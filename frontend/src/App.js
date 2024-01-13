@@ -1,10 +1,10 @@
 import logo from './logo.svg';
 import './App.css';
-import Login from './Components/Login';
-import Footer from './Components/Footer';
-import Signup from './Components/Signup';
-import Homepage from './Screens/Homepage';
+import Login from './components/Login';
+import Footer from './components/Footer';
+import Signup from './components/Signup';
 import './bootstrap.min.css'
+import Homepage from './screens/Homepage'
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 

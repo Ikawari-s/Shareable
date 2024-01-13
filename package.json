@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "bootstrap": "^5.3.2",
+    "enlist": "^0.1.0",
     "react-bootstrap": "^2.9.2"
   }
 }
