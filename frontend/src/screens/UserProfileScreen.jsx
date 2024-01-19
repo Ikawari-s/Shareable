@@ -1,10 +1,13 @@
 import React from "react";
 import { Row, Col, Card } from "react-bootstrap";
 import "../designs/UserProfileScreen.css";
+import Header from "../components/Header";
+import Leaderboard from "../components/Leaderboard";
 
 function UserProfileScreen() {
   return (
     <>
+      <Header />
       <div class="card mb-3" id="username-image">
         <img
           src="https://static.vecteezy.com/system/resources/previews/019/879/186/original/user-icon-on-transparent-background-free-png.png"
@@ -60,6 +63,8 @@ function UserProfileScreen() {
                     <li>text</li>
                     <li>text</li>
                     <li>text</li>
+                    <li>text</li>
+                    <li>text</li>
                   </ul>
                 </div>
               </div>
@@ -72,10 +77,24 @@ function UserProfileScreen() {
                     <li>text</li>
                     <li>text</li>
                     <li>text</li>
+                    <li>text</li>
+                    <li>text</li>
+                    <li>text</li>
+                    <li>text</li>
+                    <li>text</li>
+                    <li>text</li>
                   </ul>
                 </div>
               </div>
             </div>
+          </div>
+          <div class="card mt-2 p-2">
+            <h1 class="cart-title text-center">
+              Donate to you favorite creator
+            </h1>
+            <button type="button" class="btn btn-outline-light">
+              Donate
+            </button>
           </div>
         </Col>
         <Col xl={4}>
@@ -89,6 +108,13 @@ function UserProfileScreen() {
               <h5 class="card-title">User Name</h5>
               <p class="card-text">text here</p>
             </div>
+          </div>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <div class="card mt-2">
+            <Leaderboard />
           </div>
         </Col>
       </Row>
