@@ -1,0 +1,70 @@
+
+.searchBox {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #2f3640;
+    height: 40px;
+    border-radius: 40px;
+    padding: 10px;
+    margin-top: 1rem;
+}
+
+.searchButton {
+    color: white;
+    float: right;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #2f3640;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.searchInput {
+    border: none;
+    background: none;
+    outline: none;
+    float: left;
+    padding: 0;
+    color: white;
+    font-size: 16px;
+    line-height: 1rem;
+    width: 80%;
+    margin-right: 10px;
+}
+
+.templateContainer {
+    max-width: 1400px; /* Adjust the maximum width as needed */
+    width: 100%; /* Ensure the container takes 100% width */
+    margin: 0 auto; /* Center the container horizontally */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+}
+.template {
+    width: calc(33.33% - 20px);
+    margin: 10px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.template img {
+    max-width: 75%;
+    height: auto;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.template h3 {
+    margin: 10px 0;
+    font-size: 2rem; /* Adjusted font size */
+}
+
+.template p {
+    color: white;
+    font-size: 1rem; /* Adjusted font size */
+}
