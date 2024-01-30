@@ -1,21 +1,23 @@
 import React from "react";
 import { Navbar, Container, Nav } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useDispatch } from 'react-redux';
+import { logout } from '../actions/userActions'
+
 
 function Header() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
-      await axios.post("http://127.0.0.1:8000/api/logout/");
-      navigate("/");
-      console.log("Logout successful");
+      await dispatch(logout());
+      navigate('/');
+      console.log('Logout successful');
     } catch (error) {
-      console.error("Error during logout:", error);
+      console.error('Error during logout:', error);
     }
   };
-
   return (
     <>
       <Navbar expand="lg" bg="primary" variant="dark" collapseOnSelect>

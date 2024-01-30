@@ -1,10 +1,8 @@
-// Homepage.js
-
 import Header from "../components/Header";
-
 import React, { useState, useEffect } from "react";
 import jsonData from "./sampledata.json";
 import "../style.css";
+
 
 function Homepage() {
   const [data, setData] = useState([]);

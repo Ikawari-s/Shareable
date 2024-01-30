@@ -1,38 +1,43 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../actions/userActions"; 
+
 
 function Login() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const userLogin = useSelector((state) => state.userLogin);
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const navigate = useNavigate(); // Add this line
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleLogin = () => {
-    fetch("http://127.0.0.1:8000/api/login/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // Handle successful login, e.g., store token, redirect, etc.
-        console.log("Login successful", data);
-        navigate("/homepage"); // Redirect to homepage
-      })
-      .catch((error) => {
-        // Handle login error
-        console.error("Login error", error);
-      });
+  useEffect(() => {
+    if (userLogin.userInfo) {
+      navigate("/homepage");
+    }
+  }, [userLogin.userInfo, navigate]);
+
+  const handleLogin = async () => {
+    try {
+      await dispatch(login(formData.email, formData.password));
+
+      const loggedInUser = localStorage.getItem('userInfo');
+      if (loggedInUser) {
+        navigate("/homepage");
+      }
+    } catch (error) {
+      console.error("Login error", error);
+    }
   };
 
-  return (
+  return (  
     <div className="container mt-5">
       <div className="card custom-card-background">
         <div className="card-header">
