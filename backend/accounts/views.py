@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer
 from rest_framework import permissions, status
 from .validation import custom_validation, validate_email, validate_password
+from django.contrib.auth import authenticate, login
+from django.http import JsonResponse
 
 
 class UserRegister(APIView):
@@ -20,21 +22,32 @@ class UserRegister(APIView):
 
 
 class UserLogin(APIView):
-	permission_classes = (permissions.AllowAny,)
-	authentication_classes = (SessionAuthentication,)
-	##
-	def post(self, request):
-		data = request.data
-		assert validate_email(data)
-		assert validate_password(data)
-		serializer = UserLoginSerializer(data=data)
-		if serializer.is_valid(raise_exception=True):
-			user = serializer.check_user(data)
-			login(request, user) 
-			print("OKAY")
-			return Response(serializer.data, status=status.HTTP_200_OK)
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = (SessionAuthentication,)
 
+    def post(self, request):
+        data = request.data
+        print("Received data:", data) 
+        assert validate_email(data)
+        assert validate_password(data)
 
+        serializer = UserLoginSerializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            user = authenticate(request, username=data['email'], password=data['password'])
+            
+            if user:
+                login(request, user)
+                session_id = request.session.session_key
+                print("Session ID:", session_id)
+                response_data = {'sessionID': session_id, 'userInfo': serializer.data}
+                return JsonResponse(response_data, status=status.HTTP_200_OK)
+            else:
+                print("Authentication failed") 
+
+        print("Validation errors:", serializer.errors) 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+	
 class UserLogout(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = ()
@@ -46,9 +59,12 @@ class UserLogout(APIView):
 
 
 class UserView(APIView):
-	permission_classes = (permissions.IsAuthenticated,)
-	authentication_classes = (SessionAuthentication,)
-	##
-	def get(self, request):
-		serializer = UserSerializer(request.user)
-		return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def get(self, request):
+        try:
+            serializer = UserSerializer(request.user)
+            return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'detail': f'Error retrieving user information: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

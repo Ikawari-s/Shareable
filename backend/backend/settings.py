@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -33,6 +35,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
 ]
+
 CORS_ALLOWED_CREDENTIALS = True
 
 # Application definition
@@ -147,3 +150,22 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 LOGOUT_REDIRECT_URL = '/login/'
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+
+# Use Django's default session engine
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+# Set a valid value for SECRET_KEY
+SECRET_KEY = 'b4dfe0e2c20db4161ed8c9467a8c4a522c1f5826a710f7ba'
+
+CSRF_COOKIE_NAME = 'csrftoken'
+
+
+SESSION_COOKIE_NAME = 'sessionID'
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = "None"

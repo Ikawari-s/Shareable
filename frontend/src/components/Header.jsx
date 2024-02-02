@@ -1,9 +1,8 @@
 import React from "react";
 import { Navbar, Container, Nav } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux';
-import { logout } from '../actions/userActions'
-
+import { useDispatch } from "react-redux";
+import { logout } from "../actions/userActions";
 
 function Header() {
   const dispatch = useDispatch();
@@ -12,12 +11,19 @@ function Header() {
   const handleLogout = async () => {
     try {
       await dispatch(logout());
-      navigate('/');
-      console.log('Logout successful');
+      localStorage.removeItem("userInfo");
+
+      const oneHourFromNow = new Date();
+      oneHourFromNow.setTime(oneHourFromNow.getTime() - 60 * 60 * 1000);
+      document.cookie = `sessionID=; expires=${oneHourFromNow.toUTCString()}; path=/;`;
+
+      console.log("Logout successful");
+      navigate("/");
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error("Logout error", error);
     }
   };
+
   return (
     <>
       <Navbar expand="lg" bg="primary" variant="dark" collapseOnSelect>

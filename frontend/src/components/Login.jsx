@@ -1,13 +1,12 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../actions/userActions"; 
-
+import { login } from "../actions/userActions";
 
 function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo, loading } = useSelector((state) => state.userLogin);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -18,26 +17,45 @@ function Login() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  useEffect(() => {
-    if (userLogin.userInfo) {
-      navigate("/homepage");
-    }
-  }, [userLogin.userInfo, navigate]);
-
   const handleLogin = async () => {
     try {
-      await dispatch(login(formData.email, formData.password));
+      const response = await dispatch(login(formData.email, formData.password));
 
-      const loggedInUser = localStorage.getItem('userInfo');
-      if (loggedInUser) {
-        navigate("/homepage");
+      console.log("Response:", response);
+
+      if (response) {
+        console.log("Response Data:", response.data);
+
+        if (response.data) {
+          const sessionID = response.data.sessionID;
+
+          console.log("SessionID:", sessionID);
+
+          if (sessionID) {
+            document.cookie = `sessionID=${sessionID}; path=/`;
+
+            navigate("/homepage");
+          } else {
+            console.error("SessionID is undefined in the response data.");
+          }
+        } else {
+          console.error("Data property is undefined in the response.");
+        }
+      } else {
+        console.error("Invalid login response:", response);
       }
     } catch (error) {
       console.error("Login error", error);
     }
   };
 
-  return (  
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/homepage");
+    }
+  }, [userInfo, navigate]);
+
+  return (
     <div className="container mt-5">
       <div className="card custom-card-background">
         <div className="card-header">
@@ -77,8 +95,9 @@ function Login() {
                 className="btn btn-primary"
                 type="button"
                 onClick={handleLogin}
+                disabled={loading}
               >
-                Login
+                {loading ? "Logging in..." : "Login"}
               </button>
             </div>
           </form>
