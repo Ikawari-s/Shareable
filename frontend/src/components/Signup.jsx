@@ -7,22 +7,20 @@ import { useDispatch, useSelector } from "react-redux";
 function Signup() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const registration = useSelector((state) => state.registration);
   const userLogin = useSelector((state) => state.userLogin);
 
   const [formData, setFormData] = useState({
     email: "",
     username: "",
     password: "",
-    retypePassword: "", // Add retypePassword field
+    retypePassword: "",
   });
 
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // If the user is already logged in, redirect to /homepage
     if (userLogin.userInfo) {
-      navigate("/homepage");
+      navigate("/");
     }
   }, [userLogin.userInfo, navigate]);
 
@@ -31,7 +29,6 @@ function Signup() {
   };
 
   const handleSignup = () => {
-    // Perform client-side validation for retype password
     if (formData.password !== formData.retypePassword) {
       setError("Password and retype password don't match");
       return;
@@ -39,12 +36,11 @@ function Signup() {
 
     dispatch(register(formData.email, formData.password, formData.username))
       .then(() => {
-        // Redirect to the login page after successful signup
+        dispatch({ type: 'USER_LOGOUT' });
+        localStorage.removeItem("userInfo");
         navigate("/");
       })
-
       .catch((error) => {
-        // Handle signup error
         console.error("Signup error", error);
         setError("Signup failed. Please check your information and try again.");
       });

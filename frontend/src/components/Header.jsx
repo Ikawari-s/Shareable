@@ -13,17 +13,12 @@ function Header() {
       await dispatch(logout());
       localStorage.removeItem("userInfo");
 
-      const oneHourFromNow = new Date();
-      oneHourFromNow.setTime(oneHourFromNow.getTime() - 60 * 60 * 1000);
-      document.cookie = `sessionID=; expires=${oneHourFromNow.toUTCString()}; path=/;`;
-
       console.log("Logout successful");
       navigate("/");
     } catch (error) {
       console.error("Logout error", error);
     }
   };
-
   return (
     <>
       <Navbar expand="lg" bg="primary" variant="dark" collapseOnSelect>

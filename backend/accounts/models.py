@@ -21,13 +21,13 @@ class AppUserManager(BaseUserManager):
         user.save()
         return user
 
-
 class AppUser(AbstractBaseUser, PermissionsMixin):
-    user_id = models.AutoField(primary_key=True)
+    # Adding id field explicitly
+    id = models.AutoField(primary_key=True)
     email = models.EmailField(max_length=50, unique=True)
     username = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)  # Add this line to include is_staff field
+    is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -36,3 +36,7 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+
+
+
+#GINALAW

@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../actions/userActions";
 
+
+
 function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -19,37 +21,22 @@ function Login() {
 
   const handleLogin = async () => {
     try {
+
       const response = await dispatch(login(formData.email, formData.password));
 
-      console.log("Response:", response);
-
-      if (response) {
-        console.log("Response Data:", response.data);
-
-        if (response.data) {
-          const sessionID = response.data.sessionID;
-
-          console.log("SessionID:", sessionID);
-
-          if (sessionID) {
-            document.cookie = `sessionID=${sessionID}; path=/`;
-
-            navigate("/homepage");
-          } else {
-            console.error("SessionID is undefined in the response data.");
-          }
-        } else {
-          console.error("Data property is undefined in the response.");
-        }
+      if (response && response.data) {
+        console.log("User Info after Login:", response.data);
+        navigate("/homepage");
       } else {
         console.error("Invalid login response:", response);
       }
-    } catch (error) {
-      console.error("Login error", error);
+    } catch (error) { 
+      console.error("Login error:", error);
     }
   };
 
   useEffect(() => {
+    console.log("User Info:", userInfo);
     if (userInfo) {
       navigate("/homepage");
     }
