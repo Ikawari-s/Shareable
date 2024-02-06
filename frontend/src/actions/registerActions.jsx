@@ -24,7 +24,7 @@ export const register = (email, password, username) => async (dispatch) => {
       payload: data,
     });
 
-    localStorage.setItem('userInfo', JSON.stringify(data)); // Store when logged in
+    // localStorage.setItem('userInfo', JSON.stringify(data)); ina neto meron pala nag seset agad kaya pala na lologin
   } catch (error) {
     dispatch({
       type: USER_REGISTER_FAIL,

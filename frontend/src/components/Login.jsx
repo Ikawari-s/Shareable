@@ -3,8 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../actions/userActions";
 
-
-
 function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -19,11 +17,10 @@ function Login() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleLogin = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission
     try {
-
       const response = await dispatch(login(formData.email, formData.password));
-
       if (response && response.data) {
         console.log("User Info after Login:", response.data);
         navigate("/homepage");
@@ -50,7 +47,7 @@ function Login() {
         </div>
 
         <div className="card-body">
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="email" className="form-label">
                 Email:
@@ -80,8 +77,7 @@ function Login() {
             <div className="d-grid gap-2">
               <button
                 className="btn btn-primary"
-                type="button"
-                onClick={handleLogin}
+                type="submit" // Change button type to "submit"
                 disabled={loading}
               >
                 {loading ? "Logging in..." : "Login"}

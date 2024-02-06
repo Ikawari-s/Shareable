@@ -28,7 +28,9 @@ function Signup() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSignup = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault(); 
+
     if (formData.password !== formData.retypePassword) {
       setError("Password and retype password don't match");
       return;
@@ -36,8 +38,6 @@ function Signup() {
 
     dispatch(register(formData.email, formData.password, formData.username))
       .then(() => {
-        dispatch({ type: 'USER_LOGOUT' });
-        localStorage.removeItem("userInfo");
         navigate("/");
       })
       .catch((error) => {
@@ -54,7 +54,7 @@ function Signup() {
         </div>
 
         <div className="card-body">
-          <Form>
+          <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
               <Form.Label>Email:</Form.Label>
               <Form.Control
@@ -96,7 +96,7 @@ function Signup() {
             </Form.Group>
 
             <div className="d-grid gap-2">
-              <Button variant="primary" type="button" onClick={handleSignup}>
+              <Button variant="primary" type="submit"> 
                 Create!
               </Button>
             </div>

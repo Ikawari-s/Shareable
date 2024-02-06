@@ -6,19 +6,6 @@ import {
   USER_LOGOUT,
 } from "../constants/userConstants";
 
-
-const getCSRFTokenFromCookie = () => {
-  const csrfCookie = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("csrftoken="));
-
-  if (csrfCookie) {
-    return csrfCookie.split("=")[1];
-  }
-
-  return null; 
-};
-
 export const login = (email, password) => async (dispatch) => {
   try {
     dispatch({
@@ -28,8 +15,6 @@ export const login = (email, password) => async (dispatch) => {
     const config = {
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": getCSRFTokenFromCookie(),
-        withCredentials: true, 
       },
     };
 
@@ -43,6 +28,9 @@ export const login = (email, password) => async (dispatch) => {
       type: USER_LOGIN_SUCCESS,
       payload: response.data,
     });
+
+    // Add the JWT token to request headers for subsequent requests
+    axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`;
 
     localStorage.setItem("userInfo", JSON.stringify(response.data));
 
