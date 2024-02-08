@@ -26,19 +26,19 @@ export default function ContactScreen() {
                 <form onSubmit={sendEmail}>
   <div class="mb-3">
     <label class="form-label">Name</label>
-    <input type="text" class="form-control" placeholder='Name' name='name' />
+    <input type="text" class="form-control" placeholder='Name' name='name' required/>
   </div>
   <div class="mb-3">
     <label class="form-label" required>Email Address</label>
-    <input type="text" class="form-control" placeholder='@gmail.com' name='email' />
+    <input type="text" class="form-control" placeholder='@gmail.com' name='email' required />
   </div>
   <div class="mb-3">
     <label class="form-label">Subject</label>
-    <input type="text" class="form-control" placeholder='Subject' name='subject' />
+    <input type="text" class="form-control" placeholder='Subject' name='subject' required />
   </div>
   <div class="mb-3">
     <label class="form-label">Message</label>
-    <input type="text" class="form-control" placeholder='Type your message' name='message' />
+    <input type="text" class="form-control" placeholder='Type your message' name='message' required/>
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
