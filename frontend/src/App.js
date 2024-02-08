@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import Signup from './components/Signup';
 import Homepage from './screens/Homepage';
 import HomeScreen from './screens/HomeScreen';
+import ContactScreen from './screens/ContactScreen';
 import './bootstrap.min.css';
 import UserProfileScreen from './screens/UserProfileScreen';
 import ProtectedRoute from './utils/ProtectedRoutes';
@@ -19,6 +20,7 @@ function App() {
           <Route path="/homepage" element={<ProtectedRoute><Homepage /></ProtectedRoute>} />
           <Route path="/userprofile" element={<ProtectedRoute><UserProfileScreen /></ProtectedRoute>} />
           <Route path="/home" element={<ProtectedRoute><HomeScreen /></ProtectedRoute>} />
+          <Route path="/contact" element={<ProtectedRoute><ContactScreen /></ProtectedRoute>} />
         </Routes>
       </Router>
       <Footer />
