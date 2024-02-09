@@ -1,11 +1,13 @@
-import React from 'react'
+import React from "react";
+import Header from "../components/Header";
 
 function FeaturesScreen() {
   return (
     <div>
-        <h1>Features Screen</h1>
+      <Header />
+      <h1>Features Screen</h1>
     </div>
-  )
+  );
 }
 
-export default FeaturesScreen
+export default FeaturesScreen;

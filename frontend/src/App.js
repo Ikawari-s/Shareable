@@ -9,6 +9,7 @@ import ContactScreen from './screens/ContactScreen';
 import './bootstrap.min.css';
 import UserProfileScreen from './screens/UserProfileScreen';
 import ProtectedRoute from './utils/ProtectedRoutes';
+import FeaturesScreen from './screens/FeaturesScreen';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/userprofile" element={<ProtectedRoute><UserProfileScreen /></ProtectedRoute>} />
           <Route path="/home" element={<ProtectedRoute><HomeScreen /></ProtectedRoute>} />
           <Route path="/contact" element={<ProtectedRoute><ContactScreen /></ProtectedRoute>} />
+          <Route path="/features" element={<ProtectedRoute><FeaturesScreen /></ProtectedRoute>} />
         </Routes>
       </Router>
       <Footer />
