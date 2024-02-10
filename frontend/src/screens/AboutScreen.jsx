@@ -6,9 +6,12 @@ function AboutScreen() {
   return (
     <div>
         <Header />
-        <Row className="m-3">
-        <h1 className="text-center">Shareable</h1>
-            <p className="m-3"></p>
+        <Row className="m-3 justify-content-center">
+          <Col xl={6}>
+          <h1 className="text-center">Shareable</h1>
+            <p className="m-3">The primary objective of Shareable brings patrons or users exclusive content (art, music, games, podcast, writing, or photography) of their favorite creators through subscriptions or tier, either monthly, annually, or per creation. It aims to bring diverse preferences of users, creating a platform that resonates their needs and drive their engagement.</p>
+          </Col>
+        
         </Row>
         <Row className="m-3">
             

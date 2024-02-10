@@ -2,6 +2,7 @@ import React from "react";
 import Footer from "../components/Footer";
 import { Row, Col } from "react-bootstrap";
 import emailjs from "emailjs-com";
+import Header from '../components/Header'
 
 export default function ContactScreen() {
   function sendEmail(e) {
@@ -27,8 +28,9 @@ export default function ContactScreen() {
 
   return (
     <div>
-      <Row>
-        <Col xl={6} className="card">
+      <Header />
+      <Row className="justify-content-center mt-3">
+        <Col xl={6} className="card p-5">
           <form onSubmit={sendEmail}>
             <div className="mb-3">
               <label className="form-label">Name</label>
@@ -73,7 +75,7 @@ export default function ContactScreen() {
               />
             </div>
             <button type="submit" className="btn btn-primary">
-              Submit
+              Send Message
             </button>
           </form>
         </Col>

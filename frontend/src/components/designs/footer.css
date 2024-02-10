@@ -1,0 +1,14 @@
+#footer {
+    margin-top: 10rem;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    
+}
+
+#menu {
+    ul {
+        list-style-type: none;
+      }
+}
+
