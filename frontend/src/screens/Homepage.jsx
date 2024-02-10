@@ -4,6 +4,8 @@ import "../style.css";
 import React, { useState, useEffect } from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
+import { Link } from 'react-router-dom';
+
 
 function Homepage() {
   const [sharers, setSharers] = useState([]);
@@ -61,7 +63,11 @@ function Homepage() {
                       <small className="text-muted">{sharer.category}</small>
                     </Card.Text>
                   </div>
-                  <Button variant="primary">See More</Button>
+
+                  <Link to={`/sharers/${sharer.id}`}>
+                    <Button variant="primary">See More</Button>
+                  </Link>
+
                 </Card.Body>
               </Card>
             </div>

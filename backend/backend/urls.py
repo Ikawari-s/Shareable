@@ -13,7 +13,7 @@ router.register('sharers', SharerView, basename='sharerview')
 urlpatterns = ([
     path('admin/', admin.site.urls),
     path('api/', include('accounts.urls')),
-    path('api/sharers/', include(router.urls)),
+    path('', include(router.urls)),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
                + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))
 
