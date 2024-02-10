@@ -11,6 +11,7 @@ import UserProfileScreen from './screens/UserProfileScreen';
 import ProtectedRoute from './utils/ProtectedRoutes';
 import FeaturesScreen from './screens/FeaturesScreen';
 import SharerDetail from './screens/SharerDetail';
+import AboutScreen from './screens/AboutScreen';
 
 function App() {
   return (
@@ -20,12 +21,15 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/homepage" element={<Homepage />}/>
+          <Route path="/contact" element={<ContactScreen />} />
+          <Route path="/about" element={<AboutScreen />} />
 
           <Route path="/sharers/:id" element={<SharerDetail />} />
+          
 
           <Route path="/userprofile" element={<ProtectedRoute><UserProfileScreen /></ProtectedRoute>} />
           <Route path="/home" element={<ProtectedRoute><HomeScreen /></ProtectedRoute>} />
-          <Route path="/contact" element={<ProtectedRoute><ContactScreen /></ProtectedRoute>} />
+          
           <Route path="/features" element={<ProtectedRoute><FeaturesScreen /></ProtectedRoute>} />
         </Routes>
       </Router>

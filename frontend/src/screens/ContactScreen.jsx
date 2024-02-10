@@ -28,7 +28,7 @@ export default function ContactScreen() {
   return (
     <div>
       <Row>
-        <Col xl={6}>
+        <Col xl={6} className="card">
           <form onSubmit={sendEmail}>
             <div className="mb-3">
               <label className="form-label">Name</label>
