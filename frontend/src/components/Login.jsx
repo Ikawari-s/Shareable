@@ -27,7 +27,7 @@ function Login() {
       } else {
         console.error("Invalid login response:", response);
       }
-    } catch (error) { 
+    } catch (error) {
       console.error("Login error:", error);
     }
   };
@@ -87,7 +87,8 @@ function Login() {
         </div>
 
         <div className="card-footer text-muted text-center">
-          Don't have an Account? <Link to="/signup">Sign Up</Link>
+          Don't have an Account? <Link to="/signup">Sign Up</Link> <br />
+          <Link to="/reset-password">Forgot Password? </Link>
         </div>
       </div>
     </div>

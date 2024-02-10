@@ -2,7 +2,7 @@ import React from "react";
 import Footer from "../components/Footer";
 import { Row, Col } from "react-bootstrap";
 import emailjs from "emailjs-com";
-import Header from '../components/Header'
+import Header from "../components/Header";
 
 export default function ContactScreen() {
   function sendEmail(e) {
@@ -29,53 +29,49 @@ export default function ContactScreen() {
   return (
     <div>
       <Header />
-      <Row className="justify-content-center mt-3">
-        <Col xl={6} className="card p-5">
+      <Row>
+        <Col xl={6}>
           <form onSubmit={sendEmail}>
-            <div className="mb-3">
-              <label className="form-label">Name</label>
+            <div class="mb-3">
+              <label class="form-label">Name</label>
               <input
                 type="text"
-                className="form-control"
+                class="form-control"
                 placeholder="Name"
                 name="name"
-                required
               />
             </div>
-            <div className="mb-3">
-              <label className="form-label" required>
+            <div class="mb-3">
+              <label class="form-label" required>
                 Email Address
               </label>
               <input
                 type="text"
-                className="form-control"
+                class="form-control"
                 placeholder="@gmail.com"
                 name="email"
-                required
               />
             </div>
-            <div className="mb-3">
-              <label className="form-label">Subject</label>
+            <div class="mb-3">
+              <label class="form-label">Subject</label>
               <input
                 type="text"
-                className="form-control"
+                class="form-control"
                 placeholder="Subject"
                 name="subject"
-                required
               />
             </div>
-            <div className="mb-3">
-              <label className="form-label">Message</label>
+            <div class="mb-3">
+              <label class="form-label">Message</label>
               <input
                 type="text"
-                className="form-control"
+                class="form-control"
                 placeholder="Type your message"
                 name="message"
-                required
               />
             </div>
-            <button type="submit" className="btn btn-primary">
-              Send Message
+            <button type="submit" class="btn btn-primary">
+              Submit
             </button>
           </form>
         </Col>

@@ -23,25 +23,26 @@ function Header() {
     <>
       <Navbar expand="lg" bg="primary" variant="dark" collapseOnSelect>
         <Container>
-          <Navbar.Brand as={Link} to="/home">
-            Navbar
+          <Navbar.Brand as={Link} to="/homepage">
+            SHAREABLE
           </Navbar.Brand>
           <Nav className="me-auto">
-            <Nav.Link as={Link} to="/home">
+            <Nav.Link as={Link} to="/homepage">
               Home
             </Nav.Link>
-            <Nav.Link as={Link} to="/features">
+            {/* <Nav.Link as={Link} to="/features">
               Features
             </Nav.Link>
             <Nav.Link as={Link} to="/pricing">
               Pricing
-            </Nav.Link>
-            <Nav.Link as={Link} to="/cart">
-              <i className="fas fa-shopping-cart"></i>Cart
-            </Nav.Link>
+            </Nav.Link> */}
             <Nav.Link as={Link} to="/userprofile">
               <i className="fas fa-user"></i>User
             </Nav.Link>
+            <Nav.Link as={Link} to="/be-sharer">
+              <i className="fas fa-user"></i>Be a Sharer!
+            </Nav.Link>
+            
             <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
           </Nav>
         </Container>

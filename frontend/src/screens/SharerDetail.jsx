@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 import ShowCollection from './ShowCollection';
-
+import Header from '../components/Header'
 const SharerDetail = () => {
     const { id } = useParams();
     const [sharer, setSharer] = useState(null);
@@ -17,6 +17,7 @@ const SharerDetail = () => {
 
     return (
         <div>
+            <Header/>
             {sharer ? (
                 <div className='text-center py-3' style={{textAlign:'center'}}>
                     {sharer.cover_photo && <img src={sharer.cover_photo} alt="Cover-Photo" style={{ position: 'relative', width: '100%', height: '50vh' }} />}
