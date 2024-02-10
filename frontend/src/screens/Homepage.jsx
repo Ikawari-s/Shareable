@@ -48,10 +48,10 @@ function Homepage() {
           {filteredSharers.map((sharer) => (
             <div className="col-md-4 mb-3 d-flex" key={sharer.id}>
               <Card style={{ width: "18rem" }}>
-                {sharer.image && (
+                {sharer.profile_pic && (
                   <Card.Img
                     variant="top"
-                    src={sharer.image}
+                    src={sharer.profile_pic}
                     style={{ width: "100%", height: "auto" }}
                   />
                 )}
