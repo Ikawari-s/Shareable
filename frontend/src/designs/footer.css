@@ -3,6 +3,7 @@
     position: fixed;
     bottom: 0;
     width: 100%;
+    border-top: 0.1rem solid white;
     
 }
 

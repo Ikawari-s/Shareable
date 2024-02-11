@@ -29,8 +29,10 @@ export default function ContactScreen() {
   return (
     <div>
       <Header />
-      <Row>
+      <div>
+        <Row className="justify-content-center mt-3">
         <Col xl={6}>
+          <div className="card p-5"> 
           <form onSubmit={sendEmail}>
             <div class="mb-3">
               <label class="form-label">Name</label>
@@ -39,6 +41,7 @@ export default function ContactScreen() {
                 class="form-control"
                 placeholder="Name"
                 name="name"
+                required
               />
             </div>
             <div class="mb-3">
@@ -46,10 +49,11 @@ export default function ContactScreen() {
                 Email Address
               </label>
               <input
-                type="text"
+                type="email"
                 class="form-control"
                 placeholder="@gmail.com"
                 name="email"
+                required
               />
             </div>
             <div class="mb-3">
@@ -59,6 +63,7 @@ export default function ContactScreen() {
                 class="form-control"
                 placeholder="Subject"
                 name="subject"
+                required
               />
             </div>
             <div class="mb-3">
@@ -68,15 +73,17 @@ export default function ContactScreen() {
                 class="form-control"
                 placeholder="Type your message"
                 name="message"
+                required
               />
             </div>
             <button type="submit" class="btn btn-primary">
               Submit
             </button>
           </form>
+          </div>
         </Col>
       </Row>
-      <h1>testiting testing</h1>
+      </div>
       <Footer />
     </div>
   );

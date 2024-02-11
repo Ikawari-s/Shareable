@@ -16,7 +16,7 @@ function AboutScreen() {
         <Row className="m-3">
             
         </Row >
-      <Row className="m-3">
+      <Row className="mt-3">
         <Col>
           <h1 className="text-center">Meet our team</h1>
         </Col>
