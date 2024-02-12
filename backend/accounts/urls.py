@@ -20,4 +20,3 @@ urlpatterns = [
 ]
 
 
-# FIX THAT UNAUTH

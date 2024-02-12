@@ -1,24 +1,22 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Assuming you're using axios for HTTP requests
+import { useDispatch } from 'react-redux';
+import { sendPasswordRequest } from '../actions/userActions'; 
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
-
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/request-reset-email/', {
-        email: email,
-        redirect_url: 'http://localhost:3000/new-password/', // Your desired redirect URL
-      });
-      setMessage(response.data.success);
+      await dispatch(sendPasswordRequest(email)); 
+      setMessage('Password reset request sent successfully.');
     } catch (error) {
-      setMessage(error.response.data.error);
+      setMessage('Error: Unable to send password reset request.');
     }
   };
 
@@ -27,8 +25,9 @@ function ForgotPasswordScreen() {
       <h2>Forgot Password</h2>
       <form onSubmit={handleSubmit}>
         <label htmlFor="email">Email:</label>
-        <input type="email" id="email" value={email} onChange={handleEmailChange} required />
+        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         <button type="submit">Reset Password</button>
+        <Link to="/"> Go back?</Link>
       </form>
       {message && <p>{message}</p>}
     </div>

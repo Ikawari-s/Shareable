@@ -14,7 +14,7 @@ import ForgotpasswordScreen from './screens/ForgotpasswordScreen';
 import NewpasswordScreen from './screens/NewpasswordScreen';
 import SharerDetail from './screens/SharerDetail';
 import AboutScreen from './screens/AboutScreen';
-
+import InvalidScreen from './screens/InvalidScreen';
 
 function App() {
   return (
@@ -27,8 +27,9 @@ function App() {
           <Route path="/new-password" element= {<NewpasswordScreen />} />
           <Route path="/contact" element={<ContactScreen />} />
           <Route path="/about" element={<AboutScreen />} />
+          <Route path="/invalid" element={<InvalidScreen/>}/> 
 
-          <Route path="/sharers/:id" element={<SharerDetail />} />
+          <Route path="/sharers/:id" element={<ProtectedRoute><SharerDetail /></ProtectedRoute>} />
           <Route path="/homepage" element={<ProtectedRoute><Homepage /></ProtectedRoute>} />
           <Route path="/be-sharer" element={<ProtectedRoute><SharerbeScreen /></ProtectedRoute>} />
           <Route path="/userprofile" element={<ProtectedRoute><UserProfileScreen /></ProtectedRoute>} />
@@ -36,7 +37,10 @@ function App() {
           <Route path="/contact" element={<ProtectedRoute><ContactScreen /></ProtectedRoute>} />
         </Routes>
       </Router>
-      <Footer />
+      
+
+     <Footer/>  
+     {/* Paalis nalang netong footer tinatamaan kase lahat ng nasa routes palagay nalng sa screens na need ng footer thanks */}
     </div>
   );
 }
