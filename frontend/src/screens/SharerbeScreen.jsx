@@ -1,25 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Header from "../components/Header";
 import { Button, Form } from "react-bootstrap";
-import { be_sharer } from "../actions/sharerActions";
+import { beSharer } from "../actions/sharerActions"; // Import your action
 
-function SharerbeScreen({ be_sharer }) {
-  const [pageTitle, setPageTitle] = useState(""); // State to hold the page title
+function SharerbeScreen() {
+  const dispatch = useDispatch();
+  const [pageName, setPageName] = useState("");
 
-  useEffect(() => {
-    // Dispatch the action when the component mounts
-    be_sharer("Your Page Title");
-  }, [be_sharer]); // Ensure the action is only dispatched once
-
-  const handlePageTitleChange = (e) => {
-    setPageTitle(e.target.value); // Update the page title state
-  };
+  // Access the sharer state if needed
+  const sharerState = useSelector((state) => state.sharer);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Dispatch the action with the entered page title
-    be_sharer(pageTitle);
+    dispatch(beSharer(pageName)); // Dispatch the action with the pageName
   };
 
   return (
@@ -38,8 +32,8 @@ function SharerbeScreen({ be_sharer }) {
                 <Form.Control
                   type="text"
                   placeholder="Page Name"
-                  value={pageTitle}
-                  onChange={handlePageTitleChange} // Handle input change
+                  value={pageName}
+                  onChange={(e) => setPageName(e.target.value)}
                 />
               </Form.Group>
               <div className="text-center">
@@ -55,4 +49,4 @@ function SharerbeScreen({ be_sharer }) {
   );
 }
 
-export default connect(null, { be_sharer })(SharerbeScreen);
+export default SharerbeScreen;

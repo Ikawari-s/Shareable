@@ -20,7 +20,8 @@ export const login = (email, password) => async (dispatch) => {
 
     const config = {
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json' // Add Accept header here
       }
     };
 
@@ -48,6 +49,7 @@ export const login = (email, password) => async (dispatch) => {
 };
 
 
+
 export const logout = () => async (dispatch) => {
   try {
     await axios.post("http://127.0.0.1:8000/api/logout/");
@@ -65,6 +67,7 @@ export const logout = () => async (dispatch) => {
     });
   }
 };
+
 
 export const sendPasswordRequest = (email) => async (dispatch) => {
   try {
@@ -111,8 +114,6 @@ export const userNewPasswordReducer = (uidb64, token, password, password2) => as
       payload: data
     });
 
-    return data; // Return data after successful dispatch
-
   } catch (error) {
     dispatch({
       type: USER_NEW_PASSWORD_FAIL,
@@ -121,6 +122,6 @@ export const userNewPasswordReducer = (uidb64, token, password, password2) => as
         : error.message
     });
 
-    throw error; // Throw error after dispatching failure action
+    throw error;
   }
 };

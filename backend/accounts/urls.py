@@ -15,7 +15,13 @@ urlpatterns = [
     path('password-reset/<uidb64>/<token>/',
          PasswordTokenCheckAPI.as_view(), name='password-reset-confirm'),
     path('password-reset-complete/', SetNewPasswordAPIView.as_view(),
-         name='password-reset-complete')
+         name='password-reset-complete'),
+
+
+    path('send-otp/', SendOTP.as_view(), name="send-otp"),
+    path('verify-otp/', VerifyOTP.as_view(), name="verify-otp"),
+    path('resend-otp/', ResendOTP.as_view(), name='resend-otp'),
+     path('be-sharer/', Be_sharer.as_view(), name="be-sharer"),
     
 ]
 

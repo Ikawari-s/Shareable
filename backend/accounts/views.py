@@ -27,17 +27,11 @@ from .utils import Util
 from django.http import HttpResponsePermanentRedirect
 from django.conf import settings
 from rest_framework.permissions import AllowAny
-
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-def get_tokens_for_user(user):
-    refresh = RefreshToken.for_user(user)
-    return {
-        'refresh': str(refresh),
-        'access': str(refresh.access_token)
-    }
 
 class UserRegister(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -46,10 +40,54 @@ class UserRegister(APIView):
         clean_data = custom_validation(request.data)
         serializer = UserRegisterSerializer(data=clean_data)
         if serializer.is_valid(raise_exception=True):
-            user = serializer.create(clean_data)
+            user = serializer.save(is_active=False)
             if user:
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                user.send_otp()
+                return Response({"message": "OTP sent successfully"}, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class SendOTP(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        try:
+            user = AppUser.objects.get(email=request.data['email'])
+        except ObjectDoesNotExist:
+            return Response({"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        user.send_otp()
+        return Response({"message": "OTP sent successfully"}, status=status.HTTP_200_OK)
+
+class ResendOTP(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        try:
+            user = AppUser.objects.get(email=request.data['email'])
+        except ObjectDoesNotExist:
+            return Response({"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        user.send_otp()
+        return Response({"message": "OTP resent successfully"}, status=status.HTTP_200_OK)
+
+class VerifyOTP(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        try:
+            user = AppUser.objects.get(email=request.data['email'])
+        except ObjectDoesNotExist:
+            return Response({"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        otp = request.data.get('otp', '')
+
+        if user.verify_otp(otp):
+            user.is_active = True
+            user.save()
+            return Response({"message": "OTP verified successfully and user activated"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Invalid OTP or OTP expired"}, status=status.HTTP_400_BAD_REQUEST)
+
     
 
 
@@ -84,7 +122,7 @@ class UserLogin(APIView):
 
 
 class UserLogout(APIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
         logout(request)
@@ -182,6 +220,7 @@ class SetNewPasswordAPIView(generics.GenericAPIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response({'success': True, 'message': 'Password reset success'}, status=status.HTTP_200_OK)
+
 
 
 # NOT YET WORKING

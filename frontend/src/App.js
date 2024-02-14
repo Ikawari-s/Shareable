@@ -15,6 +15,7 @@ import NewpasswordScreen from './screens/NewpasswordScreen';
 import SharerDetail from './screens/SharerDetail';
 import AboutScreen from './screens/AboutScreen';
 import InvalidScreen from './screens/InvalidScreen';
+import VerifyotpScreen from './screens/VerifyotpScreen';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="/contact" element={<ContactScreen />} />
           <Route path="/about" element={<AboutScreen />} />
           <Route path="/invalid" element={<InvalidScreen/>}/> 
+          <Route path="/otp/:email" element={<VerifyotpScreen/>}/>
 
           <Route path="/sharers/:id" element={<ProtectedRoute><SharerDetail /></ProtectedRoute>} />
           <Route path="/homepage" element={<ProtectedRoute><Homepage /></ProtectedRoute>} />

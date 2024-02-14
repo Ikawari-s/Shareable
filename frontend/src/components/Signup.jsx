@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Form, Button, Alert } from "react-bootstrap";
+import React, { useState } from "react";
+import { Form, Button, Alert, Spinner } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../actions/registerActions";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 function Signup() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const userLogin = useSelector((state) => state.userLogin);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -17,32 +16,32 @@ function Signup() {
   });
 
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    if (userLogin.userInfo) {
-      navigate("/");
-    }
-  }, [userLogin.userInfo, navigate]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
     if (formData.password !== formData.retypePassword) {
       setError("Password and retype password don't match");
       return;
     }
 
+    setIsLoading(true);
+
     dispatch(register(formData.email, formData.password, formData.username))
       .then(() => {
-        navigate("/");
+        navigate(`/otp/${formData.email}`);
       })
       .catch((error) => {
         console.error("Signup error", error);
         setError("Signup failed. Please check your information and try again.");
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -96,8 +95,15 @@ function Signup() {
             </Form.Group>
 
             <div className="d-grid gap-2">
-              <Button variant="primary" type="submit"> 
-                Create!
+              <Button variant="primary" type="submit" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Spinner animation="border" size="sm" />
+                    {' '} Creating...
+                  </>
+                ) : (
+                  "Create!"
+                )}
               </Button>
             </div>
           </Form>

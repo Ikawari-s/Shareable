@@ -18,11 +18,10 @@ function Login() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
     try {
       const response = await dispatch(login(formData.email, formData.password));
       if (response && response.data) {
-        console.log("User Info after Login:", response.data);
         navigate("/homepage");
       } else {
         console.error("Invalid login response:", response);
@@ -33,7 +32,6 @@ function Login() {
   };
 
   useEffect(() => {
-    console.log("User Info:", userInfo);
     if (userInfo) {
       navigate("/homepage");
     }
@@ -77,7 +75,7 @@ function Login() {
             <div className="d-grid gap-2">
               <button
                 className="btn btn-primary"
-                type="submit" // Change button type to "submit"
+                type="submit"
                 disabled={loading}
               >
                 {loading ? "Logging in..." : "Login"}

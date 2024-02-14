@@ -1,6 +1,11 @@
 from django.db import models
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.core.mail import send_mail
+from django.utils import timezone
+import random
+import string
+from django.conf import settings
 
 class AppUserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
@@ -22,13 +27,17 @@ class AppUserManager(BaseUserManager):
         return user
 
 class AppUser(AbstractBaseUser, PermissionsMixin):
-    # Adding id field explicitly
     id = models.AutoField(primary_key=True)
     email = models.EmailField(max_length=50, unique=True)
     username = models.CharField(max_length=50)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)  # User will be activated after OTP verification
     is_staff = models.BooleanField(default=False)
     is_sharer = models.BooleanField(default=False)
+
+    # Fields for OTP verification
+    otp_code = models.CharField(max_length=6, blank=True, null=True)
+    otp_created_at = models.DateTimeField(blank=True, null=True)
+    otp_expires_at = models.DateTimeField(blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -38,3 +47,26 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.username
 
+    def generate_otp(self):
+        return ''.join(random.choices(string.digits, k=6))
+
+    def send_otp(self):
+        otp = self.generate_otp()
+        self.otp_code = otp
+        self.otp_created_at = timezone.now()
+        self.otp_expires_at = self.otp_created_at + timezone.timedelta(minutes=5)  # OTP expires in 5 minutes
+        self.save()
+
+        subject = 'Your OTP for verification'
+        message = f'Your OTP is: {otp}'
+        from_email = settings.EMAIL_HOST_USER
+        to = [self.email]
+
+        send_mail(subject, message, from_email, to)
+
+    def verify_otp(self, otp):
+        return self.otp_code == otp and self.otp_expires_at > timezone.now()
+
+
+class beSharer(models.Model):
+    title = models.CharField(max_length=50)

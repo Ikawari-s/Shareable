@@ -9,7 +9,7 @@ class AppUserAdmin(UserAdmin):
 
     fieldsets = (
         (None, {'fields': ('email', 'username', 'password')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff','is_sharer', 'groups', 'user_permissions')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_sharer', 'groups', 'user_permissions')}),
     )
 
     add_fieldsets = (
