@@ -22,7 +22,8 @@ function App() {
     <div>
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<HomeScreen />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/reset-password" element={<ForgotpasswordScreen />} />
           <Route path="/new-password" element= {<NewpasswordScreen />} />
@@ -41,7 +42,7 @@ function App() {
       </Router>
       
 
-     <Footer/>  
+     {/* <Footer/>   */}
      {/* Paalis nalang netong footer tinatamaan kase lahat ng nasa routes palagay nalng sa screens na need ng footer thanks */}
     </div>
   );

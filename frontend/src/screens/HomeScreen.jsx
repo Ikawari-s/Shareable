@@ -1,11 +1,30 @@
 import React from "react";
-import Header from "../components/Header";
+import Header from '../components/Header';
+import GuestHeader from "../components/GuestHeader";
 
 function HomeScreen() {
   return (
     <div>
-      <Header />
-      <h1>HomeScreen</h1>
+      <GuestHeader />
+      <h1>WSG MOTHERFUCKER</h1>
+      <h1>WSG MOTHERFUCKER</h1>
+      <h1>WSG MOTHERFUCKER</h1>
+      <h1>WSG MOTHERFUCKER</h1>
+      <h1>WSG MOTHERFUCKER</h1>
+      <h1>WSG MOTHERFUCKER</h1>
+      <h1>WSG MOTHERFUCKER</h1>
+      <h1>WSG MOTHERFUCKER</h1>
+      <h1>WSG MOTHERFUCKER</h1>
+      <h1>WSG MOTHERFUCKER</h1>
+      <h1>WSG MOTHERFUCKER</h1>
+      <h1>WSG MOTHERFUCKER</h1>
+      <h1>WSG MOTHERFUCKER</h1>
+      <h1>WSG MOTHERFUCKER</h1>
+      <h1>WSG MOTHERFUCKER</h1>
+      <h1>WSG MOTHERFUCKER</h1>
+      <h1>WSG MOTHERFUCKER</h1>
+      <h1>WSG MOTHERFUCKER</h1>
+      <h1>WSG MOTHERFUCKER</h1>
     </div>
   );
 }
