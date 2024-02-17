@@ -30,7 +30,8 @@ function App() {
           <Route path="/contact" element={<ContactScreen />} />
           <Route path="/about" element={<AboutScreen />} />
           <Route path="/invalid" element={<InvalidScreen/>}/> 
-          <Route path="/otp/:email" element={<VerifyotpScreen/>}/>
+          <Route path="/otp" element={<VerifyotpScreen />} />
+
 
           <Route path="/sharers/:id" element={<ProtectedRoute><SharerDetail /></ProtectedRoute>} />
           <Route path="/homepage" element={<ProtectedRoute><Homepage /></ProtectedRoute>} />

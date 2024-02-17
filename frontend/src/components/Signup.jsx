@@ -4,15 +4,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { register } from "../actions/registerActions";
 import { useDispatch } from "react-redux";
 
+//Code explanation: Nag s-store ung email sa useNavigate, stay muna na ganto
+
+
 function Signup() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    email: "",
-    username: "",
-    password: "",
-    retypePassword: "",
+    email: '',
+    username: '',
+    password: '',
+    retypePassword: '',
   });
 
   const [error, setError] = useState(null);
@@ -34,11 +37,11 @@ function Signup() {
 
     dispatch(register(formData.email, formData.password, formData.username))
       .then(() => {
-        navigate(`/otp/${formData.email}`);
+        navigate('/otp', { state: { email: formData.email } }); 
       })
       .catch((error) => {
-        console.error("Signup error", error);
-        setError("Signup failed. Please check your information and try again.");
+        console.error('Signup error', error);
+        setError('Signup failed. Please check your information and try again.');
       })
       .finally(() => {
         setIsLoading(false);

@@ -20,11 +20,13 @@ class AppUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, username, password=None, **extra_fields):
+        extra_fields.setdefault('is_active', True)  
         user = self.create_user(email=email, username=username, password=password, **extra_fields)
         user.is_superuser = True
         user.is_staff = True
-        user.save()
+        user.save(using=self._db)
         return user
+
 
 class AppUser(AbstractBaseUser, PermissionsMixin):
     id = models.AutoField(primary_key=True)
