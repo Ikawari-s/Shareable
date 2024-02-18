@@ -27,12 +27,9 @@ function Header() {
             SHAREABLE
           </Navbar.Brand>
           <Nav className="me-auto">
-            {/* <Nav.Link as={Link} to="/features">
-              Features
+            <Nav.Link as={Link} to="/sharer-page">
+              Pansamantala
             </Nav.Link>
-            <Nav.Link as={Link} to="/pricing">
-              Pricing
-            </Nav.Link> */}
             <Nav.Link as={Link} to="/userprofile">
               <i className="fas fa-user"></i>User
             </Nav.Link>

@@ -14,6 +14,15 @@ function NewPasswordScreen() {
   const [token, setToken] = useState('');
   const newPasswordState = useSelector(state => state.userNewPassword);
 
+
+  useEffect(() => {
+    const userInfo = localStorage.getItem("userInfo");
+    if (userInfo) {
+      navigate("/homepage");
+    }
+  }, [navigate]);
+  
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const uidb64Param = urlParams.get('uidb64');

@@ -21,10 +21,10 @@ function GuestHeader() {
             <Nav.Link style={{ color: 'white', fontWeight: ''}} as={Link} to="/userprofile">
               <i className="fas fa-user"></i>FIND A SHARER
             </Nav.Link>
-            <Nav.Link style={{ color: 'white', fontWeight: ''}} as={Link} to="/be-sharer">
+            <Nav.Link style={{ color: 'white', fontWeight: ''}} as={Link} to="/login">
               <i className="fas fa-user"></i>LOG IN
             </Nav.Link>
-            <Nav.Link style={{ color: 'white', fontWeight: ''}} as={Link} to="/be-sharer">
+            <Nav.Link style={{ color: 'white', fontWeight: ''}} as={Link} to="/signup">
               <i className="fas fa-user"></i>Start Today (going insane)
             </Nav.Link>
           </Nav>

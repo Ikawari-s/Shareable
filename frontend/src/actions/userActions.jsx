@@ -12,47 +12,62 @@ import {
   USER_NEW_PASSWORD_FAIL,
 } from "../constants/userConstants";
 
+const instance = axios.create({
+  baseURL: "http://127.0.0.1:8000/",
+});
+
 export const login = (email, password) => async (dispatch) => {
   try {
     dispatch({
-      type: USER_LOGIN_REQUEST
+      type: USER_LOGIN_REQUEST,
     });
 
     const config = {
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json' // Add Accept header here
-      }
+        "Content-Type": "application/json",
+        Accept: "application/json", // Add Accept header here
+      },
     };
 
-    const { data } = await axios.post(
-      'http://127.0.0.1:8000/api/login/',
+    const { data } = await instance.post(
+      "api/login/",
       { email, password },
       config
     );
 
     dispatch({
       type: USER_LOGIN_SUCCESS,
-      payload: data
+      payload: data,
     });
 
-    localStorage.setItem('userInfo', JSON.stringify(data));
-
+    localStorage.setItem("userInfo", JSON.stringify(data));
   } catch (error) {
     dispatch({
       type: USER_LOGIN_FAIL,
-      payload: error.response && error.response.data.message ?
-        error.response.data.message :
-        error.message
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
     });
   }
 };
 
-
-
 export const logout = () => async (dispatch) => {
   try {
-    await axios.post("http://127.0.0.1:8000/api/logout/");
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+    const token = userInfo ? userInfo.access_token : null;
+
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
+    await instance.post("api/logout/");
 
     localStorage.removeItem("userInfo");
 
@@ -68,14 +83,13 @@ export const logout = () => async (dispatch) => {
   }
 };
 
-
 export const sendPasswordRequest = (email) => async (dispatch) => {
   try {
     dispatch({ type: USER_SEND_PASSWORD_REQUEST });
 
-    const response = await axios.post('http://127.0.0.1:8000/api/request-reset-email/', {
+    const response = await instance.post("api/request-reset-email/", {
       email: email,
-      redirect_url: 'http://localhost:3000/new-password/',
+      redirect_url: "http://localhost:3000/new-password/",
     });
 
     dispatch({
@@ -90,38 +104,38 @@ export const sendPasswordRequest = (email) => async (dispatch) => {
   }
 };
 
+export const userNewPasswordReducer =
+  (uidb64, token, password, password2) => async (dispatch) => {
+    try {
+      dispatch({
+        type: USER_NEW_PASSWORD_REQUEST,
+      });
 
-export const userNewPasswordReducer = (uidb64, token, password, password2) => async (dispatch) => {
-  try {
-    dispatch({
-      type: USER_NEW_PASSWORD_REQUEST
-    });
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
 
-    const config = {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
+      const { data } = await instance.patch(
+        "api/password-reset-complete/",
+        { uidb64, token, password, password2 },
+        config
+      );
 
-    const { data } = await axios.patch(
-      'http://127.0.0.1:8000/api/password-reset-complete/',
-      { uidb64, token, password, password2 },
-      config
-    );
+      dispatch({
+        type: USER_NEW_PASSWORD_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: USER_NEW_PASSWORD_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
 
-    dispatch({
-      type: USER_NEW_PASSWORD_SUCCESS,
-      payload: data
-    });
-
-  } catch (error) {
-    dispatch({
-      type: USER_NEW_PASSWORD_FAIL,
-      payload: error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message
-    });
-
-    throw error;
-  }
-};
+      throw error;
+    }
+  };

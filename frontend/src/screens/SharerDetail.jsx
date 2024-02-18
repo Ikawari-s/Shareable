@@ -4,9 +4,13 @@ import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 import ShowCollection from './ShowCollection';
 import Header from '../components/Header'
+import SharerPageScreen from './SharerPageScreen';
+
 const SharerDetail = () => {
     const { id } = useParams();
     const [sharer, setSharer] = useState(null);
+
+    //Gawan nalng ng action and views and url siguro
 
     useEffect(() => {
         fetch(`http://127.0.0.1:8000/sharers/${id}/`)
@@ -25,9 +29,14 @@ const SharerDetail = () => {
                     <h2 >{sharer.name}</h2>
                     <p>{sharer.description}</p>
                     <p>Category: {sharer.category}</p>
+
+
+                <div><SharerPageScreen/></div>
                 <Link to={"/homepage"}>
                     <Button variant="primary">Go Back</Button>
                 </Link>
+
+
 
                 <ShowCollection />
 

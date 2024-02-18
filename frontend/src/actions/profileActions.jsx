@@ -1,6 +1,11 @@
 import { USER_PROFILE_FAIL, USER_PROFILE_REQUEST, USER_PROFILE_SUCCESS } from "../constants/profileConstants";
 import axios from 'axios';
 
+const instance = axios.create({
+  baseURL: 'http://127.0.0.1:8000/',
+});
+
+
 export const profile = () => async (dispatch) => {
   try {
     dispatch({
@@ -17,8 +22,8 @@ export const profile = () => async (dispatch) => {
       },
     };
 
-    const { data } = await axios.get(
-      'http://127.0.0.1:8000/api/user/profile/',
+    const { data } = await instance.get(
+      'api/user/profile/',
       config
     );
 

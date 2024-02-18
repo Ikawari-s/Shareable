@@ -1,8 +1,17 @@
-import React from "react";
-import Header from '../components/Header';
+import { React,useEffect, useState }from "react";
+import { useNavigate } from "react-router-dom";
 import GuestHeader from "../components/GuestHeader";
 
+
 function HomeScreen() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userInfo = localStorage.getItem("userInfo");
+    if (userInfo) {
+      navigate("/homepage");
+    }
+  }, [navigate]);
   return (
     <div>
       <GuestHeader />
@@ -31,5 +40,3 @@ function HomeScreen() {
 
 export default HomeScreen;
 
-
-// wag niyo na siguro tuloy to

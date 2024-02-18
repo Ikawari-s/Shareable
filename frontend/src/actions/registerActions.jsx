@@ -14,6 +14,11 @@ import {
 } from "../constants/registerConstants";
 import axios from "axios";
 
+const instance = axios.create({
+  baseURL: 'http://127.0.0.1:8000/',
+});
+
+
 export const register = (email, password, username) => async (dispatch) => {
   try {
     dispatch({
@@ -26,8 +31,8 @@ export const register = (email, password, username) => async (dispatch) => {
       },
     };
 
-    const { data } = await axios.post(
-      "http://127.0.0.1:8000/api/register/",
+    const { data } = await instance.post(
+      "api/register/",
       { email, username, password },
       config
     );
@@ -61,8 +66,8 @@ export const verifyOTP = (email, otp) => async (dispatch) => {
       },
     };
 
-    const { data } = await axios.post(
-      'http://127.0.0.1:8000/api/verify-otp/',
+    const { data } = await instance.post(
+      'api/verify-otp/',
       { email, otp },
       config
     );
@@ -94,8 +99,8 @@ export const resendOTP = (email) => async (dispatch) => {
       },
     };
 
-    const { data } = await axios.post(
-      'http://127.0.0.1:8000/api/resend-otp/',
+    const { data } = await instance.post(
+      'api/resend-otp/',
       { email },
       config
     );

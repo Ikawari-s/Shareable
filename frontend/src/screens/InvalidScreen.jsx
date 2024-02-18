@@ -1,7 +1,17 @@
-import React from 'react'
+import { React , useEffect } from 'react';
 import { Link } from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 
 function InvalidScreen() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userInfo = localStorage.getItem("userInfo");
+    if (userInfo) {
+      navigate("/homepage");
+    }
+  }, [navigate]);
+
   return (
     <div>
     <h2>Invalid Reset Password Link</h2>

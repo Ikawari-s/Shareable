@@ -16,6 +16,9 @@ import SharerDetail from './screens/SharerDetail';
 import AboutScreen from './screens/AboutScreen';
 import InvalidScreen from './screens/InvalidScreen';
 import VerifyotpScreen from './screens/VerifyotpScreen';
+import SharerPageScreen from './screens/SharerPageScreen';
+
+
 
 function App() {
   return (
@@ -32,7 +35,8 @@ function App() {
           <Route path="/invalid" element={<InvalidScreen/>}/> 
           <Route path="/otp" element={<VerifyotpScreen />} />
 
-
+      
+          <Route path="/sharer-page" element={<SharerPageScreen/>}/>
           <Route path="/sharers/:id" element={<ProtectedRoute><SharerDetail /></ProtectedRoute>} />
           <Route path="/homepage" element={<ProtectedRoute><Homepage /></ProtectedRoute>} />
           <Route path="/be-sharer" element={<ProtectedRoute><SharerbeScreen /></ProtectedRoute>} />
@@ -42,9 +46,6 @@ function App() {
         </Routes>
       </Router>
       
-
-     {/* <Footer/>   */}
-     {/* Paalis nalang netong footer tinatamaan kase lahat ng nasa routes palagay nalng sa screens na need ng footer thanks */}
     </div>
   );
 }

@@ -29,6 +29,8 @@ from django.conf import settings
 from rest_framework.permissions import AllowAny
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import get_user_model
+from sharer.models import Sharer
+
 User = get_user_model()
 
 
@@ -222,10 +224,9 @@ class SetNewPasswordAPIView(generics.GenericAPIView):
         return Response({'success': True, 'message': 'Password reset success'}, status=status.HTTP_200_OK)
 
 
-
-# NOT YET WORKING
 class Be_sharer(APIView):
     permission_classes = (permissions.IsAuthenticated,)
+    
     def post(self, request):
         try:
             if request.method == 'POST':
@@ -235,6 +236,16 @@ class Be_sharer(APIView):
                         user = AppUser.objects.get(email=request.user.email)
                         user.is_sharer = True
                         user.save()
+                        
+                        # Create a Sharer instance associated with the user
+                        sharer_instance = Sharer.objects.create(
+                            user=user,
+                            # image=user.profile_picture,  # You may need to adjust this based on your user model
+                            name=page_name,  
+                            description=f"Sharer profile for {user.username}",
+                            category="Default Category"
+                        )
+                        
                         return Response({'message': 'User is now a sharer'}, status=status.HTTP_200_OK)
                     except AppUser.DoesNotExist:
                         raise NotFound("User not found")

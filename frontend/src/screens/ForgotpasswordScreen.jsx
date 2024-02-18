@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { sendPasswordRequest } from '../actions/userActions'; 
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+
 
 function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    const userInfo = localStorage.getItem("userInfo");
+    if (userInfo) {
+      navigate("/homepage");
+    }
+  }, [navigate]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     

@@ -4,11 +4,13 @@ import { userLoginReducer } from './reducers/userReducer';
 import { userRegisterReducer } from './reducers/registerReducer';
 import { userProfileReducer } from './reducers/profileReducer'; // Import the userProfileReducer
 import {sharerListReducer} from './reducers/sharerReducer';
+import { sharerPostListReducer } from './reducers/sharerReducer';
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
   sharerList: sharerListReducer,
+  sharerPostList: sharerPostListReducer,
   // userProfile: userProfileReducer, // Add userProfileReducer to the combined reducers
 });
 
