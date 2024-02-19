@@ -2,11 +2,11 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, BasePermission
-from accounts.models import AppUser
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import *
 from .serializers import *
-from rest_framework import status
-from rest_framework import generics
+from rest_framework import status, generics, permissions
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -37,32 +37,23 @@ class SharerProfileDetail(generics.RetrieveAPIView):
         return Response(serializer.data)
 
 
-class UserSharerProfile(generics.RetrieveAPIView):
-    serializer_class = SharerUploadSerializer
-    permission_classes = [IsAuthenticated]
+class UserSharerProfile(APIView):
+    authentication_classes = (JWTAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
 
-    def get_object(self):
-        try:
-            return SharerUpload.objects.filter(uploaded_by=self.request.user).latest('id')
-        except SharerUpload.DoesNotExist:
-            return None
-
-    def get(self, request, *args, **kwargs):
-        instance = self.get_object()
-        if instance is None:
-            return Response({"detail": "Sharer profile does not exist"}, status=status.HTTP_404_NOT_FOUND)
-        serializer = self.get_serializer(instance)
+    def get(self, request):
+        user = request.user
+        serializer = SharerProfileSerializer(user, many=False)
         return Response(serializer.data)
+
 
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def SharerUploadListView(request):
-    queryset = SharerUpload.objects.all()
+    queryset = SharerUpload.objects.filter(uploaded_by=request.user)
     serializer = SharerUploadListSerializer(queryset, many=True)
     return Response(serializer.data)
-
-
 
 
 class IsSharerPermission(BasePermission):

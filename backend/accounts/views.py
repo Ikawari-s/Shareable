@@ -236,11 +236,10 @@ class Be_sharer(APIView):
                         user = AppUser.objects.get(email=request.user.email)
                         user.is_sharer = True
                         user.save()
-                        
-                        # Create a Sharer instance associated with the user
+                    
                         sharer_instance = Sharer.objects.create(
                             user=user,
-                            # image=user.profile_picture,  # You may need to adjust this based on your user model
+                            # image=user.profile_picture, 
                             name=page_name,  
                             description=f"Sharer profile for {user.username}",
                             category="Default Category"
@@ -270,24 +269,3 @@ class Be_sharer(APIView):
 
 
 
-
-# ATTEMPTS PARA AYUSIN TO, wag niyo na muna alisin sa dulo nalang
-
-
-
-# from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-# from rest_framework_simplejwt.views import TokenObtainPairView
-
-# class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-#     def validate(self, attrs):
-#         data = super().validate(attrs)
-
-#         serializer = UserSerializerWithToken(self.user).data
-
-#         for k, v in serializer.items():
-#             data[k] = v
-
-#         return data
-
-# class MyTokenObtainPairView(TokenObtainPairView):
-#     serializer_class = MyTokenObtainPairSerializer

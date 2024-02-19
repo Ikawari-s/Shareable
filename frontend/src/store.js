@@ -2,8 +2,7 @@ import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/
 import {thunk} from 'redux-thunk'; // Correct import statement for thunk middleware
 import { userLoginReducer } from './reducers/userReducer';
 import { userRegisterReducer } from './reducers/registerReducer';
-import { userProfileReducer } from './reducers/profileReducer'; // Import the userProfileReducer
-import {sharerListReducer} from './reducers/sharerReducer';
+import {sharerListReducer, myProfileReducer} from './reducers/sharerReducer';
 import { sharerPostListReducer } from './reducers/sharerReducer';
 
 const reducer = combineReducers({
@@ -11,7 +10,7 @@ const reducer = combineReducers({
   userRegister: userRegisterReducer,
   sharerList: sharerListReducer,
   sharerPostList: sharerPostListReducer,
-  // userProfile: userProfileReducer, // Add userProfileReducer to the combined reducers
+  myProfile: myProfileReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo')

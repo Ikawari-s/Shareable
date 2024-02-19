@@ -160,6 +160,7 @@ export const profileSharers = () => async (dispatch) => {
 
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
     const token = userInfo ? userInfo.access_token : null;
+    const userEmail = userInfo ? userInfo.email : null; // Get user email from userInfo
 
     const config = {
       headers: {
@@ -169,11 +170,11 @@ export const profileSharers = () => async (dispatch) => {
       },
     };
 
-    const { data } = await axios.get('api/sharer/user-sharer-profile/', config);
+    const { data } = await instance.get('api/sharer/user-sharer-profile/', config);
 
     dispatch({
       type: SHARER_PROFILE_SUCCESS,
-      payload: data,
+      payload: { ...data, userEmail }, // Include userEmail in the payload
     });
   } catch (error) {
     dispatch({
@@ -184,6 +185,7 @@ export const profileSharers = () => async (dispatch) => {
     });
   }
 };
+
 
 
   

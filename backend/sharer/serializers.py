@@ -17,4 +17,10 @@ class SharerUploadSerializer(serializers.ModelSerializer):
 class SharerUploadListSerializer(serializers.ModelSerializer):
     class Meta:
         model = SharerUpload
-        fields = '__all__'
+        fields = ['id', 'title', 'description', 'image']
+
+
+class SharerProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sharer
+        fields = ['id', 'email']
