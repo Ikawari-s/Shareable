@@ -12,10 +12,15 @@ class Sharer(models.Model):
     
     def __str__(self):
         return self.name
+    
+    @property
+    def is_sharer(self):
+        return self.user.is_sharer if self.user else False
 
     def save(self, *args, **kwargs):
         self.email = self.user.email if self.user else ''
         super().save(*args, **kwargs)
+
 
 class SharerUpload(models.Model):
     id = models.AutoField(primary_key=True)

@@ -22,6 +22,9 @@ urlpatterns = [
     path('verify-otp/', VerifyOTP.as_view(), name="verify-otp"),
     path('resend-otp/', ResendOTP.as_view(), name='resend-otp'),
      path('be-sharer/', Be_sharer.as_view(), name="be-sharer"),
+
+
+     path('checker/', views.SharerChecker.as_view(), name='sharer-checker'),
     
 ]
 

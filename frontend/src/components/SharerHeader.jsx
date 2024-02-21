@@ -18,6 +18,7 @@ function SharerHeader() {
         console.error("Logout error", error);
       }
     };
+
     return (
       <>
         <Navbar expand="lg" bg="primary" variant="dark" collapseOnSelect>
@@ -26,10 +27,10 @@ function SharerHeader() {
               SHAREABLE
             </Navbar.Brand>
             <Nav className="me-auto">
-              <Nav.Link as={Link} to="/userprofile">
+              <Nav.Link as={Link} to="/sharer-page">
                 <i className="fas fa-user"></i>Sharer more
               </Nav.Link>
-              <Nav.Link as={Link} to="/be-sharer">
+              <Nav.Link as={Link} to="/dashboard">
                 <i className="fas fa-user"></i>Dashboard
               </Nav.Link>
               

@@ -49,7 +49,7 @@ class UserSerializerWithToken(UserSerializer):
 
     class Meta:
         model = UserModel
-        fields = ['id', 'email', 'username', 'is_active', 'is_staff', 'token']
+        fields = ['id', 'email', 'username', 'is_active', 'is_staff', 'token', 'is_sharer']
 
     def get_token(self, obj):
         token = RefreshToken.for_user(obj)
@@ -96,8 +96,13 @@ class SendOTPSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
 class ResendOTPSerializer(serializers.Serializer):
-    email = serializers.EmailField()
+    user_id = serializers.IntegerField() 
 
 class VerifyOTPSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    otp = serializers.CharField(max_length=6) 
+    user_id = serializers.IntegerField() 
+    otp = serializers.CharField(max_length=6)
+
+
+
+class SharerCheckerSerializer(serializers.Serializer):
+    is_sharer = serializers.BooleanField()

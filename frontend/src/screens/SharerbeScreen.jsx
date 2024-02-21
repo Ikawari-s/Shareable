@@ -1,24 +1,39 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import Header from "../components/Header";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom"; 
 import { Button, Form } from "react-bootstrap";
-import { beSharer } from "../actions/sharerActions"; // Import your action
+import Header from "../components/Header";
+import { beSharer } from "../actions/sharerActions";
+import { logout } from "../actions/userActions"; 
 
 function SharerbeScreen() {
   const dispatch = useDispatch();
+  const navigate = useNavigate(); 
   const [pageName, setPageName] = useState("");
 
-  // Access the sharer state if needed
-  const sharerState = useSelector((state) => state.sharer);
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(beSharer(pageName)); // Dispatch the action with the pageName
+    
+    if (!pageName.trim()) {
+      alert("Page Name cannot be empty");
+      return;
+    }
+  
+    dispatch(beSharer(pageName));
+    
+    try {
+      await dispatch(logout());
+      localStorage.removeItem("userInfo");
+      console.log("Logout successful");
+      navigate("/login");
+      alert("You are now a Sharer");
+    } catch (error) {
+      console.error("Sharer register error", error);
+    }
   };
 
   return (
     <div>
-      <Header />
       <div className="container" style={{ marginTop: "3rem" }}>
         <div
           className="card custom-card-background text-white"

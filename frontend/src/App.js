@@ -1,9 +1,10 @@
 import React from 'react';
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './components/Login';
 import Footer from './components/Footer';
 import Signup from './components/Signup';
-import Homepage from './screens/Homepage';
+import Homepage from './screens/Homepage';  
 import HomeScreen from './screens/HomeScreen';
 import ContactScreen from './screens/ContactScreen';
 import './bootstrap.min.css';
@@ -17,10 +18,14 @@ import AboutScreen from './screens/AboutScreen';
 import InvalidScreen from './screens/InvalidScreen';
 import VerifyotpScreen from './screens/VerifyotpScreen';
 import SharerPageScreen from './screens/SharerPageScreen';
+import SharerDashboard from './screens/SharerDashboard';
 
 
 
 function App() {
+
+
+
   return (
     <div>
       <Router>
@@ -33,16 +38,27 @@ function App() {
           <Route path="/contact" element={<ContactScreen />} />
           <Route path="/about" element={<AboutScreen />} />
           <Route path="/invalid" element={<InvalidScreen/>}/> 
-          <Route path="/otp" element={<VerifyotpScreen />} />
+          <Route path="/otp/:userId" element={<VerifyotpScreen />} />
+          <Route path="/contact" element={<ContactScreen />}/>
 
-      
-          <Route path="/sharer-page" element={<SharerPageScreen/>}/>
+          {/* USER LEVEL ALL PROTECTED  */}
+
+
           <Route path="/sharers/:id" element={<ProtectedRoute><SharerDetail /></ProtectedRoute>} />
-          <Route path="/homepage" element={<ProtectedRoute><Homepage /></ProtectedRoute>} />
+
+          <Route path="/dashboard" element={<ProtectedRoute ><SharerDashboard /></ProtectedRoute>} />
+          <Route path="/homepage" element={<ProtectedRoute ><Homepage /></ProtectedRoute>} />
+
+
+          <Route path="/sharer-page" element={<ProtectedRoute><SharerPageScreen/></ProtectedRoute>} />
           <Route path="/be-sharer" element={<ProtectedRoute><SharerbeScreen /></ProtectedRoute>} />
           <Route path="/userprofile" element={<ProtectedRoute><UserProfileScreen /></ProtectedRoute>} />
           <Route path="/home" element={<ProtectedRoute><HomeScreen /></ProtectedRoute>} />
-          <Route path="/contact" element={<ProtectedRoute><ContactScreen /></ProtectedRoute>} />
+          
+
+          {/* USER LEVEL ALL PROTECTED  */}
+
+          
         </Routes>
       </Router>
       

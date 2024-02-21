@@ -2,7 +2,7 @@ import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/
 import {thunk} from 'redux-thunk'; // Correct import statement for thunk middleware
 import { userLoginReducer } from './reducers/userReducer';
 import { userRegisterReducer } from './reducers/registerReducer';
-import {sharerListReducer, myProfileReducer} from './reducers/sharerReducer';
+import {sharerListReducer, myProfileReducer, CheckSharerReducer} from './reducers/sharerReducer';
 import { sharerPostListReducer } from './reducers/sharerReducer';
 
 const reducer = combineReducers({
@@ -11,6 +11,7 @@ const reducer = combineReducers({
   sharerList: sharerListReducer,
   sharerPostList: sharerPostListReducer,
   myProfile: myProfileReducer,
+  CheckerSharer: CheckSharerReducer
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo')

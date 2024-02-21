@@ -27,7 +27,7 @@ function SharerPageScreen() {
 
   return (
     <div>
-      <div><SharerHeader/></div>
+      {/* <div><SharerHeader/></div> */}
       <div><SharerPost/></div>
       <p>User Email: {userProfile.email}</p>
       {sharerPostList.posts.map((post) => (

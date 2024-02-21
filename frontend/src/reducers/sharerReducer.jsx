@@ -14,6 +14,10 @@ import {
   SHARER_PROFILE_REQUEST,
   SHARER_PROFILE_SUCCESS,
   SHARER_PROFILE_FAIL,
+  CHECK_SHARER_REQUEST,
+  CHECK_SHARER_SUCCESS,
+  CHECK_SHARER_FAIL,
+  
 } from "../constants/sharerConstants";
 
 export const sharerListReducer = (state = { sharers: [] }, action) => {
@@ -86,6 +90,23 @@ export const myProfileReducer = (state = {}, action) => {
       return { loading: false, profile: action.payload };
 
     case SHARER_PROFILE_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+// PANG CHECK IF SHARER
+export const CheckSharerReducer = (state = {}, action) => {
+  switch (action.type) {
+    case CHECK_SHARER_REQUEST:
+      return { loading: true };
+
+    case CHECK_SHARER_SUCCESS:
+      return { loading: false, isSharer: action.payload };
+
+    case CHECK_SHARER_FAIL:
       return { loading: false, error: action.payload };
 
     default:

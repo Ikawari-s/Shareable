@@ -3,6 +3,7 @@ import Footer from "../components/Footer";
 import { Row, Col } from "react-bootstrap";
 import emailjs from "emailjs-com";
 import Header from "../components/Header";
+import GuestHeader from "../components/GuestHeader";
 
 export default function ContactScreen() {
   function sendEmail(e) {
@@ -28,7 +29,7 @@ export default function ContactScreen() {
 
   return (
     <div>
-      <Header />
+      <GuestHeader/>
       <div>
         <Row className="justify-content-center mt-3">
         <Col xl={6}>

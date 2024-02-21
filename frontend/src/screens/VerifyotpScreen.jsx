@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { verifyOTP, resendOTP } from '../actions/registerActions';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 function VerifyotpScreen() {
-  const location = useLocation();
-  const { email } = location.state || {};
+  const { userId } = useParams(); 
   const [otp, setOtp] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -20,26 +19,24 @@ function VerifyotpScreen() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    dispatch(verifyOTP(email, otp))
+    dispatch(verifyOTP(userId, otp)) 
       .then(() => {
         console.log('OTP submitted:', otp);
-        navigate('/'); 
+        navigate('/homepage'); 
       })
       .catch((error) => {
         console.error('OTP verification failed:', error);
-
       });
   };
 
   const handleResendOTP = () => {
     console.log('OTP re-sent');
-    dispatch(resendOTP(email)) 
+    dispatch(resendOTP(userId)) 
       .then(() => {
         console.log('OTP re-sent successfully');
       })
       .catch((error) => {
         console.error('Failed to resend OTP:', error);
-
       });
   };
 

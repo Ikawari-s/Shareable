@@ -3,24 +3,20 @@ import { Navigate } from 'react-router-dom';
 import SharerHeader from '../components/SharerHeader'; 
 import Header from '../components/Header'; 
 
-const ProtectedRoute = ({ children }) => {
+const SharerRestrict = ({ children }) => {
 
   const userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
-  if (!userInfo) {
+  if (!userInfo || !userInfo.is_active || userInfo.is_sharer) { // Check if user is not logged in, not active, or is a sharer
     return <Navigate to="/" />;
   }
 
-  const role = userInfo.is_sharer ? 'sharer' : 'regular';
-
-  const renderHeader = role === 'sharer' ? <SharerHeader /> : <Header />;
-
   return (
     <>
-      {renderHeader}
+      <Header />
       {children}
     </>
   );
 };
 
-export default ProtectedRoute;
+export default SharerRestrict;

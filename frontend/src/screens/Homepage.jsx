@@ -33,7 +33,7 @@ function Homepage({ sharerList, listSharers }) {
 
   return (
     <div>
-      <Header />
+      {/* <Header /> */}
       <div className="container">
         <div className="row">
           <div className="col-md-12 mb-2">
@@ -81,4 +81,4 @@ const mapStateToProps = (state) => ({
   sharerList: state.sharerList, // Mapping Redux state to component props
 });
 
-export default connect(mapStateToProps, { listSharers })(Homepage); // Connecting component to Redux store
+export default connect(mapStateToProps, { listSharers })(Homepage); 

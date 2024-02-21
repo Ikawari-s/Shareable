@@ -10,7 +10,7 @@ function UserProfileScreen() {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <div class="card mb-3" id="username-image">
         <img
           src="https://static.vecteezy.com/system/resources/previews/019/879/186/original/user-icon-on-transparent-background-free-png.png"

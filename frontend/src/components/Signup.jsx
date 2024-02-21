@@ -1,11 +1,8 @@
-import React, { useState } from "react";
-import { Form, Button, Alert, Spinner } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
-import { register } from "../actions/registerActions";
-import { useDispatch } from "react-redux";
-
-//Code explanation: Nag s-store ung email sa useNavigate, stay muna na ganto
-
+import React, { useState } from 'react';
+import { Form, Button, Alert, Spinner } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router-dom';
+import { register } from '../actions/registerActions';
+import { useDispatch } from 'react-redux';
 
 function Signup() {
   const dispatch = useDispatch();
@@ -25,27 +22,30 @@ function Signup() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (formData.password !== formData.retypePassword) {
-      setError("Password and retype password don't match");
+      setError('Password and retype password don\'t match');
       return;
     }
 
     setIsLoading(true);
 
-    dispatch(register(formData.email, formData.password, formData.username))
-      .then(() => {
-        navigate('/otp', { state: { email: formData.email } }); 
-      })
-      .catch((error) => {
-        console.error('Signup error', error);
-        setError('Signup failed. Please check your information and try again.');
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    try {
+      const data = await dispatch(register(formData.email, formData.password, formData.username));
+
+      if (data.userId) {
+        navigate(`/otp/${data.userId}`);
+      } else {
+        throw new Error('User ID not found in response');
+      }
+    } catch (error) {
+      console.error('Registration failed:', error);
+      setError('Registration failed. Please check your information and try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -101,11 +101,10 @@ function Signup() {
               <Button variant="primary" type="submit" disabled={isLoading}>
                 {isLoading ? (
                   <>
-                    <Spinner animation="border" size="sm" />
-                    {' '} Creating...
+                    <Spinner animation="border" size="sm" /> Creating...
                   </>
                 ) : (
-                  "Create!"
+                  'Create!'
                 )}
               </Button>
             </div>

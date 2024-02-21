@@ -16,6 +16,9 @@ import {
   SHARER_PROFILE_REQUEST,
   SHARER_PROFILE_SUCCESS,
   SHARER_PROFILE_FAIL,
+  CHECK_SHARER_REQUEST,
+  CHECK_SHARER_SUCCESS,
+  CHECK_SHARER_FAIL,
 } from "../constants/sharerConstants";
 
 const instance = axios.create({
@@ -189,4 +192,36 @@ export const profileSharers = () => async (dispatch) => {
 
 
   
+export const CheckerSharer = () => async (dispatch) => {
+  try {
+    dispatch({ type: CHECK_SHARER_REQUEST });
+
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
+
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
+
+    const response = await instance.get("api/checker/", config);
+    const { data } = response;
+
+    // Assuming your data contains an 'isSharer' property
+    dispatch({ type: CHECK_SHARER_SUCCESS, payload: { isSharer: data.isSharer } });
+  } catch (error) {
+    dispatch({
+      type: CHECK_SHARER_FAIL,
+      payload: error.message && error.response.data.message
+        ? error.response.data.message
+        : error.message,
+    });
+  }
+};
+
   

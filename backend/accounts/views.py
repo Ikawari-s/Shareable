@@ -39,58 +39,75 @@ class UserRegister(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        clean_data = custom_validation(request.data)
-        serializer = UserRegisterSerializer(data=clean_data)
+        serializer = UserRegisterSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save(is_active=False)
             if user:
-                user.send_otp()
-                return Response({"message": "OTP sent successfully"}, status=status.HTTP_200_OK)
+                if not user.is_active:
+                    user.send_otp()
+                    return Response({"message": "OTP sent successfully", "userId": user.id}, status=status.HTTP_200_OK)
+                else:
+                    return Response({"error": "User is already active"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 class SendOTP(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        try:
-            user = AppUser.objects.get(email=request.data['email'])
-        except ObjectDoesNotExist:
-            return Response({"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = SendOTPSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user_id = serializer.validated_data['user_id']
+            try:
+                user = AppUser.objects.get(id=user_id)
+            except ObjectDoesNotExist:
+                return Response({"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            
+            if user.is_active:
+                return Response({"error": "User is already active"}, status=status.HTTP_400_BAD_REQUEST)
 
-        user.send_otp()
-        return Response({"message": "OTP sent successfully"}, status=status.HTTP_200_OK)
+            user.send_otp()
+            return Response({"message": "OTP sent successfully"}, status=status.HTTP_200_OK)
 
 class ResendOTP(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        try:
-            user = AppUser.objects.get(email=request.data['email'])
-        except ObjectDoesNotExist:
-            return Response({"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = ResendOTPSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user_id = serializer.validated_data['user_id']
+            try:
+                user = AppUser.objects.get(id=user_id)
+            except ObjectDoesNotExist:
+                return Response({"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            
+            if user.is_active:
+                return Response({"error": "User is already active"}, status=status.HTTP_400_BAD_REQUEST)
 
-        user.send_otp()
-        return Response({"message": "OTP resent successfully"}, status=status.HTTP_200_OK)
+            user.send_otp()
+            return Response({"message": "OTP resent successfully"}, status=status.HTTP_200_OK)
 
 class VerifyOTP(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        try:
-            user = AppUser.objects.get(email=request.data['email'])
-        except ObjectDoesNotExist:
-            return Response({"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = VerifyOTPSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user_id = serializer.validated_data['user_id']
+            otp = serializer.validated_data['otp']
+            try:
+                user = AppUser.objects.get(id=user_id)
+            except ObjectDoesNotExist:
+                return Response({"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            
+            if user.is_active:
+                return Response({"error": "User is already active"}, status=status.HTTP_400_BAD_REQUEST)
 
-        otp = request.data.get('otp', '')
-
-        if user.verify_otp(otp):
-            user.is_active = True
-            user.save()
-            return Response({"message": "OTP verified successfully and user activated"}, status=status.HTTP_200_OK)
-        else:
-            return Response({"error": "Invalid OTP or OTP expired"}, status=status.HTTP_400_BAD_REQUEST)
-
-    
+            if user.verify_otp(otp):
+                user.is_active = True
+                user.save()
+                return Response({"message": "OTP verified successfully and user activated"}, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "Invalid OTP or OTP expired"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserLogin(APIView):
@@ -111,11 +128,13 @@ class UserLogin(APIView):
                 refresh = RefreshToken.for_user(user)
                 access_token = str(refresh.access_token)
 
-                # FOR TEST ONLY 
+                # Add logic to determine if the user is a "sharer"
+                is_sharer = user.is_sharer
+
                 print(f'Access Token: {access_token}')
                 print(f'Refresh Token: {str(refresh)}')
 
-                response_data = {'access_token': access_token, 'user_info': serializer.data}
+                response_data = {'access_token': access_token, 'user_info': serializer.data, 'is_sharer': is_sharer}
                 return JsonResponse(response_data, status=status.HTTP_200_OK)
             else:
                 return Response({'detail': 'Authentication failed'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -234,18 +253,21 @@ class Be_sharer(APIView):
                 if page_name:
                     try:
                         user = AppUser.objects.get(email=request.user.email)
-                        user.is_sharer = True
-                        user.save()
-                    
-                        sharer_instance = Sharer.objects.create(
-                            user=user,
-                            # image=user.profile_picture, 
-                            name=page_name,  
-                            description=f"Sharer profile for {user.username}",
-                            category="Default Category"
-                        )
-                        
-                        return Response({'message': 'User is now a sharer'}, status=status.HTTP_200_OK)
+                        if not user.is_sharer:  # Check if the user is not already a sharer
+                            user.is_sharer = True
+                            user.save()
+                            
+                            sharer_instance = Sharer.objects.create(
+                                user=user,
+                                # image=user.profile_picture, 
+                                name=page_name,  
+                                description=f"Sharer profile for {user.username}",
+                                category="Default Category"
+                            )
+                            
+                            return Response({'message': 'User is now a sharer'}, status=status.HTTP_200_OK)
+                        else:
+                            return Response({'error': 'User is already a sharer'}, status=status.HTTP_400_BAD_REQUEST)
                     except AppUser.DoesNotExist:
                         raise NotFound("User not found")
                 else:
@@ -258,7 +280,16 @@ class Be_sharer(APIView):
 
 
 
-
+# CHECKING LANG IF is_sharer sa headers
+        
+class SharerChecker(APIView):
+    def get(self, request):
+        user = request.user
+        if user.is_authenticated:
+            serializer = SharerCheckerSerializer({'is_sharer': user.is_sharer})
+            return Response(serializer.data)
+        else:
+            return Response({'error': 'User is not authenticated.'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 

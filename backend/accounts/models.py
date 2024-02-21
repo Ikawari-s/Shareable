@@ -7,6 +7,7 @@ import random
 import string
 from django.conf import settings
 from sharer.models import Sharer
+
 class AppUserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
         if not email:
@@ -32,12 +33,12 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
     id = models.AutoField(primary_key=True)
     email = models.EmailField(max_length=50, unique=True)
     username = models.CharField(max_length=50)
-    is_active = models.BooleanField(default=False)  # User will be activated after OTP verification
+    is_active = models.BooleanField(default=False)  
     is_staff = models.BooleanField(default=False)
     is_sharer = models.BooleanField(default=False)
     follows = models.ManyToManyField(Sharer, related_name="follower", symmetrical=False,  blank=True)
 
-    # Fields for OTP verification
+
     otp_code = models.CharField(max_length=6, blank=True, null=True)
     otp_created_at = models.DateTimeField(blank=True, null=True)
     otp_expires_at = models.DateTimeField(blank=True, null=True)
