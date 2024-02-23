@@ -111,6 +111,7 @@ class VerifyOTP(APIView):
                 return Response({"error": "Invalid OTP or OTP expired"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+
 class UserLogin(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = (JWTAuthentication,)
@@ -129,19 +130,27 @@ class UserLogin(APIView):
                 refresh = RefreshToken.for_user(user)
                 access_token = str(refresh.access_token)
 
-                # Add logic to determine if the user is a "sharer"
+                # Check if the user is a "sharer" and get their ID
                 is_sharer = user.is_sharer
+                sharer_id = None
+                if is_sharer:
+                    sharer_id = user.sharer.id
 
                 print(f'Access Token: {access_token}')
                 print(f'Refresh Token: {str(refresh)}')
 
-                response_data = {'access_token': access_token, 'user_info': serializer.data, 'is_sharer': is_sharer}
+                response_data = {
+                    'access_token': access_token,
+                    'user_id': user.id,
+                    'user_info': serializer.data,
+                    'is_sharer': is_sharer,
+                    'sharer_id': sharer_id
+                }
                 return JsonResponse(response_data, status=status.HTTP_200_OK)
             else:
                 return Response({'detail': 'Authentication failed'}, status=status.HTTP_401_UNAUTHORIZED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class UserLogout(APIView):
     permission_classes = (permissions.IsAuthenticated,)

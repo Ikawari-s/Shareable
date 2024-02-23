@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
@@ -8,10 +8,18 @@ import { DetailSharers } from '../actions/sharerActions'; // Import your action
 
 const SharerDetail = ({ sharer, loading, error, DetailSharers }) => {
     const { id } = useParams();
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const navigate = useNavigate();
 
     useEffect(() => {
         DetailSharers(id); 
     }, [id, DetailSharers]);
+
+    useEffect(() => {
+        if (userInfo && userInfo.sharer_id && Number(userInfo.sharer_id) === Number(id)) {
+            navigate('/sharer-page');
+        }
+    }, [userInfo, id, navigate]);
 
     return (
         <div>
