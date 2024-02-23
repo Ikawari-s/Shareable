@@ -19,11 +19,50 @@ import {
   CHECK_SHARER_REQUEST,
   CHECK_SHARER_SUCCESS,
   CHECK_SHARER_FAIL,
+  SHARER_DETAIL_REQUEST,
+  SHARER_DETAIL_SUCCESS,
+  SHARER_DETAIL_FAIL,
+  SHARER_LATEST_POST_REQUEST,
+  SHARER_LATEST_POST_SUCCESS,
+  SHARER_LATEST_POST_FAIL,
+  
 } from "../constants/sharerConstants";
 
 const instance = axios.create({
   baseURL: "http://127.0.0.1:8000/",
 });
+
+export const DetailSharers = (id) => async (dispatch) => {
+  try {
+    dispatch({ type: SHARER_DETAIL_REQUEST });
+
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
+
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
+
+    const { data } = await instance.get(`api/sharer/sharer-profile/${id}/`, config); 
+    dispatch({ type: SHARER_DETAIL_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: SHARER_DETAIL_FAIL,
+      payload:
+        error.message && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+
 
 export const listSharers = () => async (dispatch) => {
   try {
@@ -143,7 +182,14 @@ export const listSharerPosts = () => async (dispatch) => {
       "api/sharer/sharer-upload-list",
       config
     );
-    dispatch({ type: SHARER_POST_LIST_SUCCESS, payload: data });
+
+
+    const formattedData = data.map(post => ({
+      ...post,
+      created_at_formatted: new Date(post.created_at).toLocaleString() 
+    }));
+
+    dispatch({ type: SHARER_POST_LIST_SUCCESS, payload: formattedData });
   } catch (error) {
     dispatch({
       type: SHARER_POST_LIST_FAIL,
@@ -154,6 +200,10 @@ export const listSharerPosts = () => async (dispatch) => {
     });
   }
 };
+
+
+
+
 
 
 
@@ -189,6 +239,52 @@ export const profileSharers = () => async (dispatch) => {
   }
 };
 
+
+export const FetchSharerLatestPost = (id) => async (dispatch) => { 
+  try {
+    console.log("Fetching latest post for sharer with id:", id);
+    
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
+
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
+      
+    dispatch({ type: SHARER_LATEST_POST_REQUEST });
+    
+    const response = await instance.get(
+      `api/sharer/sharer-lates-post/${id}/`, 
+      config
+    );
+    
+    console.log("Latest post response:", response.data);
+    
+    
+    const postsWithCreatedAt = response.data.uploads.map(post => ({
+      ...post,
+      created_at: new Date(post.created_at).toLocaleString() 
+    }));
+
+    dispatch({ type: SHARER_LATEST_POST_SUCCESS, payload: postsWithCreatedAt });
+  } catch (error) {
+    console.error("Error fetching latest post:", error);
+    
+    dispatch({
+      type: SHARER_LATEST_POST_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
+};
 
 
   

@@ -17,8 +17,29 @@ import {
   CHECK_SHARER_REQUEST,
   CHECK_SHARER_SUCCESS,
   CHECK_SHARER_FAIL,
-  
+  SHARER_DETAIL_REQUEST,
+  SHARER_DETAIL_SUCCESS,
+  SHARER_DETAIL_FAIL,
+  SHARER_LATEST_POST_REQUEST,
+  SHARER_LATEST_POST_SUCCESS,
+  SHARER_LATEST_POST_FAIL,
 } from "../constants/sharerConstants";
+
+export const SharerDetailReducer = (state = {}, action) => {
+  switch (action.type) {
+    case SHARER_DETAIL_REQUEST:
+      return { loading: true };
+
+    case SHARER_DETAIL_SUCCESS:
+      return { loading: false, sharer: action.payload };
+
+    case SHARER_DETAIL_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
 
 export const sharerListReducer = (state = { sharers: [] }, action) => {
   switch (action.type) {
@@ -97,7 +118,20 @@ export const myProfileReducer = (state = {}, action) => {
   }
 };
 
-// PANG CHECK IF SHARER
+export const SharerLatestPostReducer = (state = { posts: [], loading: false, error: null }, action) => {
+  switch (action.type) {
+    case SHARER_LATEST_POST_REQUEST:
+      return { ...state, loading: true, error: null };
+    case SHARER_LATEST_POST_SUCCESS:
+      return { ...state, loading: false, posts: action.payload, error: null };
+    case SHARER_LATEST_POST_FAIL:
+      return { ...state, loading: false, posts: [], error: action.payload };
+    default:
+      return state;
+  }
+};
+
+// PANG CHECK IF SHARER DI NA GAMIT PERO WAG NIYO MUNA ALISIN
 export const CheckSharerReducer = (state = {}, action) => {
   switch (action.type) {
     case CHECK_SHARER_REQUEST:

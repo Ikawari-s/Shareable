@@ -7,18 +7,23 @@ class SharerSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class SharerUploadSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SharerUpload
-        fields = ['title', 'description', 'image' ]
-
-
-
 class SharerUploadListSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S')
+
     class Meta:
         model = SharerUpload
-        fields = ['id', 'title', 'description', 'image']
+        fields = ['title', 'description', 'image', 'created_at']
 
+
+class SharerUploadSerializer(serializers.ModelSerializer):
+    created_at_formatted = serializers.SerializerMethodField()
+
+    class Meta:
+        model = SharerUpload
+        fields = ['id', 'title', 'description', 'image', 'created_at', 'created_at_formatted'] 
+
+    def get_created_at_formatted(self, obj):
+        return obj.created_at.strftime('%Y-%m-%d %H:%M:%S') if obj.created_at else None
 
 class SharerProfileSerializer(serializers.ModelSerializer):
     class Meta:

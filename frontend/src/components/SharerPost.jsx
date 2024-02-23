@@ -21,12 +21,12 @@ function SharerPost({ uploadSharer }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (loading) return; // Prevent multiple submissions while uploading
+    if (loading) return; 
     setLoading(true);
     const { title, description, image } = formData;
     await uploadSharer({ title, description, image });
     setLoading(false);
-    // Optionally, you can redirect the user or show a success message here
+    
   };
 
   return (

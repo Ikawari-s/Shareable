@@ -55,6 +55,7 @@ function App() {
           <Route path="/userprofile" element={<ProtectedRoute><UserProfileScreen /></ProtectedRoute>} />
           <Route path="/home" element={<ProtectedRoute><HomeScreen /></ProtectedRoute>} />
           
+          
 
           {/* USER LEVEL ALL PROTECTED  */}
 
@@ -68,5 +69,5 @@ function App() {
 
 export default App;
 
-
-//CONNECTING URL FOR BE-SHARER
+// AYUSIN MO BUKAS, ROUTE AND UNG DETAIL VIEW
+// UNG DETAIL VIEW DAPAT DI KA NAKAKAPAG UPLOAD SA IBA

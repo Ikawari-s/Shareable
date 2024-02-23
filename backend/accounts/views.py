@@ -50,6 +50,7 @@ class UserRegister(APIView):
                     return Response({"error": "User is already active"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+
 class SendOTP(APIView):
     permission_classes = (permissions.AllowAny,)
 
@@ -182,7 +183,7 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
         serializer = self.serializer_class(data=request.data)
         email = request.data.get('email', '')
 
-        User = get_user_model()  # Retrieve the custom user model
+        User = get_user_model()  
 
         if User.objects.filter(email=email).exists():
             user = User.objects.get(email=email)

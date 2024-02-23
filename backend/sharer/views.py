@@ -16,6 +16,25 @@ def SharerView(request):
     return Response(serializer.data)
 
 
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def SharerlatestPost(request, sharer_id):  
+    try:
+        sharer = Sharer.objects.get(pk=sharer_id)
+    except Sharer.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+
+    uploads = SharerUpload.objects.filter(uploaded_by=sharer).order_by('created_at')
+    
+    sharer_data = SharerProfileSerializer(sharer).data
+    upload_data = SharerUploadSerializer(uploads, many=True).data
+    
+    sharer_data['uploads'] = upload_data
+    
+    return Response(sharer_data)
+
+
 
 class SharerProfileDetail(generics.RetrieveAPIView):
     queryset = Sharer.objects.all()
@@ -43,15 +62,14 @@ class UserSharerProfile(APIView):
 
     def get(self, request):
         user = request.user
-        serializer = SharerProfileSerializer(user, many=False)
+        serializer = SharerProfileSerializer(user.sharer, many=False)  
         return Response(serializer.data)
-
 
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def SharerUploadListView(request):
-    queryset = SharerUpload.objects.filter(uploaded_by=request.user)
+    queryset = SharerUpload.objects.filter(uploaded_by=request.user.sharer).order_by('-created_at')  
     serializer = SharerUploadListSerializer(queryset, many=True)
     return Response(serializer.data)
 
@@ -60,16 +78,16 @@ class IsSharerPermission(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.is_sharer
 
+
 class SharerUploadViews(APIView):
     permission_classes = [IsAuthenticated, IsSharerPermission]
 
     def post(self, request):
-        request.data['uploaded_by'] = request.user.id
-        
+        sharer = request.user.sharer  
+        request.data['uploaded_by'] = sharer.id
+
         serializer = SharerUploadSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(uploaded_by=request.user)
+            serializer.save(uploaded_by=sharer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-

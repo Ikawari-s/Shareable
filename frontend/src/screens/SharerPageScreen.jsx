@@ -25,15 +25,19 @@ function SharerPageScreen() {
     return <p>Error: {sharerPostList.error}</p>;
   }
 
+
+  const sortedPosts = sharerPostList.posts.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
   return (
     <div>
-      {/* <div><SharerHeader/></div> */}
+
       <div><SharerPost/></div>
       <p>User Email: {userProfile.email}</p>
-      {sharerPostList.posts.map((post) => (
+      {sortedPosts.map((post) => (
         <div key={post.id}>
           <h2>{post.title}</h2>
           <p>{post.description}</p>
+          <p>Time: {post.created_at_formatted}</p> {/* Kayo na bahala design*/}
           {post.image && <img src={post.image} alt="Post Image" />}
         </div>
       ))}

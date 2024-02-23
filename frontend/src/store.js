@@ -1,8 +1,8 @@
 import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import {thunk} from 'redux-thunk'; // Correct import statement for thunk middleware
 import { userLoginReducer } from './reducers/userReducer';
-import { userRegisterReducer } from './reducers/registerReducer';
-import {sharerListReducer, myProfileReducer, CheckSharerReducer} from './reducers/sharerReducer';
+import { userRegisterReducer, userResendOTPReducer, userSentOTPReducer, userVerifyOTPReducer } from './reducers/registerReducer';
+import {sharerListReducer, myProfileReducer, CheckSharerReducer, SharerDetailReducer, userSharerBeReducer, userSharerPostReducer, SharerLatestPostReducer} from './reducers/sharerReducer';
 import { sharerPostListReducer } from './reducers/sharerReducer';
 
 const reducer = combineReducers({
@@ -11,7 +11,21 @@ const reducer = combineReducers({
   sharerList: sharerListReducer,
   sharerPostList: sharerPostListReducer,
   myProfile: myProfileReducer,
-  CheckerSharer: CheckSharerReducer
+  CheckerSharer: CheckSharerReducer,
+  SharerDetail: SharerDetailReducer,
+  // NEW
+  UserVerifyOtp: userVerifyOTPReducer,
+  UserSentOtp: userSentOTPReducer,
+  UserResentOtp: userResendOTPReducer,
+  UserSharerBe : userSharerBeReducer,
+  UserSharerPost : userSharerPostReducer,
+  SharerPostList : sharerPostListReducer,
+  MyProfile : myProfileReducer,
+  SharerLatestPost : SharerLatestPostReducer,
+
+
+  
+
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo')
