@@ -2,10 +2,14 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { listSharers } from "../actions/sharerActions"; // Import your Redux action
 import Header from "../components/Header";
+// import { followSharer } from "../actions/followActions";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 
-function Homepage({ sharerList, listSharers }) {
+
+
+
+function Homepage({ sharerList, listSharers,}) {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -24,6 +28,7 @@ function Homepage({ sharerList, listSharers }) {
 
   // NI reverse nya yung ids nila para mag newest to oldest and hindi matambakan ung new users
   const sortedSharers = filteredSharers.slice().reverse();
+  
 
   if (loading) {
     return <div>Loading...</div>;
@@ -32,7 +37,11 @@ function Homepage({ sharerList, listSharers }) {
   if (error) {
     return <div>Error: {error}</div>;
   }
-
+  
+  // const handleFollow = (sharerId) => {
+  //   followSharer(sharerId);
+  // };
+  
   return (
     <div>
 
@@ -67,10 +76,15 @@ function Homepage({ sharerList, listSharers }) {
                     <Card.Text>
                       <small className="text-muted">{sharer.category}</small>
                     </Card.Text>
+                    
                   </div>
+                  {/* <Button onClick={() => handleFollow(sharer.id)}>
+                Follow Sharer
+              </Button> */}
                   <a href={`sharers/${sharer.id}`}>
                     {" "}
                     <Button variant="primary">See More</Button>{" "}
+                    
                   </a>
                 </Card.Body>
               </Card>
@@ -83,7 +97,9 @@ function Homepage({ sharerList, listSharers }) {
 }
 
 const mapStateToProps = (state) => ({
-  sharerList: state.sharerList, // Mapping Redux state to component props
+  sharerList: state.sharerList, followState: state.follow, // Mapping Redux state to component props
 });
 
-export default connect(mapStateToProps, { listSharers })(Homepage);
+
+
+export default connect(mapStateToProps, { listSharers, })(Homepage);

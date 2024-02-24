@@ -30,6 +30,8 @@ from rest_framework.permissions import AllowAny
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 from sharer.models import Sharer
+from rest_framework.permissions import IsAuthenticated
+from sharer.serializers import SharerSerializer
 
 User = get_user_model()
 
@@ -303,10 +305,26 @@ class SharerChecker(APIView):
 
 
 
+class FollowSharer(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        sharer_id = self.kwargs.get('sharer_id')
+        try:
+            sharer = Sharer.objects.get(pk=sharer_id)
+            request.user.follows.add(sharer)
+            request.user.save()
+
+            serializer = SharerSerializer(sharer)
+
+            return Response({'detail': 'Successfully followed sharer', 'sharer': serializer.data}, status=status.HTTP_200_OK)
+        except Sharer.DoesNotExist:
+            return Response({'detail': 'Sharer not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 
 
 
+    
 
 
