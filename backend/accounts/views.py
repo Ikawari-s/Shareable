@@ -347,3 +347,10 @@ class UnfollowSharer(generics.GenericAPIView):
             return Response({'detail': 'Successfully unfollowed sharer', 'sharer': serializer.data}, status=status.HTTP_200_OK)
         except Sharer.DoesNotExist:
             return Response({'detail': 'Sharer not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+class FollowedSharerList(generics.ListAPIView):
+    serializer_class = SharerSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return self.request.user.follows.all()

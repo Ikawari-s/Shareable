@@ -4,7 +4,7 @@ import { CommentPostReducer, DeleteCommentPostReducer, LikePostReducer, ListComm
 import { userRegisterReducer, userResendOTPReducer, userSentOTPReducer, userVerifyOTPReducer } from './reducers/registerReducer';
 import {sharerListReducer, myProfileReducer, CheckSharerReducer, SharerDetailReducer, userSharerBeReducer, userSharerPostReducer, SharerLatestPostReducer} from './reducers/sharerReducer';
 import { sharerPostListReducer } from './reducers/sharerReducer';
-import { followReducer, unfollowReducer } from './reducers/followReducer';
+import { followReducer, unfollowReducer, followedSharerListReducer } from './reducers/followReducer';
 
 
 const reducer = combineReducers({
@@ -26,6 +26,7 @@ const reducer = combineReducers({
   SharerLatestPost : SharerLatestPostReducer,
   followSharer : followReducer,
   unfollowSharer :unfollowReducer,
+  followedSharerList: followedSharerListReducer,
   Likepost : LikePostReducer,
   UnlikePost: UnlikePostReducer,
   CommentPost: CommentPostReducer,

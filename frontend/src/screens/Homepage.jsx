@@ -5,6 +5,8 @@ import Header from "../components/Header";
 // import { followSharer } from "../actions/followActions";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
+import FollowedSharersList from "../components/FollowedSharersList";
+import {Row, Col} from 'react-bootstrap';
 
 
 
@@ -92,6 +94,9 @@ function Homepage({ sharerList, listSharers,}) {
           ))}
         </div>
       </div>
+      <Col xl={2}>
+      <FollowedSharersList />
+      </Col>
     </div>
   );
 }

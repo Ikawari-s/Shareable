@@ -21,7 +21,7 @@ urlpatterns = [
      path('be-sharer/', Be_sharer.as_view(), name="be-sharer"),
      path('follow-sharer/<int:sharer_id>', FollowSharer.as_view(), name='follow-sharer'),
      path('unfollow-sharer/<int:sharer_id>/', UnfollowSharer.as_view(), name='unfollow-sharer'),
-     
+     path('followed-sharers/', FollowedSharerList.as_view(), name='followed-sharers'),
 
 
      path('checker/', views.SharerChecker.as_view(), name='sharer-checker'),

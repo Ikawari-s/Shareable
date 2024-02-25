@@ -86,6 +86,7 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
           <p>{sharer.description}</p>
           <p>Category: {sharer.category}</p>
           <Button onClick={handleFollowToggle}>{isFollowing ? 'Unfollow Sharer' : 'Follow Sharer'}</Button>
+          
 
           <SharerLatestPost id={id} />
           
