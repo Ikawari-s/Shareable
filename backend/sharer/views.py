@@ -6,6 +6,8 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import *
 from .serializers import *
 from rest_framework import status, generics, permissions
+from django.shortcuts import get_object_or_404
+from django.db import IntegrityError
 
 
 @api_view(['GET'])
@@ -91,3 +93,96 @@ class SharerUploadViews(APIView):
             serializer.save(uploaded_by=sharer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class LikePost(APIView):
+    permission_classes = [IsAuthenticated] 
+
+    def post(self, request, upload_id):
+        user = request.user
+        upload = get_object_or_404(SharerUpload, id=upload_id)
+        
+        try:
+            like = Like.objects.get(user=user, post=upload)
+            if like.liked:
+                like.delete()
+                return Response({"message": "Post like removed successfully"}, status=status.HTTP_200_OK)
+            else:
+                like.liked = True
+                like.unliked = False
+                like.save()
+                return Response({"message": "Post liked successfully"}, status=status.HTTP_200_OK)
+        except Like.DoesNotExist:
+            Like.objects.create(user=user, post=upload, liked=True)
+            return Response({"message": "Post liked successfully"}, status=status.HTTP_201_CREATED)
+
+
+class UnlikePost(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, upload_id):
+        user = request.user
+        upload = get_object_or_404(SharerUpload, id=upload_id)
+
+        try:
+            like = Like.objects.get(user=user, post=upload)
+            if like.unliked:
+                like.delete()
+                return Response({"message": "Post unlike removed successfully"}, status=status.HTTP_200_OK)
+            else:
+                like.unliked = True
+                like.liked = False
+                like.save()
+                return Response({"message": "Post unliked successfully"}, status=status.HTTP_200_OK)
+        except Like.DoesNotExist:
+            Like.objects.create(user=user, post=upload, liked=False, unliked=True)
+            return Response({"message": "Post unliked successfully"}, status=status.HTTP_201_CREATED)
+
+
+
+
+
+
+class CommentPost(APIView):
+    permission_classes = [IsAuthenticated]  
+
+    def post(self, request, upload_id):
+        user = request.user
+        try:
+            upload = SharerUpload.objects.get(id=upload_id)
+        except SharerUpload.DoesNotExist:
+            return Response({"message": "Post does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=user, post=upload)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class CommentDeleteView(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        try:
+            comment = Comment.objects.get(id=kwargs['comment_id'])
+        except Comment.DoesNotExist:
+            return Response({"message": "Comment does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+    
+        if comment.user != request.user:
+            return Response({"message": "You are not the owner of this comment"}, status=status.HTTP_403_FORBIDDEN)
+
+        comment.delete()
+        return Response({"message": "Comment deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+    
+
+class CommentListView(generics.ListAPIView):
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        post_id = self.kwargs.get('post_id')
+        queryset = Comment.objects.filter(post_id=post_id)
+        return queryset

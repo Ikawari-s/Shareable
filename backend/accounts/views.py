@@ -29,10 +29,10 @@ from django.conf import settings
 from rest_framework.permissions import AllowAny
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import get_user_model
-from sharer.models import Sharer
+from sharer.models import *
 from rest_framework.permissions import IsAuthenticated
 from sharer.serializers import SharerSerializer
-
+from django.views.decorators.csrf import csrf_exempt
 User = get_user_model()
 
 
@@ -114,6 +114,7 @@ class VerifyOTP(APIView):
 
 
 
+
 class UserLogin(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = (JWTAuthentication,)
@@ -132,11 +133,14 @@ class UserLogin(APIView):
                 refresh = RefreshToken.for_user(user)
                 access_token = str(refresh.access_token)
 
-                # Check if the user is a "sharer" and get their ID
+                
                 is_sharer = user.is_sharer
                 sharer_id = None
                 if is_sharer:
                     sharer_id = user.sharer.id
+
+            
+                followed_sharers = user.follows.values_list('id', flat=True)
 
                 print(f'Access Token: {access_token}')
                 print(f'Refresh Token: {str(refresh)}')
@@ -144,15 +148,20 @@ class UserLogin(APIView):
                 response_data = {
                     'access_token': access_token,
                     'user_id': user.id,
-                    'user_info': serializer.data,
                     'is_sharer': is_sharer,
-                    'sharer_id': sharer_id
+                    'sharer_id': sharer_id,
+                    'followed_sharers': list(followed_sharers), 
+                    'user_info': {
+                        'email': user.email,
+                        
+                    }
                 }
                 return JsonResponse(response_data, status=status.HTTP_200_OK)
             else:
                 return Response({'detail': 'Authentication failed'}, status=status.HTTP_401_UNAUTHORIZED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 
 class UserLogout(APIView):
     permission_classes = (permissions.IsAuthenticated,)
@@ -322,9 +331,19 @@ class FollowSharer(generics.GenericAPIView):
             return Response({'detail': 'Sharer not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
+# Gawa ni Roque For UnFollow
+class UnfollowSharer(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
 
+    def delete(self, request, *args, **kwargs):
+        sharer_id = self.kwargs.get('sharer_id')
+        try:
+            sharer = Sharer.objects.get(pk=sharer_id)
+            request.user.follows.remove(sharer)
+            request.user.save()
 
+            serializer = SharerSerializer(sharer)
 
-    
-
-
+            return Response({'detail': 'Successfully unfollowed sharer', 'sharer': serializer.data}, status=status.HTTP_200_OK)
+        except Sharer.DoesNotExist:
+            return Response({'detail': 'Sharer not found'}, status=status.HTTP_404_NOT_FOUND)

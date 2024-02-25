@@ -29,3 +29,17 @@ class SharerProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sharer
         fields = ['id', 'email']
+
+
+
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
+        fields = ['user', 'post', 'liked']
+
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['content']

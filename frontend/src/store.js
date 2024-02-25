@@ -1,10 +1,10 @@
 import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import {thunk} from 'redux-thunk'; // Correct import statement for thunk middleware
-import { userLoginReducer } from './reducers/userReducer';
+import { CommentPostReducer, DeleteCommentPostReducer, LikePostReducer, ListCommentPostReducer, UnlikePostReducer, userLoginReducer } from './reducers/userReducer';
 import { userRegisterReducer, userResendOTPReducer, userSentOTPReducer, userVerifyOTPReducer } from './reducers/registerReducer';
 import {sharerListReducer, myProfileReducer, CheckSharerReducer, SharerDetailReducer, userSharerBeReducer, userSharerPostReducer, SharerLatestPostReducer} from './reducers/sharerReducer';
 import { sharerPostListReducer } from './reducers/sharerReducer';
-import { followReducer } from './reducers/followReducer';
+import { followReducer, unfollowReducer } from './reducers/followReducer';
 
 
 const reducer = combineReducers({
@@ -25,10 +25,14 @@ const reducer = combineReducers({
   MyProfile : myProfileReducer,
   SharerLatestPost : SharerLatestPostReducer,
   followSharer : followReducer,
+  unfollowSharer :unfollowReducer,
+  Likepost : LikePostReducer,
+  UnlikePost: UnlikePostReducer,
+  CommentPost: CommentPostReducer,
+  DeleteComment: DeleteCommentPostReducer,
+  ListComment: ListCommentPostReducer
   
 
-
-  
 
 });
 

@@ -32,3 +32,32 @@ class SharerUpload(models.Model):
 
     def __str__(self):
         return f"{self.uploaded_by.email}'s Title: {self.title}"
+    
+    def count_likes(self):
+        return self.likes.count()
+    
+    def count_comments(self):
+        return self.comments.count()
+
+
+class Like(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    post = models.ForeignKey(SharerUpload, on_delete=models.CASCADE, related_name='likes')
+    liked = models.BooleanField(default=True)
+    unliked = models.BooleanField(default=False) 
+
+    class Meta:
+        unique_together = ('user', 'post')
+
+class Comment(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    post = models.ForeignKey(SharerUpload, on_delete=models.CASCADE, related_name='comments')
+    content = models.TextField(max_length=1000, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def count_likes(self):
+        return self.likes.filter(liked=True).count()
+
+    def count_unlikes(self):
+        return self.likes.filter(liked=False).count()
+

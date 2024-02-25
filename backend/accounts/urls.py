@@ -20,6 +20,8 @@ urlpatterns = [
      path('resend-otp/', ResendOTP.as_view(), name='resend-otp'),
      path('be-sharer/', Be_sharer.as_view(), name="be-sharer"),
      path('follow-sharer/<int:sharer_id>', FollowSharer.as_view(), name='follow-sharer'),
+     path('unfollow-sharer/<int:sharer_id>/', UnfollowSharer.as_view(), name='unfollow-sharer'),
+     
 
 
      path('checker/', views.SharerChecker.as_view(), name='sharer-checker'),

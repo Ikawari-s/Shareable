@@ -10,6 +10,21 @@ import {
   USER_NEW_PASSWORD_REQUEST,
   USER_NEW_PASSWORD_SUCCESS,
   USER_NEW_PASSWORD_FAIL,
+  USER_LIKE_REQUEST,
+  USER_LIKE_SUCCESS,
+  USER_LIKE_FAIL,
+  USER_UNLIKE_REQUEST,
+  USER_UNLIKE_SUCCESS,
+  USER_UNLIKE_FAIL,
+  USER_COMMENT_REQUEST,
+  USER_COMMENT_SUCCESS,
+  USER_COMMENT_FAIL,
+  USER_DELETE_COMMENT_REQUEST,
+  USER_DELETE_COMMENT_SUCCESS,
+  USER_DELETE_COMMENT_FAIL,
+  USER_LIST_COMMENT_REQUEST,
+  USER_LIST_COMMENT_SUCCESS,
+  USER_LIST_COMMENT_FAIL,
 } from "../constants/userConstants";
 
 const instance = axios.create({
@@ -25,7 +40,7 @@ export const login = (email, password) => async (dispatch) => {
     const config = {
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json", 
+        Accept: "application/json",
       },
     };
 
@@ -139,3 +154,113 @@ export const userNewPasswordReducer =
       throw error;
     }
   };
+
+export const likePost = (uploadId, token) => async (dispatch) => {
+  dispatch({ type: USER_LIKE_REQUEST });
+
+  try {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
+
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
+
+    await instance.post(`api/sharer/posts/like/${uploadId}/`, null, config);
+
+    dispatch({ type: USER_LIKE_SUCCESS });
+  } catch (error) {
+    dispatch({ type: USER_LIKE_FAIL, payload: error.message });
+  }
+};
+
+export const unlikePost = (uploadId, token) => async (dispatch) => {
+  dispatch({ type: USER_UNLIKE_REQUEST });
+
+  try {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
+
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
+
+    await instance.post(`api/sharer/posts/unlike/${uploadId}/`, null, config);
+
+    dispatch({ type: USER_UNLIKE_SUCCESS });
+  } catch (error) {
+    dispatch({ type: USER_UNLIKE_FAIL, payload: error.message });
+  }
+};
+
+export const postComment = (uploadId, content, token) => async (dispatch) => {
+  try {
+    dispatch({ type: USER_COMMENT_REQUEST });
+
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
+
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
+
+    const requestData = {
+      content: content,
+    };
+
+    const response = await instance.post(
+      `api/sharer/posts/comment/${uploadId}/`,
+      requestData,
+      config
+    );
+
+    dispatch({ type: USER_COMMENT_SUCCESS, payload: response.data });
+  } catch (error) {
+    dispatch({ type: USER_COMMENT_FAIL, payload: error.message });
+  }
+};
+
+
+export const listComments = (uploadId) => async (dispatch) => {
+  try {
+    dispatch({ type: USER_LIST_COMMENT_REQUEST });
+
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
+
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
+
+    const response = await instance.get(`api/sharer/comments/${uploadId}/`, config);
+    const { data } = response;
+
+    dispatch({ type: USER_LIST_COMMENT_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({ type: USER_LIST_COMMENT_FAIL, payload: error.message });
+  }
+};
