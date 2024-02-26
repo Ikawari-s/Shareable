@@ -6,8 +6,6 @@ import { useDispatch } from "react-redux";
 import { logout } from "../actions/userActions";
 import { listSharers } from "../actions/sharerActions";
 import '../designs/Header.css';
-import { FontAwesomeIcon } from "@fortawesome/fontawesome-free"
-import { faIconName } from "@fortawesome/free-solid-svg-icons"
 import { FaExchangeAlt, FaHome, FaIconName, FaLongArrowAltUp, FaSearch, FaUser, FaUserAlt, FaUserCheck } from "react-icons/fa";
 import { connect } from "react-redux";  
 

@@ -3,6 +3,7 @@ import { Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { register } from '../actions/registerActions';
 import { useDispatch } from 'react-redux';
+import GuestHeader from "../components/GuestHeader";  
 
 function Signup() {
   const dispatch = useDispatch();
@@ -50,6 +51,7 @@ function Signup() {
 
   return (
     <div className="container mt-5">
+      <GuestHeader />
       <div className="card">
         <div className="card-header">
           <h3 className="text-center">Sign Up</h3>
@@ -116,6 +118,9 @@ function Signup() {
           Already have an Account? <Link to="/">Login</Link>
         </div>
       </div>
+      <br></br>
+      <br></br>
+      
     </div>
   );
 }

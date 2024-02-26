@@ -1,3 +1,29 @@
-#Body{
-    background-color: red;
-}
+.bodhi {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    color: #fff;
+    padding-top: 8px;
+    transition: border-radius 0.3s ease, margin 0.3s ease, width 0.3s ease;
+    z-index: 1000; /* Ensure it stays above other content */
+  }
+  
+  .circular {
+    border-radius: 40px;
+    margin-top: 1rem;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    width: 95%;
+  }
+
+  body{
+    padding-top: 4rem;
+  }
+
+  img{
+    padding-bottom: 8px;
+    width: 40%;
+    height: auto;
+  }

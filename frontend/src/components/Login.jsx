@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../actions/userActions";
+import GuestHeader from "../components/GuestHeader";
 
 function Login() {
   const dispatch = useDispatch();
@@ -39,6 +40,7 @@ function Login() {
 
   return (
     <div className="container mt-5">
+      <GuestHeader />
       <div className="card custom-card-background">
         <div className="card-header">
           <h3 className="text-center">Log in</h3>

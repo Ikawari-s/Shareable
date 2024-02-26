@@ -16,8 +16,8 @@ function HomeScreen() {
   return (
     <div>
       <GuestHeader />
-      <h1>WSG MOTHERFUCKER</h1>
-      <h1>WSG MOTHERFUCKER</h1>
+      <h1>WSG MOTHERFUCKER1</h1>
+      <h1>WSG MOTHERFUCKER2</h1>
       <h1>WSG MOTHERFUCKER</h1>
       <h1>WSG MOTHERFUCKER</h1>
       <h1>WSG MOTHERFUCKER</h1>
