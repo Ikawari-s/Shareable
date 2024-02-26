@@ -1,6 +1,7 @@
 import { React,useEffect, useState }from "react";
 import { useNavigate } from "react-router-dom";
 import GuestHeader from "../components/GuestHeader";
+import Footer from '../components/Footer'
 
 
 function HomeScreen() {
@@ -34,6 +35,8 @@ function HomeScreen() {
       <h1>WSG MOTHERFUCKER</h1>
       <h1>WSG MOTHERFUCKER</h1>
       <h1>WSG MOTHERFUCKER</h1>
+
+      <Footer />
     </div>
   );
 }

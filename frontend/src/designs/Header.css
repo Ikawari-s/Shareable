@@ -1,0 +1,78 @@
+
+nave {
+    z-index: 1;
+    position: fixed;
+    top: 10px;
+    bottom: 10px;
+    height: 97%;
+    left: 10px;
+    background: rgb(27, 27, 27);
+    width: 55px;
+    overflow: hidden;
+    transition: width 0.2s linear;
+    box-shadow: 0 20px 35px rgb(0,0,0,0.1);
+    list-style: none;
+    border-radius: 40PX;
+    padding-top: 20px;
+}
+a{
+    font-size: 1.2rem;
+    position: relative;
+    color: white;
+    display: table;
+    width: 300px;
+    padding-left: 0.35rem;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+}
+.nav-icon{
+    position: relative;
+    padding-right: 1rem;
+    font-size: 1.7rem;
+    text-align: center;
+}
+
+.nav-item{
+    position: relative;
+    top: 50%;
+    margin-left: 10px;
+}
+
+.nav-search{
+    position: relative;
+    display: flex;
+    margin-left: 13px;
+    
+}
+
+.nav-text {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    display: none;
+}
+
+.nav-item:hover .nav-text {
+    display: inline-block;
+}
+  
+a:hover{
+    background: rgb(168, 168, 168);
+
+}
+nave:hover{
+    width: 270px;
+    transition: all 0.5s ease;
+
+}
+
+.searchy    {
+    border-radius: 50px;
+    color: white;
+    border: none;
+    font-size: 1rem;
+    padding: .4rem;
+    padding-left: 1rem;
+    flex: 1;
+    background: rgb(45, 45, 45);
+}
