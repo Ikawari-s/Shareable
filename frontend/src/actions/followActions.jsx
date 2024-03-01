@@ -22,8 +22,7 @@ export const followSharer = (sharerId) => async (dispatch) => {
         }
       : {};
 
-    // Perform API call to follow the sharer
-    // Use fetch or your preferred HTTP library for making the API call
+
     const response = await instance.post(`/api/follow-sharer/${sharerId}`, null, config);
 
     if (response.status === 200) { // Adjust the status code according to your API
@@ -53,18 +52,16 @@ export const unfollowSharer = (sharerId) => async (dispatch) => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const token = userInfo ? userInfo.access_token : null;
 
-    const config = token
-      ? {
-          headers: {
-            "Content-Type": "application/json",
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
             Accept: "application/json",
             Authorization: `Bearer ${token}`,
-          },
-        }
-      : {};
+      },
+    };
 
-    // Perform API call to unfollow the sharer
-    const response = await instance.post(`/api/unfollow-sharer/${sharerId}`, null, config);
+    // Perform API call to unfollow the sharer using DELETE method
+    const response = await instance.delete(`/api/unfollow-sharer/${sharerId}/`, config);
 
     if (response.status === 200) { // Adjust the status code according to your API
       dispatch({
@@ -85,7 +82,6 @@ export const unfollowSharer = (sharerId) => async (dispatch) => {
     });
   }
 };
-
 
 
 export const listFollowedSharers = () => async (dispatch) => {

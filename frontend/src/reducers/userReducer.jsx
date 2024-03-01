@@ -24,8 +24,13 @@ import {
   USER_DELETE_COMMENT_FAIL,
   USER_LIST_COMMENT_REQUEST,
   USER_LIST_COMMENT_SUCCESS,
-  USER_LIST_COMMENT_FAIL
+  USER_LIST_COMMENT_FAIL,
+  FETCH_LIKES_COUNT_REQUEST,
+  FETCH_LIKES_COUNT_SUCCESS,
+  FETCH_LIKES_COUNT_FAILURE,
 } from "../constants/userConstants";
+
+
 
 export const userLoginReducer = (state = {}, action) => {
   switch (action.type) {
@@ -49,9 +54,6 @@ export const userLoginReducer = (state = {}, action) => {
   }
 };
 
-
-
-
 export const userSendPasswordReducer = (state = {}, action) => {
   switch (action.type) {
     case USER_NEW_PASSWORD_REQUEST:
@@ -67,8 +69,6 @@ export const userSendPasswordReducer = (state = {}, action) => {
       return state; // Pag wala ka pinakelaman
   }
 };
-
-
 
 export const userNewPasswordReducer = (state = {}, action) => {
   switch (action.type) {
@@ -86,7 +86,6 @@ export const userNewPasswordReducer = (state = {}, action) => {
   }
 };
 
-
 export const LikePostReducer = (state = {}, action) => {
   switch (action.type) {
     case USER_LIKE_REQUEST:
@@ -99,10 +98,9 @@ export const LikePostReducer = (state = {}, action) => {
       return { loading: false, error: action.payload };
 
     default:
-      return state; 
+      return state;
   }
 };
-
 
 export const UnlikePostReducer = (state = {}, action) => {
   switch (action.type) {
@@ -116,10 +114,9 @@ export const UnlikePostReducer = (state = {}, action) => {
       return { loading: false, error: action.payload };
 
     default:
-      return state; 
+      return state;
   }
 };
-
 
 export const CommentPostReducer = (state = {}, action) => {
   switch (action.type) {
@@ -133,10 +130,9 @@ export const CommentPostReducer = (state = {}, action) => {
       return { loading: false, error: action.payload };
 
     default:
-      return state; 
+      return state;
   }
 };
-
 
 export const DeleteCommentPostReducer = (state = {}, action) => {
   switch (action.type) {
@@ -150,27 +146,66 @@ export const DeleteCommentPostReducer = (state = {}, action) => {
       return { loading: false, error: action.payload };
 
     default:
-      return state; 
+      return state;
   }
 };
 
-
-
-export const ListCommentPostReducer = (state = { loading: false, comments: [] }, action) => {
+export const ListCommentPostReducer = (
+  state = { loading: false, comments: {}, error: null },
+  action
+) => {
   switch (action.type) {
     case USER_LIST_COMMENT_REQUEST:
-      return { ...state, loading: true };
+      return { ...state, loading: true, error: null };
 
     case USER_LIST_COMMENT_SUCCESS:
-      return { loading: false, comments: action.payload };
+      return {
+        loading: false,
+        comments: {
+          ...state.comments,
+          [action.payload.uploadId]: action.payload.comments,
+        },
+        error: null,
+      };
 
     case USER_LIST_COMMENT_FAIL:
-      return { loading: false, error: action.payload, comments: [] };
+      return { loading: false, comments: {}, error: action.payload };
 
     default:
-      return state; 
+      return state;
   }
 };
 
 
+const initialState = {};
 
+export const LikeCountReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case FETCH_LIKES_COUNT_REQUEST:
+      return {
+        ...state,
+        [action.payload.uploadId]: { loading: true, error: null },
+      };
+    case FETCH_LIKES_COUNT_SUCCESS:
+      return {
+        ...state,
+        [action.payload.uploadId]: {
+          likesCount: action.payload.likesCount,
+          unlikesCount: action.payload.unlikesCount,
+          loading: false,
+          error: null,
+        },
+      };
+    case FETCH_LIKES_COUNT_FAILURE:
+      return {
+        ...state,
+        [action.payload.uploadId]: {
+          ...state[action.payload.uploadId],
+          loading: false,
+          error: action.payload.error,
+        },
+      };
+    default:
+      return state;
+  }
+};

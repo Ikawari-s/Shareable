@@ -11,7 +11,10 @@ urlpatterns = [
     path('sharer-lates-post/<int:sharer_id>/', views.SharerlatestPost, name='sharer-latest-post'),
     path('posts/like/<int:upload_id>/', views.LikePost.as_view(), name='like_post'),
     path('posts/unlike/<int:upload_id>/', views.UnlikePost.as_view(), name='unlike_post'),
+    path('posts/count-likes/<int:upload_id>/', views.CountOfLikes.as_view(), name='count_likes'),
     path('posts/comment/<int:upload_id>/', views.CommentPost.as_view(), name='comment_post'),
     path('comment/delete/<int:comment_id>/', views.CommentDeleteView.as_view(), name='comment-delete'),
-    path('comments/<int:post_id>/', views.CommentListView.as_view(), name='comment-list'),
+    path('comments/<int:upload_id>/', views.CommentListView.as_view(), name='comment-list'),
+
 ]
+    

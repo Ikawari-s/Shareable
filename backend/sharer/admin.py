@@ -51,5 +51,5 @@ class LikeAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'post', 'content', 'created_at')
-    search_fields = ('user__username', 'post__title', 'content')
+    list_display = ('id', 'user', 'post', 'comments', 'created_at')  
+    search_fields = ('user__username', 'post__title', 'comments')  

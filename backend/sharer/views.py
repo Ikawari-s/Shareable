@@ -97,7 +97,7 @@ class SharerUploadViews(APIView):
 
 
 class LikePost(APIView):
-    permission_classes = [IsAuthenticated] 
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, upload_id):
         user = request.user
@@ -141,7 +141,14 @@ class UnlikePost(APIView):
 
 
 
+class CountOfLikes(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def get(self, request, upload_id):
+        upload = get_object_or_404(SharerUpload, id=upload_id)
+        likes_count = Like.objects.filter(post=upload, liked=True).count()
+        unlikes_count = Like.objects.filter(post=upload, unliked=True).count()
+        return Response({"likes_count": likes_count, "unlikes_count": unlikes_count}, status=status.HTTP_200_OK)
 
 
 class CommentPost(APIView):
@@ -177,12 +184,11 @@ class CommentDeleteView(generics.DestroyAPIView):
         comment.delete()
         return Response({"message": "Comment deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
     
-
 class CommentListView(generics.ListAPIView):
-    serializer_class = CommentSerializer
+    serializer_class = CommentSerializer  
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        post_id = self.kwargs.get('post_id')
-        queryset = Comment.objects.filter(post_id=post_id)
+        upload_id = self.kwargs.get('upload_id')
+        queryset = Comment.objects.filter(post_id=upload_id)  # Filter comments by upload_id
         return queryset

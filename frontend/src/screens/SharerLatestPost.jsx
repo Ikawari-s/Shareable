@@ -33,8 +33,8 @@ function SharerLatestPost({ id }) {
                   {post.image && <img src={post.image} alt="Post Image" />}
                   <LikeComponent uploadId={post.id} />
                   
-                  {/* Pass the post.id as the postId prop */}
-                  <Comment postId={post.id} />
+                 
+                  <Comment uploadId={post.id} postId={post.id} />
                 </div>
               ))}
             </div>

@@ -26,7 +26,7 @@ function SharerPost({ uploadSharer }) {
     const { title, description, image } = formData;
     await uploadSharer({ title, description, image });
     setLoading(false);
-    
+    window.location.reload(); 
   };
 
   return (

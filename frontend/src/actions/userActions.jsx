@@ -25,6 +25,10 @@ import {
   USER_LIST_COMMENT_REQUEST,
   USER_LIST_COMMENT_SUCCESS,
   USER_LIST_COMMENT_FAIL,
+  FETCH_LIKES_COUNT_REQUEST,
+  FETCH_LIKES_COUNT_SUCCESS,
+  FETCH_LIKES_COUNT_FAILURE,
+  
 } from "../constants/userConstants";
 
 const instance = axios.create({
@@ -33,9 +37,7 @@ const instance = axios.create({
 
 export const login = (email, password) => async (dispatch) => {
   try {
-    dispatch({
-      type: USER_LOGIN_REQUEST,
-    });
+    dispatch({ type: USER_LOGIN_REQUEST });
 
     const config = {
       headers: {
@@ -44,16 +46,9 @@ export const login = (email, password) => async (dispatch) => {
       },
     };
 
-    const { data } = await instance.post(
-      "api/login/",
-      { email, password },
-      config
-    );
+    const { data } = await instance.post("api/login/", { email, password }, config);
 
-    dispatch({
-      type: USER_LOGIN_SUCCESS,
-      payload: data,
-    });
+    dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
 
     localStorage.setItem("userInfo", JSON.stringify(data));
   } catch (error) {
@@ -70,9 +65,7 @@ export const login = (email, password) => async (dispatch) => {
 export const logout = () => async (dispatch) => {
   try {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-
     const token = userInfo ? userInfo.access_token : null;
-
     const config = token
       ? {
           headers: {
@@ -83,11 +76,8 @@ export const logout = () => async (dispatch) => {
         }
       : {};
     await instance.post("api/logout/");
-
     localStorage.removeItem("userInfo");
-
     dispatch({ type: USER_LOGOUT });
-
     console.log("Logout successful");
   } catch (error) {
     console.error("Error during logout:", error);
@@ -101,12 +91,10 @@ export const logout = () => async (dispatch) => {
 export const sendPasswordRequest = (email) => async (dispatch) => {
   try {
     dispatch({ type: USER_SEND_PASSWORD_REQUEST });
-
     const response = await instance.post("api/request-reset-email/", {
       email: email,
       redirect_url: "http://localhost:3000/new-password/",
     });
-
     dispatch({
       type: USER_SEND_PASSWORD_SUCCESS,
       payload: response.data.success,
@@ -122,26 +110,18 @@ export const sendPasswordRequest = (email) => async (dispatch) => {
 export const userNewPasswordReducer =
   (uidb64, token, password, password2) => async (dispatch) => {
     try {
-      dispatch({
-        type: USER_NEW_PASSWORD_REQUEST,
-      });
-
+      dispatch({ type: USER_NEW_PASSWORD_REQUEST });
       const config = {
         headers: {
           "Content-Type": "application/json",
         },
       };
-
       const { data } = await instance.patch(
         "api/password-reset-complete/",
         { uidb64, token, password, password2 },
         config
       );
-
-      dispatch({
-        type: USER_NEW_PASSWORD_SUCCESS,
-        payload: data,
-      });
+      dispatch({ type: USER_NEW_PASSWORD_SUCCESS, payload: data });
     } catch (error) {
       dispatch({
         type: USER_NEW_PASSWORD_FAIL,
@@ -150,18 +130,15 @@ export const userNewPasswordReducer =
             ? error.response.data.message
             : error.message,
       });
-
       throw error;
     }
   };
 
 export const likePost = (uploadId, token) => async (dispatch) => {
   dispatch({ type: USER_LIKE_REQUEST });
-
   try {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const token = userInfo ? userInfo.access_token : null;
-
     const config = token
       ? {
           headers: {
@@ -171,9 +148,7 @@ export const likePost = (uploadId, token) => async (dispatch) => {
           },
         }
       : {};
-
     await instance.post(`api/sharer/posts/like/${uploadId}/`, null, config);
-
     dispatch({ type: USER_LIKE_SUCCESS });
   } catch (error) {
     dispatch({ type: USER_LIKE_FAIL, payload: error.message });
@@ -182,11 +157,9 @@ export const likePost = (uploadId, token) => async (dispatch) => {
 
 export const unlikePost = (uploadId, token) => async (dispatch) => {
   dispatch({ type: USER_UNLIKE_REQUEST });
-
   try {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const token = userInfo ? userInfo.access_token : null;
-
     const config = token
       ? {
           headers: {
@@ -196,71 +169,98 @@ export const unlikePost = (uploadId, token) => async (dispatch) => {
           },
         }
       : {};
-
     await instance.post(`api/sharer/posts/unlike/${uploadId}/`, null, config);
-
     dispatch({ type: USER_UNLIKE_SUCCESS });
   } catch (error) {
     dispatch({ type: USER_UNLIKE_FAIL, payload: error.message });
   }
 };
 
-export const postComment = (uploadId, content, token) => async (dispatch) => {
-  try {
-    dispatch({ type: USER_COMMENT_REQUEST });
+export const fetchLikesCount = (uploadId) => {
+  return async (dispatch) => {
+    dispatch({ type: FETCH_LIKES_COUNT_REQUEST, payload: { uploadId } });
+
 
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const token = userInfo ? userInfo.access_token : null;
 
+
     const config = token
       ? {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
       : {};
 
-    const requestData = {
-      content: content,
-    };
+    try {
 
+      const response = await instance.get(`api/sharer/posts/count-likes/${uploadId}/`, config);
+
+
+      dispatch({
+        type: FETCH_LIKES_COUNT_SUCCESS,
+        payload: {
+          likesCount: response.data.likes_count,
+          unlikesCount: response.data.unlikes_count,
+          uploadId: uploadId 
+        }
+      });
+    } catch (error) {
+
+      dispatch({
+        type: FETCH_LIKES_COUNT_FAILURE,
+        payload: { error, uploadId }
+      });
+    }
+  };
+};
+
+export const postComment = (uploadId, comments, accessToken, username) => async (dispatch) => {
+  try {
+    dispatch({ type: USER_COMMENT_REQUEST });
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+    const requestData = {
+      username: username,
+      comments: comments,
+    };
     const response = await instance.post(
       `api/sharer/posts/comment/${uploadId}/`,
       requestData,
       config
     );
-
     dispatch({ type: USER_COMMENT_SUCCESS, payload: response.data });
   } catch (error) {
     dispatch({ type: USER_COMMENT_FAIL, payload: error.message });
   }
 };
 
-
 export const listComments = (uploadId) => async (dispatch) => {
+  dispatch({ type: USER_LIST_COMMENT_REQUEST });
   try {
-    dispatch({ type: USER_LIST_COMMENT_REQUEST });
-
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const token = userInfo ? userInfo.access_token : null;
-
-    const config = token
-      ? {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      : {};
-
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    };
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     const response = await instance.get(`api/sharer/comments/${uploadId}/`, config);
     const { data } = response;
-
-    dispatch({ type: USER_LIST_COMMENT_SUCCESS, payload: data });
+    dispatch({ type: USER_LIST_COMMENT_SUCCESS, payload: { comments: data, uploadId } });
   } catch (error) {
-    dispatch({ type: USER_LIST_COMMENT_FAIL, payload: error.message });
+    dispatch({ type: USER_LIST_COMMENT_FAIL, payload: error.response ? error.response.data.message : error.message });
   }
 };

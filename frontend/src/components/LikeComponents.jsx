@@ -1,29 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { likePost, unlikePost } from '../actions/userActions';
+import { fetchLikesCount, likePost, unlikePost } from '../actions/userActions';
 
 function LikeComponent({ uploadId }) {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.userLogin);
-
-  const [liked, setLiked] = useState(false);
+  const { likesCount, unlikesCount, loading, error } = useSelector((state) => state.LikeCount[uploadId] || { likesCount: 0, unlikesCount: 0, loading: false, error: null });
 
   useEffect(() => {
-    
-  }, []);
+    dispatch(fetchLikesCount(uploadId));
+  }, [dispatch, uploadId]);
 
-  const handleLike = () => {
-    dispatch(likePost(uploadId, userInfo.token));
-    setLiked(true);
+  const handleLike = async () => {
+    await dispatch(likePost(uploadId, userInfo.access_token));
+    dispatch(fetchLikesCount(uploadId));
   };
+  
+  const handleUnlike = async () => {
+    await dispatch(unlikePost(uploadId, userInfo.access_token));
+    dispatch(fetchLikesCount(uploadId));
+  };
+  
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-  const handleUnlike = () => {
-    dispatch(unlikePost(uploadId, userInfo.token));
-    setLiked(false);
-  };
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div>
+      <p>Likes: {likesCount}</p>
+      <p>Unlikes: {unlikesCount}</p>
       <button onClick={handleLike}>Like</button>
       <button onClick={handleUnlike}>Unlike</button>
     </div>

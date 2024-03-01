@@ -29,6 +29,7 @@ class SharerUpload(models.Model):
     image = models.ImageField(upload_to='uploads/images', null=True, blank=True)
     uploaded_by = models.ForeignKey(Sharer, on_delete=models.CASCADE, related_name='uploads')
     created_at = models.DateTimeField(auto_now_add=True)
+    
 
     def __str__(self):
         return f"{self.uploaded_by.email}'s Title: {self.title}"
@@ -52,12 +53,10 @@ class Like(models.Model):
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     post = models.ForeignKey(SharerUpload, on_delete=models.CASCADE, related_name='comments')
-    content = models.TextField(max_length=1000, blank=True, null=True)
+    username = models.CharField(max_length=150)  # Add a field to store the username
+    comments = models.TextField(max_length=1000, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def count_likes(self):
-        return self.likes.filter(liked=True).count()
-
-    def count_unlikes(self):
-        return self.likes.filter(liked=False).count()
-
+    def save(self, *args, **kwargs):
+        self.username = self.user.username 
+        super().save(*args, **kwargs)

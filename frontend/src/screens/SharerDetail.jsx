@@ -38,22 +38,25 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
     const updatedUserInfo = userInfo ? { ...userInfo } : {};
     updatedUserInfo.followed_sharers = updatedUserInfo.followed_sharers || [];
   
-    const updatedFollowedSharers = updatedUserInfo.followed_sharers.includes(id)
-      ? updatedUserInfo.followed_sharers.filter(sharerId => sharerId !== id)
-      : [...updatedUserInfo.followed_sharers, id];
+    const idInt = parseInt(id);
   
-    if (updatedUserInfo.followed_sharers.includes(id)) {
+    const updatedFollowedSharers = updatedUserInfo.followed_sharers.includes(idInt)
+      ? updatedUserInfo.followed_sharers.filter(sharerId => sharerId !== idInt)
+      : [...updatedUserInfo.followed_sharers, idInt]; 
+  
+    setIsFollowing(!isFollowing); 
+    if (updatedUserInfo.followed_sharers.includes(idInt)) {
+
+      updatedUserInfo.followed_sharers = updatedFollowedSharers;
+      localStorage.setItem('userInfo', JSON.stringify(updatedUserInfo));
       unfollowSharer(id);
     } else {
+
+      updatedUserInfo.followed_sharers = updatedFollowedSharers;
+      localStorage.setItem('userInfo', JSON.stringify(updatedUserInfo));
       followSharer(id);
     }
-  
-    setIsFollowing(!isFollowing); // Update isFollowing state immediately
-  
-    updatedUserInfo.followed_sharers = updatedFollowedSharers;
-    localStorage.setItem('userInfo', JSON.stringify(updatedUserInfo));
   };
-  
   
 
   return (

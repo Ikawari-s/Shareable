@@ -33,6 +33,7 @@ from sharer.models import *
 from rest_framework.permissions import IsAuthenticated
 from sharer.serializers import SharerSerializer
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
 User = get_user_model()
 
 
@@ -153,6 +154,7 @@ class UserLogin(APIView):
                     'followed_sharers': list(followed_sharers), 
                     'user_info': {
                         'email': user.email,
+                        'username': user.username
                         
                     }
                 }
@@ -302,7 +304,7 @@ class Be_sharer(APIView):
 
 
 # CHECKING LANG IF is_sharer sa headers
-        
+
 class SharerChecker(APIView):
     def get(self, request):
         user = request.user
@@ -348,6 +350,7 @@ class UnfollowSharer(generics.GenericAPIView):
         except Sharer.DoesNotExist:
             return Response({'detail': 'Sharer not found'}, status=status.HTTP_404_NOT_FOUND)
         
+
 class FollowedSharerList(generics.ListAPIView):
     serializer_class = SharerSerializer
     permission_classes = [IsAuthenticated]

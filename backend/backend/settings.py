@@ -38,6 +38,9 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOWED_CREDENTIALS = True
 
+
+APPEND_SLASH=False
+
 # Application definition
 
 INSTALLED_APPS = [
