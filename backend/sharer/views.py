@@ -184,6 +184,8 @@ class CommentDeleteView(generics.DestroyAPIView):
         comment.delete()
         return Response({"message": "Comment deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
     
+    
+    
 class CommentListView(generics.ListAPIView):
     serializer_class = CommentSerializer  
     permission_classes = [IsAuthenticated]

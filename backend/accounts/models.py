@@ -71,6 +71,12 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
     def verify_otp(self, otp):
         return self.otp_code == otp and self.otp_expires_at > timezone.now()
 
+    def save(self, *args, **kwargs):
+        if self.pk is not None:  
+            orig = AppUser.objects.get(pk=self.pk) 
+            if orig.is_sharer and not self.is_sharer:
+                self.sharer.delete() 
+        super().save(*args, **kwargs)
 
 class beSharer(models.Model):
     user = models.OneToOneField(AppUser, on_delete=models.CASCADE)

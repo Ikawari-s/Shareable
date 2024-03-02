@@ -26,13 +26,27 @@ function SharerbeScreen() {
     }
   
     try {
-      dispatch(beSharer(pageName)); 
-      const userInfo = JSON.parse(localStorage.getItem('userInfo')); 
-      localStorage.setItem('userInfo', JSON.stringify({ ...userInfo, is_sharer: true })); 
-      alert("You are now a Sharer");
-      navigate("/login");
+      const response = await dispatch(beSharer(pageName));
+      console.log("Response from backend:", response);
+  
+      if (response.data && response.data.message === 'User is now a sharer') {
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        if (userInfo) {
+          userInfo.is_sharer = true;
+          localStorage.setItem('userInfo', JSON.stringify(userInfo));
+          console.log("Updated userInfo:", userInfo);
+          alert("You are now a Sharer");
+          navigate("/login");
+        } else {
+          console.error("User info not found in localStorage");
+        }
+      } else {
+        console.error("Unexpected message from backend:", response.data.message);
+        alert("An unexpected error occurred while processing your request.");
+      }
     } catch (error) {
       console.error("Sharer register error", error);
+      alert("An error occurred while processing your request.");
     }
   };
   
@@ -58,7 +72,7 @@ function SharerbeScreen() {
               </Form.Group>
               <div className="text-center">
                 <Button type="submit" variant="primary">
-                  Be A Sharer!
+                  Be A Sharer!  
                 </Button>
               </div>
             </Form>

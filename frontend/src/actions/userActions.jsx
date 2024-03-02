@@ -260,3 +260,28 @@ export const listComments = (uploadId) => async (dispatch) => {
     dispatch({ type: USER_LIST_COMMENT_FAIL, payload: error.response ? error.response.data.message : error.message });
   }
 };
+
+
+
+export const deleteComments = (commentId) => async (dispatch) => {
+  dispatch({ type: USER_DELETE_COMMENT_REQUEST });
+  try {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    };
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    const response = await instance.delete(`api/sharer/comment/delete/${commentId}/`, config);
+    const { data } = response;
+    dispatch({ type: USER_DELETE_COMMENT_SUCCESS, payload: { comments: data, commentId } });
+  } catch (error) {
+    dispatch({ type: USER_DELETE_COMMENT_FAIL, payload: error.response ? error.response.data.message : error.message });
+  }
+};

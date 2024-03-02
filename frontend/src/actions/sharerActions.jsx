@@ -100,37 +100,36 @@ export const beSharer = (page_name) => async (dispatch) => {
     dispatch({ type: BE_SHARER_REQUEST });
 
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-
     const token = userInfo ? userInfo.access_token : null;
 
-    const config = token
-      ? {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      : {};
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    };
 
-    const response = await instance.post(
-      "api/be-sharer/",
-      { page_name },
-      config
-    );
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await instance.post("api/be-sharer/", { page_name }, config);
 
     dispatch({
       type: BE_SHARER_SUCCESS,
       payload: response.data,
     });
+    
+    return response; // Return the response for further handling if needed
   } catch (error) {
     dispatch({
       type: BE_SHARER_FAIL,
-      payload:
-        error.response && error.response.data.detail
-          ? error.response.data.detail
-          : error.message,
+      payload: error.response 
+        ? error.response.data.detail || error.response.data.message
+        : error.message,
     });
+    throw error; // Rethrow the error for handling in the component
   }
 };
 

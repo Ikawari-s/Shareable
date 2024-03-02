@@ -16,7 +16,6 @@ from django.contrib.auth.models import AnonymousUser  # Import AnonymousUser
 from rest_framework.exceptions import NotFound
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .serializers import ResetPasswordEmailRequestSerializer
 from .models import AppUser
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
@@ -31,7 +30,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 from sharer.models import *
 from rest_framework.permissions import IsAuthenticated
-from sharer.serializers import SharerSerializer
+from sharer.serializers import *
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 User = get_user_model()
@@ -134,17 +133,15 @@ class UserLogin(APIView):
                 refresh = RefreshToken.for_user(user)
                 access_token = str(refresh.access_token)
 
-                
                 is_sharer = user.is_sharer
                 sharer_id = None
                 if is_sharer:
                     sharer_id = user.sharer.id
 
-            
                 followed_sharers = user.follows.values_list('id', flat=True)
 
-                print(f'Access Token: {access_token}')
-                print(f'Refresh Token: {str(refresh)}')
+                # Fetch comments for the user and extract comment IDs
+                comments = Comment.objects.filter(user=user).values_list('id', flat=True)
 
                 response_data = {
                     'access_token': access_token,
@@ -155,9 +152,11 @@ class UserLogin(APIView):
                     'user_info': {
                         'email': user.email,
                         'username': user.username
-                        
-                    }
+                    },
+                    'comment_ids': list(comments)  # Include only comment IDs in the response
                 }
+
+                # Return the response as JSON
                 return JsonResponse(response_data, status=status.HTTP_200_OK)
             else:
                 return Response({'detail': 'Authentication failed'}, status=status.HTTP_401_UNAUTHORIZED)

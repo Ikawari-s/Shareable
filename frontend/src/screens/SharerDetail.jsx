@@ -32,8 +32,6 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
   }, [id, userInfo]);
   
   
-  
-  
   const handleFollowToggle = () => {
     const updatedUserInfo = userInfo ? { ...userInfo } : {};
     updatedUserInfo.followed_sharers = updatedUserInfo.followed_sharers || [];
@@ -46,19 +44,16 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
   
     setIsFollowing(!isFollowing); 
     if (updatedUserInfo.followed_sharers.includes(idInt)) {
-
       updatedUserInfo.followed_sharers = updatedFollowedSharers;
       localStorage.setItem('userInfo', JSON.stringify(updatedUserInfo));
       unfollowSharer(id);
     } else {
-
       updatedUserInfo.followed_sharers = updatedFollowedSharers;
       localStorage.setItem('userInfo', JSON.stringify(updatedUserInfo));
       followSharer(id);
     }
   };
   
-
   return (
     <div>
       {loading ? (
@@ -90,9 +85,11 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
           <p>Category: {sharer.category}</p>
           <Button onClick={handleFollowToggle}>{isFollowing ? 'Unfollow Sharer' : 'Follow Sharer'}</Button>
           
-
-          <SharerLatestPost id={id} />
-          
+          {isFollowing ? (
+            <SharerLatestPost id={id} />
+          ) : (
+            <p>FOLLOW NOW</p>
+          )}
 
           <Link to={'/homepage'}>
             <Button variant="primary">Go Back</Button>
@@ -115,6 +112,4 @@ const mapDispatchToProps = {
   unfollowSharer,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SharerDetail); 
-
-
+export default connect(mapStateToProps, mapDispatchToProps)(SharerDetail);

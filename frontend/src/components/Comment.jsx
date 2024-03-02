@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { listComments, postComment } from "../actions/userActions";
+import { listComments, postComment, deleteComments } from "../actions/userActions";
 
 function Comment({ uploadId }) {
   const dispatch = useDispatch();
@@ -28,13 +28,21 @@ function Comment({ uploadId }) {
     try {
       await dispatch(postComment(uploadId, content, userInfo.access_token, username));
       setContent("");
-      dispatch(listComments(uploadId))
-        .catch(error => {
-          console.error("Failed to fetch comments after posting:", error);
-        });
+      await dispatch(listComments(uploadId));
     } catch (error) {
       console.error("Failed to submit comment:", error);
       alert("Failed to submit comment. Please try again.");
+    }
+  };
+
+  const handleDelete = async (commentId) => {
+    console.log("Deleting comment with id:", commentId);
+    try {
+      await dispatch(deleteComments(commentId));
+      await dispatch(listComments(uploadId));
+    } catch (error) {
+      console.error("Failed to delete comment:", error);
+      alert("Failed to delete comment. Please try again.");
     }
   };
 
@@ -53,6 +61,9 @@ function Comment({ uploadId }) {
             comments[uploadId].map((comment) => (
               <li key={comment.id}>
                 <strong>{comment.username}:</strong> {comment.comments}
+                {username === comment.username && (
+                  <button onClick={() => handleDelete(comment.id)}>Delete</button>
+                )}
               </li>
             ))
           ) : (
