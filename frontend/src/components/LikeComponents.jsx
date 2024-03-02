@@ -12,13 +12,21 @@ function LikeComponent({ uploadId }) {
   }, [dispatch, uploadId]);
 
   const handleLike = async () => {
-    await dispatch(likePost(uploadId, userInfo.access_token));
-    dispatch(fetchLikesCount(uploadId));
+    try {
+      await dispatch(likePost(uploadId, userInfo.access_token));
+      dispatch(fetchLikesCount(uploadId));
+    } catch (error) {
+      console.error("Error liking post:", error);
+    }
   };
   
   const handleUnlike = async () => {
-    await dispatch(unlikePost(uploadId, userInfo.access_token));
-    dispatch(fetchLikesCount(uploadId));
+    try {
+      await dispatch(unlikePost(uploadId, userInfo.access_token));
+      dispatch(fetchLikesCount(uploadId));
+    } catch (error) {
+      console.error("Error unliking post:", error);
+    }
   };
   
   if (loading) {
@@ -26,7 +34,7 @@ function LikeComponent({ uploadId }) {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div>Error: {error.message}</div>;
   }
 
   return (

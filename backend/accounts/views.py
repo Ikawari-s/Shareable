@@ -268,7 +268,7 @@ class SetNewPasswordAPIView(generics.GenericAPIView):
 
 class Be_sharer(APIView):
     permission_classes = (permissions.IsAuthenticated,)
-    
+
     def post(self, request):
         try:
             if request.method == 'POST':
@@ -277,18 +277,20 @@ class Be_sharer(APIView):
                     try:
                         user = AppUser.objects.get(email=request.user.email)
                         if not user.is_sharer:  # Check if the user is not already a sharer
-                            user.is_sharer = True
-                            user.save()
-                            
-                            sharer_instance = Sharer.objects.create(
-                                user=user,
-                                # image=user.profile_picture, 
-                                name=page_name,  
-                                description=f"Sharer profile for {user.username}",
-                                category="Default Category"
-                            )
-                            
-                            return Response({'message': 'User is now a sharer'}, status=status.HTTP_200_OK)
+                            if not Sharer.objects.filter(name=page_name).exists():  # Check if the name already exists
+                                user.is_sharer = True
+                                user.save()
+
+                                sharer_instance = Sharer.objects.create(
+                                    user=user,
+                                    name=page_name,
+                                    description=f"Sharer profile for {user.username}",
+                                    category="Default Category"
+                                )
+
+                                return Response({'message': 'User is now a sharer'}, status=status.HTTP_200_OK)
+                            else:
+                                return Response({'error': 'Name already exists'}, status=status.HTTP_400_BAD_REQUEST)
                         else:
                             return Response({'error': 'User is already a sharer'}, status=status.HTTP_400_BAD_REQUEST)
                     except AppUser.DoesNotExist:

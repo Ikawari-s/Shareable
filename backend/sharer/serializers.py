@@ -12,7 +12,7 @@ class SharerUploadListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SharerUpload
-        fields = ['title', 'description', 'image', 'created_at']
+        fields = ['id','title', 'description', 'image', 'created_at']
 
 
 class SharerUploadSerializer(serializers.ModelSerializer):

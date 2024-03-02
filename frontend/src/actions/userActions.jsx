@@ -180,10 +180,8 @@ export const fetchLikesCount = (uploadId) => {
   return async (dispatch) => {
     dispatch({ type: FETCH_LIKES_COUNT_REQUEST, payload: { uploadId } });
 
-
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const token = userInfo ? userInfo.access_token : null;
-
 
     const config = token
       ? {
@@ -196,9 +194,7 @@ export const fetchLikesCount = (uploadId) => {
       : {};
 
     try {
-
       const response = await instance.get(`api/sharer/posts/count-likes/${uploadId}/`, config);
-
 
       dispatch({
         type: FETCH_LIKES_COUNT_SUCCESS,
@@ -209,14 +205,14 @@ export const fetchLikesCount = (uploadId) => {
         }
       });
     } catch (error) {
-
       dispatch({
         type: FETCH_LIKES_COUNT_FAILURE,
-        payload: { error, uploadId }
+        payload: { error: error.message, uploadId }
       });
     }
   };
 };
+
 
 export const postComment = (uploadId, comments, accessToken, username) => async (dispatch) => {
   try {

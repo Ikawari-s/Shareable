@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login';
 import Footer from './components/Footer';
 import Signup from './components/Signup';
@@ -46,20 +46,20 @@ function App() {
 
           <Route path="/sharers/:id" element={<ProtectedRoute><SharerDetail /></ProtectedRoute>} />
 
-          <Route path="/dashboard" element={<ProtectedRoute ><SharerDashboard /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute ><SharerDashboard /></ProtectedRoute>} /> 
           <Route path="/homepage" element={<ProtectedRoute ><Homepage /></ProtectedRoute>} />
 
 
           <Route path="/sharer-page" element={<ProtectedRoute><SharerPageScreen/></ProtectedRoute>} />
           <Route path="/be-sharer" element={<ProtectedRoute><SharerbeScreen /></ProtectedRoute>} />
-          <Route path="/userprofile" element={<ProtectedRoute><UserProfileScreen /></ProtectedRoute>} />
+          <Route path="/userprofile" element={<ProtectedRoute><UserProfileScreen /></ProtectedRoute>} /> 
           <Route path="/home" element={<ProtectedRoute><HomeScreen /></ProtectedRoute>} />
           
           
 
           {/* USER LEVEL ALL PROTECTED  */}
 
-          
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Router>
       
@@ -69,5 +69,3 @@ function App() {
 
 export default App;
 
-// AYUSIN MO BUKAS, ROUTE AND UNG DETAIL VIEW
-// UNG DETAIL VIEW DAPAT DI KA NAKAKAPAG UPLOAD SA IBA

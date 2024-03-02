@@ -6,12 +6,17 @@ function Comment({ uploadId }) {
   const dispatch = useDispatch();
   const { loading, comments, error } = useSelector((state) => state.ListComment);
   const [content, setContent] = useState("");
+  const [fetchError, setFetchError] = useState(null);
 
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const username = userInfo && userInfo.user_info ? userInfo.user_info.username : null;
 
   useEffect(() => {
-    dispatch(listComments(uploadId));
+    dispatch(listComments(uploadId))
+      .catch(error => {
+        console.error("Failed to fetch comments:", error);
+        setFetchError("Failed to fetch comments. Please try again.");
+      });
   }, [dispatch, uploadId]);
 
   const handleSubmit = async () => {
@@ -23,7 +28,10 @@ function Comment({ uploadId }) {
     try {
       await dispatch(postComment(uploadId, content, userInfo.access_token, username));
       setContent("");
-      dispatch(listComments(uploadId));
+      dispatch(listComments(uploadId))
+        .catch(error => {
+          console.error("Failed to fetch comments after posting:", error);
+        });
     } catch (error) {
       console.error("Failed to submit comment:", error);
       alert("Failed to submit comment. Please try again.");
@@ -36,7 +44,9 @@ function Comment({ uploadId }) {
       {loading ? (
         <p>Loading comments...</p>
       ) : error ? (
-        <p>Error: {error}</p>
+        <div>Error: {error.message}</div>
+      ) : fetchError ? (
+        <div>Error: {fetchError}</div>
       ) : (
         <ul>
           {comments && comments[uploadId] && comments[uploadId].length > 0 ? (

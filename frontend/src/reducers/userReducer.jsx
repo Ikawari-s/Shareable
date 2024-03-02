@@ -196,15 +196,16 @@ export const LikeCountReducer = (state = initialState, action) => {
           error: null,
         },
       };
-    case FETCH_LIKES_COUNT_FAILURE:
-      return {
-        ...state,
-        [action.payload.uploadId]: {
-          ...state[action.payload.uploadId],
-          loading: false,
-          error: action.payload.error,
-        },
-      };
+      case FETCH_LIKES_COUNT_FAILURE:
+        return {
+          ...state,
+          [action.payload.uploadId]: {
+            ...state[action.payload.uploadId],
+            loading: false,
+            error: action.payload.error.message,
+          },
+        };
+      
     default:
       return state;
   }
