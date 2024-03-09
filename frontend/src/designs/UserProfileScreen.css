@@ -1,9 +1,66 @@
 #profile-image {
-    max-width: 4%;
-    height: auto;
-    margin-right: 0;
+    max-width: 15%;
 }
 
 #username-image {
     display: flex;
+}
+
+.settings-container {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+}
+
+.settings-form {
+    margin-left: 25%;
+    margin-right:25%;
+    width: 50%;
+}
+
+.settings-form label {
+    text-align: right;
+}
+
+.settings-form input {
+    margin: 5px 0;
+}
+
+.membership-container {
+    margin: 10px;
+}
+
+#itaas {
+    background-color: #4f4f4f;
+    color: white;
+    text-align: center;
+    content: '';
+    border-right: 10px solid rgba(0, 0, 0, 0);
+    border-top: 10px solid rgb(97, 97, 97);
+    border-left: 10px solid rgba(97, 97, 97);
+    float: right;
+    border-radius: 5px;
+}
+
+.profInfo {
+    margin: 10px;
+}
+
+.title {
+    font-weight:bolder;
+}
+
+.bar {
+    width: 500px; 
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px; 
+    outline: none;
+    margin: 0;
+    
+}
+
+.pang-usog {
+    width: 500px;
+
 }

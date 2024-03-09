@@ -9,6 +9,7 @@ import HomeScreen from './screens/HomeScreen';
 import ContactScreen from './screens/ContactScreen';
 import './bootstrap.min.css';
 import UserProfileScreen from './screens/UserProfileScreen';
+import UserProfileAccount from './screens/UserProfileAccount';
 import ProtectedRoute from './utils/ProtectedRoutes';
 import SharerbeScreen from './screens/SharerbeScreen';
 import ForgotpasswordScreen from './screens/ForgotpasswordScreen';
@@ -52,7 +53,8 @@ function App() {
 
           <Route path="/sharer-page" element={<ProtectedRoute><SharerPageScreen/></ProtectedRoute>} />
           <Route path="/be-sharer" element={<ProtectedRoute><SharerbeScreen /></ProtectedRoute>} />
-          <Route path="/userprofile" element={<ProtectedRoute><UserProfileScreen /></ProtectedRoute>} /> 
+          <Route path="/userprofile" element={<ProtectedRoute><UserProfileScreen /></ProtectedRoute>} />
+          <Route path="/userprofileaccount" element={<ProtectedRoute><UserProfileAccount /></ProtectedRoute>} />  
           <Route path="/home" element={<ProtectedRoute><HomeScreen /></ProtectedRoute>} />
           
           
