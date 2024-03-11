@@ -14,14 +14,12 @@ function NewPasswordScreen() {
   const [token, setToken] = useState('');
   const newPasswordState = useSelector(state => state.userNewPassword);
 
-
   useEffect(() => {
     const userInfo = localStorage.getItem("userInfo");
     if (userInfo) {
       navigate("/homepage");
     }
   }, [navigate]);
-  
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -40,7 +38,11 @@ function NewPasswordScreen() {
     if (newPasswordState && newPasswordState.success) {
       navigate("/");
     } else if (newPasswordState && newPasswordState.error) {
-      navigate("/invalid");
+      if (newPasswordState.error === 'Cannot use old password') {
+        setMessage('You cannot use your old password.');
+      } else {
+        setMessage('An error occurred. Please try again later.');
+      }
     }
   }, [newPasswordState, navigate]);
 
@@ -64,7 +66,11 @@ function NewPasswordScreen() {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      setMessage(error.message);
+      if (error.response && error.response.status === 401) {
+        setMessage('You cannot use your old password.');
+      } else {
+        setMessage(error.message);
+      }
     }
   };
 

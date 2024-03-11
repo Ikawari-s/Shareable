@@ -12,8 +12,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import *
 from django.contrib.auth.models import User
-from django.contrib.auth.models import AnonymousUser  # Import AnonymousUser
-from rest_framework.exceptions import NotFound
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import generics, status
 from rest_framework.response import Response
 from .models import AppUser
@@ -31,8 +30,9 @@ from django.contrib.auth import get_user_model
 from sharer.models import *
 from rest_framework.permissions import IsAuthenticated
 from sharer.serializers import *
-from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import get_object_or_404
+from rest_framework.parsers import MultiPartParser, FormParser
+from django.core.cache import cache
+from datetime import datetime, timedelta
 User = get_user_model()
 
 
@@ -43,6 +43,13 @@ class UserRegister(APIView):
     def post(self, request):
         serializer = UserRegisterSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
+            username = serializer.validated_data['username']
+            
+
+            if get_user_model().objects.filter(username=username).exists():
+                return Response({"error": "Username already exists"}, status=status.HTTP_400_BAD_REQUEST)
+            
+
             user = serializer.save(is_active=False)
             if user:
                 if not user.is_active:
@@ -86,7 +93,15 @@ class ResendOTP(APIView):
             if user.is_active:
                 return Response({"error": "User is already active"}, status=status.HTTP_400_BAD_REQUEST)
 
+            last_sent_time = cache.get(f'resend_otp_{user_id}_time')
+            if last_sent_time:
+                time_since_last_sent = datetime.now() - last_sent_time
+                if time_since_last_sent < timedelta(seconds=60):
+                    time_remaining = timedelta(seconds=60) - time_since_last_sent
+                    return Response({"error": f"Please wait {time_remaining.seconds} seconds before resending OTP"}, status=status.HTTP_400_BAD_REQUEST)
+
             user.send_otp()
+            cache.set(f'resend_otp_{user_id}_time', datetime.now(), timeout=60)  # Cache the current time
             return Response({"message": "OTP resent successfully"}, status=status.HTTP_200_OK)
 
 class VerifyOTP(APIView):
@@ -135,8 +150,20 @@ class UserLogin(APIView):
 
                 is_sharer = user.is_sharer
                 sharer_id = None
+                profile_picture = None
+                name = None
+
                 if is_sharer:
-                    sharer_id = user.sharer.id
+                    try:
+                        sharer = Sharer.objects.get(user=user)
+                        sharer_id = sharer.id
+                        profile_picture = sharer.image.url
+                        name = sharer.name  # Set the name to the sharer's page_name
+                    except Sharer.DoesNotExist:
+                        pass
+                else:
+                    profile_picture = user.profile_picture.url if user.profile_picture else None
+                    name = user.username  # For non-sharer users, name is taken from username
 
                 followed_sharers = user.follows.values_list('id', flat=True)
 
@@ -148,7 +175,9 @@ class UserLogin(APIView):
                     'user_id': user.id,
                     'is_sharer': is_sharer,
                     'sharer_id': sharer_id,
-                    'followed_sharers': list(followed_sharers), 
+                    'name': name,  # Include name in the response
+                    'profile_picture': profile_picture,
+                    'followed_sharers': list(followed_sharers),
                     'user_info': {
                         'email': user.email,
                         'username': user.username
@@ -162,7 +191,8 @@ class UserLogin(APIView):
                 return Response({'detail': 'Authentication failed'}, status=status.HTTP_401_UNAUTHORIZED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+
 
 class UserLogout(APIView):
     permission_classes = (permissions.IsAuthenticated,)
@@ -172,25 +202,6 @@ class UserLogout(APIView):
         return Response({'message': 'Logout successful'}, status=status.HTTP_200_OK)
 
 
-
-class UserView(APIView):
-    authentication_classes = (JWTAuthentication,)
-    permission_classes = (permissions.IsAuthenticated,)
-    def get(self, request):
-        user = request.user
-        serializer = UserSerializer(user, many=False)
-        return Response(serializer.data)
-
-
-class UserProfileView(APIView):
-    authentication_classes = (JWTAuthentication,)
-    permission_classes = (permissions.IsAuthenticated,)
-    def get(self, request):
-        AppUser = get_user_model()
-        users = AppUser.objects.all()
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
-    
 
 class CustomRedirect(HttpResponsePermanentRedirect):
 
@@ -272,32 +283,48 @@ class Be_sharer(APIView):
         try:
             if request.method == 'POST':
                 page_name = request.data.get('page_name')
+                profile_picture = request.data.get('profile_picture')  # Retrieve profile picture from request
+
                 if page_name:
-                    try:
-                        user = AppUser.objects.get(email=request.user.email)
-                        if not user.is_sharer:  # Check if the user is not already a sharer
-                            if not Sharer.objects.filter(name=page_name).exists():  # Check if the name already exists
-                                user.is_sharer = True
-                                user.save()
+                    user = AppUser.objects.get(email=request.user.email)
+                    if not user.is_sharer:  # Check if the user is not already a sharer
+                        if not Sharer.objects.filter(name=page_name).exists():  # Check if the name already exists
+                            user.is_sharer = True
+                            user.save()
 
-                                sharer_instance = Sharer.objects.create(
-                                    user=user,
-                                    name=page_name,
-                                    description=f"Sharer profile for {user.username}",
-                                    category="Default Category"
-                                )
+                            # Extract profile picture from AppUser
+                            profile_picture = user.profile_picture
 
-                                return Response({'message': 'User is now a sharer'}, status=status.HTTP_200_OK)
-                            else:
-                                return Response({'error': 'Name already exists'}, status=status.HTTP_400_BAD_REQUEST)
+                            # Create Sharer instance with user's data including profile picture
+                            sharer_instance_data = {
+                                'user': user,
+                                'email': user.email,  # You may need to adjust this depending on your serializer
+                                'image': profile_picture,
+                                'name': page_name,  # Set the sharer's name to the provided page_name
+                                'description': f"Sharer profile for {page_name}",
+                                'category': "Default Category",
+                                'username': page_name  # Set the username to the page_name
+                            }
+                            sharer_instance = Sharer.objects.create(**sharer_instance_data)
+
+                            user.sharer_id = sharer_instance.id
+                            user.save()
+
+                            response_data = {
+                                'message': 'User is now a sharer',
+                                'sharer_id': sharer_instance.id
+                            }
+                            return Response(response_data, status=status.HTTP_200_OK)
                         else:
-                            return Response({'error': 'User is already a sharer'}, status=status.HTTP_400_BAD_REQUEST)
-                    except AppUser.DoesNotExist:
-                        raise NotFound("User not found")
+                            return Response({'error': 'Name already exists'}, status=status.HTTP_400_BAD_REQUEST)
+                    else:
+                        return Response({'error': 'User is already a sharer'}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response({'error': 'Missing page_name parameter'}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'error': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        except ObjectDoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'error': f'Internal Server Error: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -358,3 +385,74 @@ class FollowedSharerList(generics.ListAPIView):
 
     def get_queryset(self):
         return self.request.user.follows.all()
+    
+
+#PANG GET LAHAT NG USER
+
+class UserView(APIView):
+    authentication_classes = (JWTAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+    def get(self, request):
+        user = request.user
+        serializer = UserSerializer(user, many=False)
+        return Response(serializer.data)
+
+
+
+# USE THIS FOR GET PROFILE
+class UserProfileView(APIView):
+    authentication_classes = (JWTAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+    def get(self, request):
+        AppUser = get_user_model()
+        users = AppUser.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+    
+
+
+# PANG EDIT
+
+class ProfileUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def patch(self, request, *args, **kwargs):
+        # Check if the user is authenticated
+        if request.user.is_sharer:
+            return Response({"detail": "You are not allowed to access this endpoint."}, status=status.HTTP_403_FORBIDDEN)
+
+        username = request.data.get('username')
+
+        if not username:
+            return Response({"detail": "Provide a username for update."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Update user profile
+        user_serializer = ProfileUpdateSerializer(request.user, data=request.data, partial=True)
+        if user_serializer.is_valid():
+            user_serializer.save()
+
+        return Response({"user": user_serializer.data}, status=status.HTTP_200_OK)
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    serializer = ChangePasswordSerializer(data=request.data)
+    if serializer.is_valid():
+        user = request.user
+        old_password = serializer.validated_data.get("old_password")
+        new_password = serializer.validated_data.get("new_password")
+        
+
+        if not user.check_password(old_password):   
+            return Response({"error": "Old password is incorrect"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if old_password == new_password:
+            return Response({"error": "New password must be different from old password"}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+        user.set_password(new_password)
+        user.save()
+        return Response({"message": "Password changed successfully"}, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

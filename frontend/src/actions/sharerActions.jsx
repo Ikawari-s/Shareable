@@ -25,7 +25,9 @@ import {
   SHARER_LATEST_POST_REQUEST,
   SHARER_LATEST_POST_SUCCESS,
   SHARER_LATEST_POST_FAIL,
-  
+  SHARER_UPDATE_PROFILE_REQUEST,
+  SHARER_UPDATE_PROFILE_SUCCESS,
+  SHARER_UPDATE_PROFILE_FAILURE,
 } from "../constants/sharerConstants";
 
 const instance = axios.create({
@@ -319,4 +321,40 @@ export const CheckerSharer = () => async (dispatch) => {
   }
 };
 
-  
+export const SharerUpdateProfile = ({ name, image, username, description }) => {
+  return async (dispatch) => {
+    try {
+      const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      const token = userInfo ? userInfo.access_token : null;
+
+      const formData = new FormData();
+      if (name) {
+        formData.append('name', name);
+      }
+      if (image) {
+        formData.append('image', image);
+      }
+      if (username) {
+        formData.append('username', username);
+      }
+      if (description) {
+        formData.append('description', description);
+      }
+
+      const config = {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      dispatch({ type: SHARER_UPDATE_PROFILE_REQUEST });
+
+      const response = await instance.patch('/api/sharer/update-profile-sharer/', formData, config);
+
+      dispatch({ type: SHARER_UPDATE_PROFILE_SUCCESS, payload: response.data });
+    } catch (error) {
+      dispatch({ type: SHARER_UPDATE_PROFILE_FAILURE, payload: error.response.data });
+    }
+  };
+};

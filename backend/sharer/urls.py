@@ -1,9 +1,11 @@
 from django.urls import path
-from . import views
+from . import views 
+from .views import *
 
 
 urlpatterns = [
     path('', views.SharerView, name='sharer-view'),
+     path('update-profile-sharer/', SharerUpdateProfile.as_view(), name='update_profile'),
     path('sharer-upload', views.SharerUploadViews.as_view(), name='sharer-post'),
     path('sharer-upload-list', views.SharerUploadListView, name='sharer-post-list'),
     path('sharer-profile/<int:sharer_id>/', views.SharerProfileDetail.as_view(), name='sharer-profile'),

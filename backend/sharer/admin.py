@@ -3,8 +3,8 @@ from .models import *
 
 @admin.register(Sharer)
 class SharerAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'email', 'category', 'is_sharer')  
-    search_fields = ('id', 'name', 'email', 'category')  
+    list_display = ('id', 'name', 'username', 'email', 'category', 'is_sharer')  
+    search_fields = ('id', 'name', 'username', 'email', 'category')  
     list_filter = ('category',)
 
 @admin.register(SharerUpload)

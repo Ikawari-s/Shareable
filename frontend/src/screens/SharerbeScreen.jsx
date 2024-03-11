@@ -30,16 +30,17 @@ function SharerbeScreen() {
       console.log("Response from backend:", response);
   
       if (response.data && response.data.message === 'User is now a sharer') {
-        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        if (userInfo) {
-          userInfo.is_sharer = true;
-          localStorage.setItem('userInfo', JSON.stringify(userInfo));
-          console.log("Updated userInfo:", userInfo);
-          alert("You are now a Sharer");
-          navigate("/login");
-        } else {
-          console.error("User info not found in localStorage");
-        }
+        const updatedUserInfo = {
+          ...JSON.parse(localStorage.getItem('userInfo')),
+          is_sharer: true,
+          sharer_id: response.data.sharer_id,
+          name: pageName // Update the name here
+        };
+        
+        localStorage.setItem('userInfo', JSON.stringify(updatedUserInfo));
+        console.log("Updated userInfo:", updatedUserInfo);
+        alert("You are now a Sharer");
+        navigate("/");
       } else {
         console.error("Unexpected message from backend:", response.data.message);
         alert("An unexpected error occurred while processing your request.");
@@ -49,6 +50,9 @@ function SharerbeScreen() {
       alert("An error occurred while processing your request.");
     }
   };
+  
+  
+
   
 
   return (

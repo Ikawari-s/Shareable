@@ -1,10 +1,11 @@
 import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import {thunk} from 'redux-thunk'; // Correct import statement for thunk middleware
-import { CommentPostReducer, DeleteCommentPostReducer, LikeCountReducer, LikePostReducer, ListCommentPostReducer, UnlikePostReducer, likesCountReducer, userLoginReducer, } from './reducers/userReducer';
+import { CommentPostReducer, DeleteCommentPostReducer, LikeCountReducer, LikePostReducer, ListCommentPostReducer, UnlikePostReducer, UserProfileUpdateReducer, likesCountReducer, userChangePasswordReducer, userLoginReducer, } from './reducers/userReducer';
 import { userRegisterReducer, userResendOTPReducer, userSentOTPReducer, userVerifyOTPReducer } from './reducers/registerReducer';
-import {sharerListReducer, myProfileReducer, CheckSharerReducer, SharerDetailReducer, userSharerBeReducer, userSharerPostReducer, SharerLatestPostReducer} from './reducers/sharerReducer';
+import {sharerListReducer, myProfileReducer, CheckSharerReducer, SharerDetailReducer, userSharerBeReducer, userSharerPostReducer, SharerLatestPostReducer, SharerUserProfileUpdateReducer} from './reducers/sharerReducer';
 import { sharerPostListReducer } from './reducers/sharerReducer';
 import { followReducer, unfollowReducer, followedSharerListReducer } from './reducers/followReducer';
+import { SharerUpdateProfile } from './actions/sharerActions';
 
 
 const reducer = combineReducers({
@@ -33,6 +34,9 @@ const reducer = combineReducers({
   DeleteComment: DeleteCommentPostReducer,
   ListComment: ListCommentPostReducer,
   LikeCount : LikeCountReducer,
+  UserProfileUpdate : UserProfileUpdateReducer,
+  SharerUpdateProfile: SharerUserProfileUpdateReducer,
+  userChangePassword : userChangePasswordReducer,
   
 
 
@@ -44,7 +48,6 @@ JSON.parse(localStorage.getItem("key") || '{}')
 const initialState = {
   userLogin: { userInfo: userInfoFromStorage },
 
-  // userProfile: { userProfileData: null },
 };
 
 const store = configureStore({

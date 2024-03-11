@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { verifyOTP, resendOTP } from '../actions/registerActions';
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -8,6 +8,8 @@ function VerifyotpScreen() {
   const [otp, setOtp] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const verifyOtpError = useSelector(state => state.verifyOtpError);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const userInfo = localStorage.getItem("userInfo");
@@ -16,17 +18,23 @@ function VerifyotpScreen() {
     }
   }, [navigate]);
 
-  const handleSubmit = (event) => {
+  useEffect(() => {
+    if (verifyOtpError) {
+      setErrorMessage(verifyOtpError); // Set error message when verifyOtpError state changes
+    }
+  }, [verifyOtpError]);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    dispatch(verifyOTP(userId, otp)) 
-      .then(() => {
-        console.log('OTP submitted:', otp);
-        navigate('/homepage'); 
-      })
-      .catch((error) => {
-        console.error('OTP verification failed:', error);
-      });
+    try {
+      const data = await dispatch(verifyOTP(userId, otp)); 
+      console.log('OTP submitted:', otp);
+      navigate('/homepage');
+    } catch (error) {
+      console.error('OTP verification failed:', error);
+      setErrorMessage('OTP verification failed. Please try again.');
+    }
   };
 
   const handleResendOTP = () => {
@@ -34,9 +42,11 @@ function VerifyotpScreen() {
     dispatch(resendOTP(userId)) 
       .then(() => {
         console.log('OTP re-sent successfully');
+        setErrorMessage(''); // Clear error message when OTP is resent successfully
       })
       .catch((error) => {
         console.error('Failed to resend OTP:', error);
+        setErrorMessage('Failed to resend OTP. Please try again.');
       });
   };
 
@@ -49,6 +59,7 @@ function VerifyotpScreen() {
         <button type="submit">Submit</button>
       </form>
       <button onClick={handleResendOTP}>Re-send OTP</button>
+      {errorMessage && <p>{errorMessage}</p>} {/* Display error message */}
     </div>
   );
 }

@@ -72,6 +72,8 @@ export const verifyOTP = (userId, otp) => async (dispatch) => {
       type: USER_VERIFY_SUCCESS,
       payload: data,
     });
+
+    return data; // Return the data for success handling in the component
   } catch (error) {
     dispatch({
       type: USER_VERIFY_FAIL,
@@ -80,6 +82,7 @@ export const verifyOTP = (userId, otp) => async (dispatch) => {
           ? error.response.data.error
           : error.message,
     });
+    throw error; // Throw the error for error handling in the component
   }
 };
 

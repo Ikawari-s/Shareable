@@ -17,6 +17,7 @@
     "emailjs": "^4.0.3",
     "emailjs-com": "^3.2.0",
     "enlist": "^0.1.0",
+    "js-base64": "^3.7.7",
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.2",
     "react-dom": "^18.2.0",

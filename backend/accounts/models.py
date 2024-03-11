@@ -37,6 +37,7 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_sharer = models.BooleanField(default=False)
     follows = models.ManyToManyField(Sharer, related_name="follower", symmetrical=False,  blank=True)
+    profile_picture = models.ImageField(upload_to='uploads/images', default='uploads/default/default.png', null=True, blank=True)
 
 
     otp_code = models.CharField(max_length=6, blank=True, null=True)

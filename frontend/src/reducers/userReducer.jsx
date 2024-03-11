@@ -28,6 +28,16 @@ import {
   FETCH_LIKES_COUNT_REQUEST,
   FETCH_LIKES_COUNT_SUCCESS,
   FETCH_LIKES_COUNT_FAILURE,
+  UPDATE_PROFILE_REQUEST,
+  UPDATE_PROFILE_SUCCESS,
+  UPDATE_PROFILE_FAILURE,
+  FETCH_USER_PROFILE_REQUEST,
+  FETCH_USER_PROFILE_SUCCESS,
+  FETCH_USER_PROFILE_FAILURE,
+  USER_CHANGE_PASSWORD_REQUEST,
+  USER_CHANGE_PASSWORD_SUCCESS,
+  USER_CHANGE_PASSWORD_FAIL,
+
 } from "../constants/userConstants";
 
 
@@ -206,6 +216,57 @@ export const LikeCountReducer = (state = initialState, action) => {
           },
         };
       
+    default:
+      return state;
+  }
+};
+
+
+
+export const UserProfileUpdateReducer = (state = {}, action) => {
+  switch (action.type) {
+    case UPDATE_PROFILE_REQUEST:
+      return { loading: true };
+
+    case UPDATE_PROFILE_SUCCESS:
+      return { loading: false, updateProfile: action.payload };
+
+    case UPDATE_PROFILE_FAILURE:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+
+export const UserProfileReducer = (state = {}, action) => {
+  switch (action.type) {
+    case FETCH_USER_PROFILE_REQUEST:
+      return { loading: true };
+
+    case FETCH_USER_PROFILE_SUCCESS:
+      return { loading: false, userProfile: action.payload };
+
+    case FETCH_USER_PROFILE_FAILURE:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const userChangePasswordReducer = (state = {}, action) => {
+  switch (action.type) {
+    case USER_CHANGE_PASSWORD_REQUEST:
+      return { loading: true };
+
+    case USER_CHANGE_PASSWORD_SUCCESS:
+      return { loading: false, userInfo: action.payload };
+
+    case USER_CHANGE_PASSWORD_FAIL:
+      return { loading: false, error: action.payload };
+
     default:
       return state;
   }

@@ -23,6 +23,9 @@ import {
   SHARER_LATEST_POST_REQUEST,
   SHARER_LATEST_POST_SUCCESS,
   SHARER_LATEST_POST_FAIL,
+  SHARER_UPDATE_PROFILE_REQUEST,
+  SHARER_UPDATE_PROFILE_SUCCESS,
+  SHARER_UPDATE_PROFILE_FAILURE,
 } from "../constants/sharerConstants";
 
 export const SharerDetailReducer = (state = {}, action) => {
@@ -141,6 +144,23 @@ export const CheckSharerReducer = (state = {}, action) => {
       return { loading: false, isSharer: action.payload };
 
     case CHECK_SHARER_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+
+export const SharerUserProfileUpdateReducer = (state = {}, action) => {
+  switch (action.type) {
+    case SHARER_UPDATE_PROFILE_REQUEST:
+      return { loading: true };
+
+    case SHARER_UPDATE_PROFILE_SUCCESS:
+      return { loading: false, success: true, updateProfile: action.payload };
+
+    case SHARER_UPDATE_PROFILE_FAILURE:
       return { loading: false, error: action.payload };
 
     default:

@@ -192,5 +192,27 @@ class CommentListView(generics.ListAPIView):
 
     def get_queryset(self):
         upload_id = self.kwargs.get('upload_id')
-        queryset = Comment.objects.filter(post_id=upload_id)  # Filter comments by upload_id
+        queryset = Comment.objects.filter(post_id=upload_id)  
         return queryset
+    
+
+
+class IsSharer(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.is_sharer
+
+
+
+
+class SharerUpdateProfile(APIView):
+    permission_classes = [IsAuthenticated, IsSharer]
+
+    def patch(self, request):
+        user = request.user
+        sharer = Sharer.objects.get(user=user)
+        serializer = SharerSerializer(sharer, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()  # Save the serializer to update the profile
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -11,13 +11,15 @@ class AppUserAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'username', 'password')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_sharer', 'groups', 'user_permissions', 'follows')}),
+        ('Profile Picture', {'fields': ('profile_picture',)}), 
     )
 
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'username', 'password1', 'password2', 'is_active', 'is_staff', 'is_sharer')}
+            'fields': ('email', 'username', 'password1', 'password2', 'is_active', 'is_staff', 'is_sharer', 'profile_picture')},  # Include profile_picture field here
         ),
     )
+
 
 admin.site.register(AppUser, AppUserAdmin)

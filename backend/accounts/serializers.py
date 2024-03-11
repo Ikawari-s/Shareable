@@ -37,7 +37,24 @@ class UserLoginSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = ['id', 'email', 'username', 'is_active', 'is_staff']
+        fields = ['id', 'email', 'username', 'is_active', 'is_staff', 'profile_picture']
+
+
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(required=False)
+    profile_picture = serializers.ImageField(required=False)
+
+    class Meta:
+        model = AppUser
+        fields = ['username', 'profile_picture']
+
+    def update(self, instance, validated_data):
+        if 'username' in validated_data:
+            instance.username = validated_data['username']
+        if 'profile_picture' in validated_data:
+            instance.profile_picture = validated_data['profile_picture']
+        instance.save()
+        return instance
 
 
 class Be_sharerSerializer(serializers.Serializer):
@@ -68,9 +85,6 @@ class SetNewPasswordSerializer(serializers.Serializer):
     token = serializers.CharField(min_length=1, write_only=True)
     uidb64 = serializers.CharField(min_length=1, write_only=True)
 
-    class Meta:
-        fields = ['password', 'token', 'uidb64']
-
     def validate(self, attrs):
         try:
             password = attrs.get('password')
@@ -82,17 +96,18 @@ class SetNewPasswordSerializer(serializers.Serializer):
             if not PasswordResetTokenGenerator().check_token(user, token):
                 raise AuthenticationFailed('The reset link is invalid', 401)
 
+            if user.check_password(password):
+                raise serializers.ValidationError("New password cannot be the same as the old password.")
+
             user.set_password(password)
             user.save()
 
-            return (user)
+            return attrs
         except Exception as e:
             raise AuthenticationFailed('The reset link is invalid', 401)
-        return super().validate(attrs)
 
 
-
-class SendOTPSerializer(serializers.Serializer):
+class SendOTPSerializer(serializers.Serializer):    
     email = serializers.EmailField()
 
 class ResendOTPSerializer(serializers.Serializer):
@@ -106,3 +121,9 @@ class VerifyOTPSerializer(serializers.Serializer):
 
 class SharerCheckerSerializer(serializers.Serializer):
     is_sharer = serializers.BooleanField()
+
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
