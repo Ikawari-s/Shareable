@@ -26,6 +26,10 @@ import {
   SHARER_UPDATE_PROFILE_REQUEST,
   SHARER_UPDATE_PROFILE_SUCCESS,
   SHARER_UPDATE_PROFILE_FAILURE,
+  SHARER_DELETE_POST_REQUEST,
+  SHARER_DELETE_POST_SUCCESS,
+  SHARER_DELETE_POST_FAILURE,
+  REMOVE_DELETED_POST,
 } from "../constants/sharerConstants";
 
 export const SharerDetailReducer = (state = {}, action) => {
@@ -100,6 +104,11 @@ export const sharerPostListReducer = (
       return { loading: false, posts: action.payload, error: null };
     case SHARER_POST_LIST_FAIL:
       return { loading: false, posts: [], error: action.payload };
+    case REMOVE_DELETED_POST:
+      return {
+          ...state,
+          posts: state.posts.filter((post) => post.id !== action.payload),
+        };
     default:
       return state;
   }
@@ -167,3 +176,37 @@ export const SharerUserProfileUpdateReducer = (state = {}, action) => {
       return state;
   }
 };
+
+
+const sharerDeletePostReducer = (state = { loading: false, success: false, error: null }, action) => {
+  switch (action.type) {
+    case SHARER_DELETE_POST_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        success: false,
+        error: null,
+      };
+
+    case SHARER_DELETE_POST_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        success: true,
+        error: null,
+      };
+
+    case SHARER_DELETE_POST_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        success: false,
+        error: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
+export default sharerDeletePostReducer;

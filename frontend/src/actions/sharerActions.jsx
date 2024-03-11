@@ -28,6 +28,10 @@ import {
   SHARER_UPDATE_PROFILE_REQUEST,
   SHARER_UPDATE_PROFILE_SUCCESS,
   SHARER_UPDATE_PROFILE_FAILURE,
+  SHARER_DELETE_POST_REQUEST,
+  SHARER_DELETE_POST_SUCCESS,
+  SHARER_DELETE_POST_FAILURE,
+  REMOVE_DELETED_POST,
 } from "../constants/sharerConstants";
 
 const instance = axios.create({
@@ -357,4 +361,38 @@ export const SharerUpdateProfile = ({ name, image, username, description }) => {
       dispatch({ type: SHARER_UPDATE_PROFILE_FAILURE, payload: error.response.data });
     }
   };
+};
+
+
+export const sharerDeletePost = (uploadId) => async (dispatch) => {
+  try {
+    dispatch({ type: SHARER_DELETE_POST_REQUEST });
+
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const accessToken = userInfo ? userInfo.access_token : null;
+    console.log("Access token:", accessToken); 
+
+    if (!accessToken) {
+      throw new Error('Access token not found');
+    }
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+
+    // Make API request to delete the post
+    await axios.delete(`/api/sharer/sharer-post-delete/${uploadId}/`, config);
+
+    dispatch({ type: SHARER_DELETE_POST_SUCCESS, payload: uploadId }); // Pass the uploadId as payload
+    dispatch({ type: REMOVE_DELETED_POST, payload: uploadId }); // Add a new action to remove the post from the state
+  } catch (error) {
+    dispatch({
+      type: SHARER_DELETE_POST_FAILURE,
+      payload: error.response.data.message || 'Failed to delete post',
+    });
+  }
 };

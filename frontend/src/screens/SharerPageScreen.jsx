@@ -4,6 +4,7 @@ import {
   listSharerPosts,
   profileSharers,
   SharerUpdateProfile,
+  sharerDeletePost
 } from "../actions/sharerActions"; // Import the SharerUpdateProfile action
 import SharerPost from "../components/SharerPost";
 import { useNavigate } from "react-router-dom";
@@ -97,6 +98,11 @@ function SharerPageScreen() {
     .slice()
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
+    const handleDeletePost = (uploadId) => {
+      // Dispatch the sharerDeletePost action with the uploadId
+      dispatch(sharerDeletePost(uploadId));
+    };
+
   return (
     <div>
       <p>PAGE TITLE: {name}</p>
@@ -162,13 +168,14 @@ function SharerPageScreen() {
       </div>
       {sortedPosts.map((post) => {
         return (
-          <div key={post.id}>
-            <h2>{post.title}</h2>
+          <div key={post.id}> 
+            <h2>{post.title}</h2>  <button onClick={() => handleDeletePost(post.id)}>DELETE POST</button>
             <p>{post.description}</p>
             <p>Time: {post.created_at_formatted}</p>
             {post.image && <img src={post.image} alt="Post Image" />}
             <LikeComponent uploadId={post.id} />
             <Comment uploadId={post.id} />
+            
           </div>
         );
       })}

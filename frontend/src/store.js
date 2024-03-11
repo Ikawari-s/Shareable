@@ -37,6 +37,9 @@ const reducer = combineReducers({
   UserProfileUpdate : UserProfileUpdateReducer,
   SharerUpdateProfile: SharerUserProfileUpdateReducer,
   userChangePassword : userChangePasswordReducer,
+  //sharerDeletePost : sharerDeletePostReducer,
+ 
+  
   
 
 
