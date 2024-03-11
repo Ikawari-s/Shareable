@@ -216,3 +216,21 @@ class SharerUpdateProfile(APIView):
             serializer.save()  # Save the serializer to update the profile
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class SharerDeletePostView(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated, IsSharerPermission]
+
+    def delete(self, request, *args, **kwargs):
+        upload_id = kwargs.get('upload_id')
+
+        try:
+            upload = SharerUpload.objects.get(id=upload_id)
+        except SharerUpload.DoesNotExist:
+            return Response({"message": "Post does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        if upload.uploaded_by.user != request.user:
+            return Response({"message": "You are not the owner of this post"}, status=status.HTTP_403_FORBIDDEN)
+
+        upload.delete()
+        return Response({"message": "Post deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
