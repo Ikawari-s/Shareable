@@ -40,7 +40,7 @@ function SharerbeScreen() {
         localStorage.setItem('userInfo', JSON.stringify(updatedUserInfo));
         console.log("Updated userInfo:", updatedUserInfo);
         alert("You are now a Sharer");
-        navigate("/");
+        navigate("/sharer-page"); // Redirect to sharer-page
       } else {
         console.error("Unexpected message from backend:", response.data.message);
         alert("An unexpected error occurred while processing your request.");
@@ -50,10 +50,6 @@ function SharerbeScreen() {
       alert("An error occurred while processing your request.");
     }
   };
-  
-  
-
-  
 
   return (
     <div>

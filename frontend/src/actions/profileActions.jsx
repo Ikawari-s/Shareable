@@ -12,16 +12,18 @@ export const profile = () => async (dispatch) => {
       type: USER_PROFILE_REQUEST,
     });
 
-    // Set the authorization header using Axios defaults
-    const accessToken = localStorage.getItem('accessToken'); // Assuming you store the access token in localStorage
-    axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
 
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
-
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
     const { data } = await instance.get(
       'api/user/profile/',
       config

@@ -274,3 +274,5 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = "shareable2024@gmail.com"
 EMAIL_HOST_PASSWORD = "fmmgdwqbmpbckllq"
 APP_SCHEME = 'https'
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024 

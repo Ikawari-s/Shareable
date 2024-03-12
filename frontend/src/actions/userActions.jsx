@@ -298,28 +298,32 @@ export const deleteComments = (commentId) => async (dispatch) => {
 
 
 
-export const updateUserProfile = (formData, username) => async (dispatch) => {
+export const updateUserProfile = ({ profile_picture, username }) => async (dispatch) => {
   try {
     dispatch({ type: UPDATE_PROFILE_REQUEST });
 
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const token = userInfo ? userInfo.access_token : null;
 
-    const config = token
-      ? {
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-        }
-      : {};
-
-    delete config.headers['Content-Type'];
-
+    const formData = new FormData();
+    
+    // Append profile_picture only if it's present
+    if (profile_picture) {
+      formData.append('profile_picture', profile_picture);
+    }
+    
+    // Append username only if it's present
     if (username) {
       formData.append('username', username);
     }
+
+    const config = {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        // Set the correct content type for FormData
+        "Content-Type": "multipart/form-data",
+      },
+    };
 
     const { data } = await instance.patch('api/profile/update/', formData, config);
 
@@ -336,7 +340,6 @@ export const updateUserProfile = (formData, username) => async (dispatch) => {
     });
   }
 };
-
 
 export const fetchUserProfile = () => async (dispatch) => {
   try {

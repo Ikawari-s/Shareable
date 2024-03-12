@@ -85,15 +85,15 @@ class SharerUploadViews(APIView):
     permission_classes = [IsAuthenticated, IsSharerPermission]
 
     def post(self, request):
-        sharer = request.user.sharer  
-        request.data['uploaded_by'] = sharer.id
-
+        sharer = request.user.sharer
+        
+        # Create a serializer with the request data
         serializer = SharerUploadSerializer(data=request.data)
+        
         if serializer.is_valid():
             serializer.save(uploaded_by=sharer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class LikePost(APIView):
@@ -204,6 +204,8 @@ class IsSharer(permissions.BasePermission):
 
 
 
+
+
 class SharerUpdateProfile(APIView):
     permission_classes = [IsAuthenticated, IsSharer]
 
@@ -213,7 +215,7 @@ class SharerUpdateProfile(APIView):
         serializer = SharerSerializer(sharer, data=request.data, partial=True)
 
         if serializer.is_valid():
-            serializer.save()  # Save the serializer to update the profile
+            serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     

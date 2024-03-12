@@ -139,34 +139,48 @@ export const beSharer = (page_name) => async (dispatch) => {
   }
 };
 
-export const uploadSharer = ({ title, description, image }) => {
-  return async (dispatch) => {
-    try {
-      const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-      const token = userInfo ? userInfo.access_token : null;
+export const uploadSharer = (formData) => async (dispatch) => {
+  try {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
 
-      const formData = new FormData();
-      formData.append('title', title);
-      formData.append('description', description);
-      formData.append('image', image);
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
 
-      const config = token
-        ? {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              Accept: 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        : {};
+    // Remove null values from formData
+    const formDataUpload = new FormData();
+    Object.keys(formData).forEach((key) => {
+      if (formData[key] !== null) {
+        formDataUpload.append(key, formData[key]);
+      }
+    });
 
-      const response = await instance.post('/api/sharer/sharer-upload', formData, config);
-      dispatch({ type: 'SHARER_POST_SUCCESS', payload: response.data });
-    } catch (error) {
-      dispatch({ type: 'SHARER_POST_FAIL', payload: error.response.data });
-    }
-  };
+    const { data } = await instance.post(
+      "api/sharer/sharer-upload",
+      formDataUpload,
+      config
+    );
+
+    dispatch({ type: SHARER_POST_LIST_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: SHARER_POST_LIST_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
 };
+
+
+const BASE_URL = "http://localhost:8000";
 
 export const listSharerPosts = () => async (dispatch) => {
   try {
@@ -188,13 +202,24 @@ export const listSharerPosts = () => async (dispatch) => {
       config
     );
 
-
+    // Map through data and format created_at
     const formattedData = data.map(post => ({
       ...post,
       created_at_formatted: new Date(post.created_at).toLocaleString() 
     }));
 
-    dispatch({ type: SHARER_POST_LIST_SUCCESS, payload: formattedData });
+    // Format URLs based on file type
+    const formattedPosts = formattedData.map(post => ({
+      ...post,
+      // Handle image URLs
+      image_url: post.image ? `${BASE_URL}/${post.image}` : null,
+      // Handle video URLs
+      video_url: post.video ? `${BASE_URL}/${post.video}` : null,
+      // Handle file URLs
+      file_url: post.file ? `${BASE_URL}/${post.file}` : null
+    }));
+
+    dispatch({ type: SHARER_POST_LIST_SUCCESS, payload: formattedPosts });
   } catch (error) {
     dispatch({
       type: SHARER_POST_LIST_FAIL,
@@ -205,6 +230,7 @@ export const listSharerPosts = () => async (dispatch) => {
     });
   }
 };
+
 
 
 
@@ -325,7 +351,7 @@ export const CheckerSharer = () => async (dispatch) => {
   }
 };
 
-export const SharerUpdateProfile = ({ name, image, username, description }) => {
+export const SharerUpdateProfile = ({ name, image, username, description, category }) => {
   return async (dispatch) => {
     try {
       const userInfo = JSON.parse(localStorage.getItem('userInfo'));
@@ -343,6 +369,9 @@ export const SharerUpdateProfile = ({ name, image, username, description }) => {
       }
       if (description) {
         formData.append('description', description);
+      }
+      if (category) {
+        formData.append('category', category); // Add the category to formData
       }
 
       const config = {
@@ -362,7 +391,6 @@ export const SharerUpdateProfile = ({ name, image, username, description }) => {
     }
   };
 };
-
 
 export const sharerDeletePost = (uploadId) => async (dispatch) => {
   try {

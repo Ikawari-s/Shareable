@@ -40,9 +40,7 @@ function Homepage({ sharerList, listSharers,}) {
     return <div>Error: {error}</div>;
   }
   
-  // const handleFollow = (sharerId) => {
-  //   followSharer(sharerId);
-  // };
+
   
   return (
     <div>
@@ -80,9 +78,6 @@ function Homepage({ sharerList, listSharers,}) {
                     </Card.Text>
                     
                   </div>
-                  {/* <Button onClick={() => handleFollow(sharer.id)}>
-                Follow Sharer
-              </Button> */}
                   <a href={`sharers/${sharer.id}`}>
                     {" "}
                     <Button variant="primary">See More</Button>{" "}

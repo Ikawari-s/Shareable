@@ -1,11 +1,20 @@
 from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
+from django.core.validators import FileExtensionValidator
 
 def upload_image(instance, filename):
-    # Generate a unique filename and replace spaces with underscores
     filename = slugify(filename)
     return f'uploads/images/{filename}'
+
+def upload_video(instance, filename):
+    filename = slugify(filename)
+    return f'uploads/videos/{filename}'
+
+def upload_file(instance, filename):
+    filename = slugify(filename)
+    return f'uploads/files/{filename}'
+
 
 class Sharer(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -13,7 +22,33 @@ class Sharer(models.Model):
     image = models.ImageField(upload_to=upload_image, null=False, blank=False)
     name = models.CharField(max_length=30, null=False, blank=False)
     description = models.CharField(max_length=150, null=False, blank=False)
-    category = models.CharField(max_length=30, null=False, blank=False)
+    
+    CATEGORY_CHOICES = [
+        ('', 'Not specified'),
+        ('Art', 'Art'),
+        ('Comics', 'Comics'),
+        ('Writing', 'Writing'),
+        ('Music', 'Music'),
+        ('Podcasts', 'Podcasts'),
+        ('Video & Film', 'Video & Film'),
+        ('Photography', 'Photography'),
+        ('Crafts & DIY', 'Crafts & DIY'),
+        ('Dance & Theater', 'Dance & Theater'),
+        ('Gaming', 'Gaming'),
+        ('Education', 'Education'),
+        ('Science', 'Science'),
+        ('Technology', 'Technology'),
+        ('Health & Fitness', 'Health & Fitness'),
+        ('Lifestyle', 'Lifestyle'),
+        ('Fashion & Beauty', 'Fashion & Beauty'),
+        ('Food & Cooking', 'Food & Cooking'),
+        ('Travel & Outdoor', 'Travel & Outdoor'),
+        ('Business & Entrepreneurship', 'Business & Entrepreneurship'),
+        ('Parenting & Family', 'Parenting & Family'),
+    ]
+    
+    category = models.CharField(max_length=30, choices=CATEGORY_CHOICES, null=False, blank=False)
+    
     username = models.CharField(max_length=50)  
     id = models.AutoField(primary_key=True)
     
@@ -34,6 +69,8 @@ class SharerUpload(models.Model):
     title = models.CharField(max_length=200, null=False, blank=False)
     description = models.CharField(max_length=1000000, null=False, blank=False)
     image = models.ImageField(upload_to=upload_image, null=True, blank=True)
+    video = models.FileField(upload_to=upload_video, null=True, blank=True)  
+    file = models.FileField(upload_to=upload_file, null=True, blank=True)  
     uploaded_by = models.ForeignKey(Sharer, on_delete=models.CASCADE, related_name='uploads')
     created_at = models.DateTimeField(auto_now_add=True)
     

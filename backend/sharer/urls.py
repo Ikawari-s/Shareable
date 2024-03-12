@@ -20,4 +20,3 @@ urlpatterns = [
     path('sharer-post-delete/<int:upload_id>/', views.SharerDeletePostView.as_view(), name='delete_sharer_post'),
 
 ]
-    

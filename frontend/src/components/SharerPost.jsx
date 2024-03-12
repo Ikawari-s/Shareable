@@ -6,7 +6,9 @@ function SharerPost({ uploadSharer }) {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    image: null
+    image: null,
+    video: null,
+    file: null,
   });
 
   const [loading, setLoading] = useState(false);
@@ -16,18 +18,28 @@ function SharerPost({ uploadSharer }) {
   };
 
   const handleFileChange = (e) => {
-    setFormData({ ...formData, image: e.target.files[0] });
+    setFormData({ ...formData, [e.target.name]: e.target.files[0] });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (loading) return; 
+    if (loading) return;
+  
     setLoading(true);
-    const { title, description, image } = formData;
-    await uploadSharer({ title, description, image });
+
+    // Remove null values from formData
+    const formDataUpload = {};
+    Object.keys(formData).forEach((key) => {
+      if (formData[key] !== null) {
+        formDataUpload[key] = formData[key];
+      }
+    });
+  
+    await uploadSharer(formDataUpload);
     setLoading(false);
-    window.location.reload(); 
+    window.location.reload();
   };
+  
 
   return (
     <div>
@@ -42,8 +54,16 @@ function SharerPost({ uploadSharer }) {
           <input type="text" name="description" value={formData.description} onChange={handleChange} />
         </div>
         <div>
-          <label>Image:</label>
-          <input type="file" name="image" onChange={handleFileChange} />
+          <label>Upload Image:</label>
+          <input type="file" name="image" onChange={handleFileChange} accept="image/*" />
+        </div>
+        <div>
+          <label>Upload Video:</label>
+          <input type="file" name="video" onChange={handleFileChange} accept="video/*" />
+        </div>
+        <div>
+          <label>Upload File:</label>
+          <input type="file" name="file" onChange={handleFileChange} />
         </div>
         <button type="submit" disabled={loading}>Upload</button>
       </form>

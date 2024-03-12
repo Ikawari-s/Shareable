@@ -9,7 +9,7 @@ import { changePassword } from '../actions/userActions';
 
 function UserProfileAccount() {
   const navigate = useNavigate();
-  const dispatch = useDispatch(); // Define dispatch function
+  const dispatch = useDispatch();
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');

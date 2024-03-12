@@ -176,7 +176,7 @@ class UserLogin(APIView):
                     'is_sharer': is_sharer,
                     'sharer_id': sharer_id,
                     'name': name,  # Include name in the response
-                    'profile_picture': profile_picture,
+                    # 'profile_picture': profile_picture,
                     'followed_sharers': list(followed_sharers),
                     'user_info': {
                         'email': user.email,
@@ -400,18 +400,22 @@ class UserView(APIView):
 
 
 # USE THIS FOR GET PROFILE
-class UserProfileView(APIView):
-    authentication_classes = (JWTAuthentication,)
-    permission_classes = (permissions.IsAuthenticated,)
-    def get(self, request):
-        AppUser = get_user_model()
-        users = AppUser.objects.all()
-        serializer = UserSerializer(users, many=True)
+class UserProfileView(generics.RetrieveUpdateAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    def patch(self, request, *args, **kwargs):
+        serializer = self.get_serializer(self.get_object(), data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(serializer.data)
-    
 
 
 # PANG EDIT
+
 
 class ProfileUpdateView(APIView):
     permission_classes = [IsAuthenticated]
@@ -427,13 +431,12 @@ class ProfileUpdateView(APIView):
         if not username:
             return Response({"detail": "Provide a username for update."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Update user profile
         user_serializer = ProfileUpdateSerializer(request.user, data=request.data, partial=True)
         if user_serializer.is_valid():
             user_serializer.save()
-
-        return Response({"user": user_serializer.data}, status=status.HTTP_200_OK)
-
+            return Response({"user": user_serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "Invalid data provided for profile update."}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
@@ -456,3 +459,27 @@ def change_password(request):
         user.save()
         return Response({"message": "Password changed successfully"}, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+# from django.utils.decorators import method_decorator
+# from django.views.decorators.csrf import csrf_exempt
+
+# class Ratings(APIView):
+#     permission_classes = [IsAuthenticated]  
+
+#     @method_decorator(csrf_exempt)
+#     def dispatch(self, *args, **kwargs):
+#         return super().dispatch(*args, **kwargs)
+        
+#     def post(self, request):
+#         serializer = RatingSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#     def get(self, request):
+#         ratings = Rating.objects.all()
+#         serializer = RatingSerializer(ratings, many=True)
+#         return Response(serializer.data)

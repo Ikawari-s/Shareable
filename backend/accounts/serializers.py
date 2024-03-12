@@ -6,8 +6,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework.exceptions import AuthenticationFailed
-
-from .models import AppUser
+from .models import *
 
 UserModel = get_user_model()
 
@@ -35,10 +34,16 @@ class UserLoginSerializer(serializers.Serializer):
         return attrs
 
 class UserSerializer(serializers.ModelSerializer):
+    profile_picture_url = serializers.SerializerMethodField()
+
     class Meta:
         model = UserModel
-        fields = ['id', 'email', 'username', 'is_active', 'is_staff', 'profile_picture']
+        fields = ['id', 'email', 'username', 'is_active', 'is_staff', 'profile_picture', 'profile_picture_url']
 
+    def get_profile_picture_url(self, obj):
+        if obj.profile_picture:
+            return obj.profile_picture.url
+        return None
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=False)
@@ -127,3 +132,10 @@ class SharerCheckerSerializer(serializers.Serializer):
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
+
+
+
+# class RatingSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Rating
+#         fields = ['id', 'user', 'rating', 'comments', 'created_at']

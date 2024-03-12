@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import *
+from .models import Sharer, SharerUpload, Like, Comment
 
 @admin.register(Sharer)
 class SharerAdmin(admin.ModelAdmin):
@@ -40,8 +40,6 @@ class SharerUploadAdmin(admin.ModelAdmin):
     unlike_posts.short_description = "Unlike selected posts"
 
     actions = ['unlike_posts']  # Registering the action within the SharerUploadAdmin class
-
-
 
 @admin.register(Like)
 class LikeAdmin(admin.ModelAdmin):

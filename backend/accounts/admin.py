@@ -22,4 +22,10 @@ class AppUserAdmin(UserAdmin):
     )
 
 
+# @admin.register(Rating)
+# class RatingAdmin(admin.ModelAdmin):
+#     list_display = ('user', 'rating', 'comments', 'created_at')
+#     search_fields = ('user__username', 'comments')
+#     list_filter = ('created_at',)
+
 admin.site.register(AppUser, AppUserAdmin)
