@@ -1,29 +1,30 @@
 .bodhi {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #333;
-    color: #fff;
-    padding-top: 8px;
-    transition: border-radius 0.3s ease, margin 0.3s ease, width 0.3s ease;
-    z-index: 1000; /* Ensure it stays above other content */
-  }
-  
-  .circular {
-    border-radius: 40px;
-    margin-top: 1rem;
-    margin-left: 2.5%;
-    margin-right: 2.5%;
-    width: 95%;
-  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* background-color: rgba(51, 51, 51, 0.8); */
+  backdrop-filter: blur(5px);
+  color: #232323;
+  /* padding-top: 8px; */
+  transition: border-radius 0.3s ease, margin 0.3s ease, width 0.3s ease, background-color 0.3s ease;
+  z-index: 1000; /* Ensure it stays above other content */
+}
 
-  body{
-    padding-top: 4rem;
-  }
+.circular {
+  background-color: rgba(255, 255, 255, 1);
+  color: red;
+  border-radius: 40px;
+  margin-top: 1rem;
+  margin-left: 2.5%;
+  margin-right: 2.5%;
+  width: 95%;
+}
 
-  img{
-    padding-bottom: 8px;
-    width: 40%;
-    height: auto;
-  }
+
+img{
+  padding-bottom: .3rem;
+  padding-top: .2rem;
+  width: ;
+  height: auto;
+}

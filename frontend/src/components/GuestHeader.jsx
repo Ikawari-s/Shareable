@@ -32,14 +32,14 @@ function GuestHeader() {
   return (
     <>
       <header id="bodhi" className={isScrolled ? 'bodhi circular' : 'bodhi'}>
-          <Nav className="d-flex justify-content-center">
-            <Nav.Link style={{ color: 'white', fontWeight: ''}} as={Link} to="/">
+          <nav className="d-flex justify-content-center">
+            <Nav.Link style={{ color: 'gray', fontWeight: ''}} as={Link} to="/">
               <img src={logotext} alt="Logo" />
             </Nav.Link>
-            <Nav.Link style={{ color: 'white', fontWeight: '',textDecoration: 'none',outline: 'none', boxShadow: 'none' }} as={Link} to="/userprofile">FIND A SHARER</Nav.Link>
-            <Nav.Link style={{ color: 'white', fontWeight: ''}} as={Link} to="/login">LOG IN</Nav.Link>
-            <Nav.Link style={{ color: 'white', fontWeight: ''}} as={Link} to="/signup">SIGN UP (going insane)</Nav.Link>
-          </Nav>
+            <Nav.Link style={{ color: 'gray', fontWeight: '', padding: 'none' }} as={Link} to="/userprofile">FIND A SHARER</Nav.Link>
+            <Nav.Link style={{ color: 'gray', fontWeight: ''}} as={Link} to="/login">LOG IN</Nav.Link>
+            <Nav.Link style={{ color: 'gray', fontWeight: ''}} as={Link} to="/signup">SIGN UP (going insane)</Nav.Link>
+          </nav>
 
       </header>
     </>
@@ -47,3 +47,5 @@ function GuestHeader() {
 }
 
 export default GuestHeader;
+
+ 
