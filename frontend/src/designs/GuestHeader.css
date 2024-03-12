@@ -16,15 +16,15 @@
   color: red;
   border-radius: 40px;
   margin-top: 1rem;
-  margin-left: 2.5%;
-  margin-right: 2.5%;
-  width: 95%;
+  margin-left: 5%;
+  margin-right: 5%;
+  width: 90%;
 }
 
 
-img{
-  padding-bottom: .3rem;
-  padding-top: .2rem;
-  width: ;
+#logotext{
+  padding-bottom: .5rem;
+  padding-top: .4rem;
+  width: 45% !important;
   height: auto;
 }
