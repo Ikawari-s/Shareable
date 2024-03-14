@@ -6,9 +6,7 @@ import '../designs/GuestHeader.css';
 import logotext from '../designs/logotext.png';
 
 
-
-
-function GuestHeader() {
+function GuestHeader({ scrollToSpecificHeight }) {
   const dispatch = useDispatch();
   const navigate = useNavigate() 
   
@@ -28,6 +26,21 @@ function GuestHeader() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  const scrollToLogInPage = () => {
+    const LogInPage = document.getElementById("LogInPage");
+    if (LogInPage) {
+      LogInPage.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+  
+  const scrollToFindSharer = () => {
+    const FindSharer = document.getElementById("FindSharer");
+    if (FindSharer) {
+      FindSharer.scrollIntoView({ behavior: 'smooth' });
+    }
+  }; 
+
   
   return (
     <>
@@ -36,8 +49,8 @@ function GuestHeader() {
             <Nav.Link className="d-flex justify-content-center" style={{ color: 'gray', fontWeight: ''}} as={Link} to="/">
               <img src={logotext} alt="Logo" id='logotext' />
             </Nav.Link>
-            <Nav.Link className="d-flex justify-content-center" style={{ color: 'gray', fontWeight: '', paddingTop: '1rem', fontWeight: '600'}} as={Link} to="/userprofile">FIND A SHARER</Nav.Link>
-            <Nav.Link className="d-flex justify-content-center" style={{ color: 'gray', fontWeight: '', paddingTop: '1rem', fontWeight: '600'}} as={Link} to="/login">LOG IN</Nav.Link>
+            <Nav.Link className="d-flex justify-content-center" style={{ color: 'gray', fontWeight: '', paddingTop: '1rem', fontWeight: '600'}} onClick={scrollToFindSharer}>FIND A SHARER</Nav.Link>
+            <Nav.Link className="d-flex justify-content-center" style={{ color: 'gray', fontWeight: '', paddingTop: '1rem', fontWeight: '600'}} onClick={scrollToLogInPage}>LOG IN</Nav.Link>
             <Nav.Link className="d-flex justify-content-center" style={{ color: 'gray', fontWeight: '', paddingTop: '1rem', fontWeight: '600'}} as={Link} to="/signup">SIGN UP</Nav.Link>
           </nav>
 
@@ -47,5 +60,3 @@ function GuestHeader() {
 }
 
 export default GuestHeader;
-
- 

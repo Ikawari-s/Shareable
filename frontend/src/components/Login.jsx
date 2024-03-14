@@ -39,7 +39,7 @@ function Login() {
   }, [userInfo, navigate]);
 
   return (
-    <div className="container mt-5">
+    <div id="specificArea" className="container mt-5">
       <GuestHeader />
       <div className="card custom-card-background">
         <div className="card-header">
