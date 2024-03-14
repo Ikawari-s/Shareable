@@ -96,6 +96,25 @@ class SharerUploadViews(APIView):
             serializer.save(uploaded_by=sharer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class SharerUploadEditView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, pk):
+        try:
+            upload = SharerUpload.objects.get(pk=pk)
+        except SharerUpload.DoesNotExist:
+            return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Check if the user is the owner of the post
+        if upload.uploaded_by != request.user.sharer:
+            return Response({'error': 'You are not authorized to edit this post'}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = SharerUploadSerializer(upload, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LikePost(APIView):

@@ -38,7 +38,10 @@ import {
   DELETE_SHARER_RATINGS_FAILURE,
   PATCH_SHARER_RATINGS_REQUEST,
   PATCH_SHARER_RATINGS_SUCCESS,
-  PATCH_SHARER_RATINGS_FAILURE
+  PATCH_SHARER_RATINGS_FAILURE,
+  SHARER_EDIT_POST_REQUEST,
+  SHARER_EDIT_POST_SUCCESS,
+  SHARER_EDIT_POST_FAILURE,
 } from "../constants/sharerConstants";
 
 export const SharerDetailReducer = (state = {}, action) => {
@@ -279,6 +282,38 @@ export const patchSharerRatingsReducer = (state = { updatedRating: null, loading
       return { ...state, loading: false, updatedRating: action.payload, error: null };
     case PATCH_SHARER_RATINGS_FAILURE:
       return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const sharerEditPostReducer = (state = {
+  loading: false,
+  success: false,
+  error: null
+}, action) => {
+  switch (action.type) {
+    case SHARER_EDIT_POST_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        success: false,
+        error: null
+      };
+    case SHARER_EDIT_POST_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        success: true,
+        error: null
+      };
+    case SHARER_EDIT_POST_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        success: false,
+        error: action.payload
+      };
     default:
       return state;
   }
