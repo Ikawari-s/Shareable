@@ -10,6 +10,7 @@ import SharerPost from "../components/SharerPost";
 import { useNavigate } from "react-router-dom";
 import LikeComponent from "../components/LikeComponents";
 import Comment from "../components/Comment";
+import '../designs/sharerPageScreen.css'
 
 function SharerPageScreen() {
   const dispatch = useDispatch();
@@ -29,6 +30,8 @@ function SharerPageScreen() {
   const [newUsername, setNewUsername] = useState("");
   const [newVideo, setNewVideo] = useState(null);
   const [newImage, setNewImage] = useState(null);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [deletePostId, setDeletePostId] = useState(null);
 
   const CATEGORY_CHOICES = [
     { value: "", label: "Select a category" },
@@ -108,9 +111,7 @@ function SharerPageScreen() {
     }
   };
 
-  const handleDeletePost = (uploadId) => {
-    dispatch(sharerDeletePost(uploadId));
-  };
+  
 
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
@@ -129,6 +130,20 @@ function SharerPageScreen() {
         .slice()
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     : [];
+
+    const handleDeletePostConfirmation = (uploadId) => {
+      setDeletePostId(uploadId);
+      setShowDeleteConfirmation(true);
+    };
+  
+    const handleDeleteConfirmation = () => {
+      dispatch(sharerDeletePost(deletePostId));
+      setShowDeleteConfirmation(false);
+    };
+  
+    const handleCancelDelete = () => {
+      setShowDeleteConfirmation(false);
+    };
 
   return (
     <div>
@@ -203,10 +218,17 @@ function SharerPageScreen() {
       {sortedPosts.map((post) => {
         return (
           <div key={post.id}>
-            <h2>{post.title}</h2>{" "}
-            <button onClick={() => handleDeletePost(post.id)}>
-              DELETE POST
-            </button>
+            <h2>{post.title}</h2>  <button onClick={() => handleDeletePostConfirmation(post.id)}>DELETE POST</button>
+            {/* Delete confirmation modal */}
+            {showDeleteConfirmation && deletePostId === post.id && (
+              <div className="delete-confirmation-overlay">
+                <div className="delete-confirmation-modal">
+                  <p>Are you sure you want to delete this post?</p>
+                  <button onClick={handleDeleteConfirmation}>Yes</button>
+                  <button onClick={handleCancelDelete}>No</button>
+                </div>
+              </div>
+            )}
             <p>{post.description}</p>
             <p>Time: {post.created_at_formatted}</p>
             {post.image && <img src={post.image} alt="Post Image" />}
@@ -216,6 +238,7 @@ function SharerPageScreen() {
                 Download File
               </a>
             )}
+
             <LikeComponent uploadId={post.id} />
             <Comment uploadId={post.id} />
           </div>
