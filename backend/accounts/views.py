@@ -462,24 +462,3 @@ def change_password(request):
 
 
 
-# from django.utils.decorators import method_decorator
-# from django.views.decorators.csrf import csrf_exempt
-
-# class Ratings(APIView):
-#     permission_classes = [IsAuthenticated]  
-
-#     @method_decorator(csrf_exempt)
-#     def dispatch(self, *args, **kwargs):
-#         return super().dispatch(*args, **kwargs)
-        
-#     def post(self, request):
-#         serializer = RatingSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-#     def get(self, request):
-#         ratings = Rating.objects.all()
-#         serializer = RatingSerializer(ratings, many=True)
-#         return Response(serializer.data)

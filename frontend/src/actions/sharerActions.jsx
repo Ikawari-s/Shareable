@@ -32,6 +32,12 @@ import {
   SHARER_DELETE_POST_SUCCESS,
   SHARER_DELETE_POST_FAILURE,
   REMOVE_DELETED_POST,
+  FETCH_SHARER_RATINGS_REQUEST,
+  FETCH_SHARER_RATINGS_SUCCESS,
+  FETCH_SHARER_RATINGS_FAILURE,
+  SHARER_RATINGS_REQUEST,
+  POST_SHARER_RATINGS_SUCCESS,
+  POST_SHARER_RATINGS_FAILURE,
 } from "../constants/sharerConstants";
 
 const instance = axios.create({
@@ -421,6 +427,80 @@ export const sharerDeletePost = (uploadId) => async (dispatch) => {
     dispatch({
       type: SHARER_DELETE_POST_FAILURE,
       payload: error.response.data.message || 'Failed to delete post',
+    });
+  }
+};
+
+
+export const fetchSharerRatings = (sharerId) => async (dispatch) => {
+  try {
+    dispatch({ type: FETCH_SHARER_RATINGS_REQUEST });
+
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const accessToken = userInfo ? userInfo.access_token : null;
+    const username = userInfo ? userInfo.user_info.username : null; // Extract username
+
+    if (!accessToken) {
+      throw new Error('Access token not found');
+    }
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+
+    const response = await axios.get(`/api/sharer/ratings/${sharerId}`, config);
+    const ratings = response.data.map((rating) => ({ ...rating, user: username })); // Assign username to each rating
+
+    console.log('Fetched Ratings:', ratings); // Log ratings data
+
+    dispatch({ type: FETCH_SHARER_RATINGS_SUCCESS, payload: ratings });
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || 'Failed to fetch sharer ratings';
+    console.error('Error Fetching Ratings:', errorMessage); // Log error message
+    dispatch({ type: FETCH_SHARER_RATINGS_FAILURE, payload: errorMessage });
+  }
+};
+
+
+export const postSharerRatings = (sharerId, ratingData) => async (dispatch) => {
+  try {
+    dispatch({ type: SHARER_RATINGS_REQUEST });
+
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const accessToken = userInfo ? userInfo.access_token : null;
+
+    if (!accessToken) {
+      throw new Error('Access token not found');
+    }
+
+    // Add all necessary fields to the ratingData object
+    const fullRatingData = {
+      ...ratingData,
+      userId: userInfo.userId, // Assuming userId is stored in localStorage
+      sharerId: sharerId,
+      // Add any other necessary fields here
+    };
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+
+    // Make API request to post the ratings
+    const response = await axios.post(`/api/sharer/ratings/${sharerId}`, fullRatingData, config);
+
+    dispatch({ type: POST_SHARER_RATINGS_SUCCESS, payload: response.data });
+  } catch (error) {
+    dispatch({
+      type: POST_SHARER_RATINGS_FAILURE,
+      payload: error.response.data.message || 'Failed to post ratings',
     });
   }
 };

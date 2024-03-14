@@ -236,3 +236,70 @@ class SharerDeletePostView(generics.DestroyAPIView):
 
         upload.delete()
         return Response({"message": "Post deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+    
+
+def is_follow(user, sharer_id):
+    """
+    Check if the user follows the specified sharer.
+    """
+    try:
+        sharer = Sharer.objects.get(pk=sharer_id)
+    except Sharer.DoesNotExist:
+        return False
+    return sharer in user.follows.all()
+
+
+class RatingViews(APIView):
+    def get(self, request, sharer_id=None):  
+        user = request.user
+        if user.is_authenticated:
+            if sharer_id is not None:
+                try:
+                    sharer_id = int(sharer_id)
+                except ValueError:
+                    return Response({"error": "Invalid Sharer ID"}, status=status.HTTP_400_BAD_REQUEST)
+
+            followed_sharers = user.follows.all()
+            if sharer_id is not None:
+                ratings = Rating.objects.filter(sharer=sharer_id, rating__in=[i * 0.5 for i in range(11)])
+            else:
+                ratings = Rating.objects.filter(sharer__in=followed_sharers, rating__in=[i * 0.5 for i in range(11)])
+            serializer = RatingSerializer(ratings, many=True)
+            return Response(serializer.data)
+        else:
+            return Response({"error": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    
+    def post(self, request, sharer_id):
+        user = request.user
+        if user.is_authenticated:
+            try:
+                sharer_id = int(sharer_id)
+            except ValueError:
+                return Response({"error": "Invalid Sharer ID"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            return self.handle_post(user, sharer_id, request.data)
+        else:
+            return Response({"error": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    def handle_post(self, user, sharer_id, data):
+        if user.is_sharer and user.sharer.id == sharer_id:
+            return Response({"error": "You cannot rate your own sharer"}, status=status.HTTP_403_FORBIDDEN)
+
+        if is_follow(user, sharer_id):
+            try:
+                rating = float(data['rating'])  # Convert rating to a float
+            except ValueError:
+                return Response({"error": "Invalid rating format"}, status=status.HTTP_400_BAD_REQUEST)
+
+            if rating < 0:
+                return Response({"error": "Rating cannot be negative"}, status=status.HTTP_400_BAD_REQUEST)
+
+            data['rating'] = round(rating * 2) / 2
+            serializer = RatingSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save(user=user, sharer_id=sharer_id)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"error": "You can only rate sharers you follow"}, status=status.HTTP_403_FORBIDDEN)

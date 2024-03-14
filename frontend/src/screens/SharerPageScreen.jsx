@@ -50,7 +50,10 @@ function SharerPageScreen() {
     { value: "Fashion & Beauty", label: "Fashion & Beauty" },
     { value: "Food & Cooking", label: "Food & Cooking" },
     { value: "Travel & Outdoor", label: "Travel & Outdoor" },
-    { value: "Business & Entrepreneurship", label: "Business & Entrepreneurship" },
+    {
+      value: "Business & Entrepreneurship",
+      label: "Business & Entrepreneurship",
+    },
     { value: "Parenting & Family", label: "Parenting & Family" },
   ];
 
@@ -122,7 +125,9 @@ function SharerPageScreen() {
   }
 
   const sortedPosts = Array.isArray(sharerPostList)
-    ? sharerPostList.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    ? sharerPostList
+        .slice()
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     : [];
 
   return (
@@ -130,6 +135,7 @@ function SharerPageScreen() {
       <p>PAGE TITLE: {name}</p>
       <p>User Email: {userProfile.email}</p>
       <p>Username: {username}</p>
+
       <div>
         <label>Category:</label>
         <select value={category} onChange={handleCategoryChange}>
@@ -168,6 +174,13 @@ function SharerPageScreen() {
               value={newUsername}
               placeholder={username}
               onChange={(e) => setNewUsername(e.target.value)}
+            />
+          </div>
+          <div>
+            <label>Description:</label> {/* Add description field */}
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
           </div>
           <div>

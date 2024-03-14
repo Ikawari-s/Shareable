@@ -30,6 +30,9 @@ import {
   SHARER_DELETE_POST_SUCCESS,
   SHARER_DELETE_POST_FAILURE,
   REMOVE_DELETED_POST,
+  FETCH_SHARER_RATINGS_REQUEST,
+  FETCH_SHARER_RATINGS_SUCCESS,
+  FETCH_SHARER_RATINGS_FAILURE,
 } from "../constants/sharerConstants";
 
 export const SharerDetailReducer = (state = {}, action) => {
@@ -210,3 +213,52 @@ const sharerDeletePostReducer = (state = { loading: false, success: false, error
 };
 
 export default sharerDeletePostReducer;
+
+
+
+
+export const fetchSharerRatingsReducer = (state = { ratings: [], loading: false, error: null }, action) => {
+  switch (action.type) {
+    case FETCH_SHARER_RATINGS_REQUEST:
+      return { ...state, loading: true, error: null };
+    case FETCH_SHARER_RATINGS_SUCCESS:
+      return { ...state, loading: false, ratings: action.payload, error: null };
+    case FETCH_SHARER_RATINGS_FAILURE:
+      return { ...state, loading: false, ratings: [], error: action.payload };
+    default:
+      return state;
+  }
+};
+
+const initialState = {
+  ratings: [],
+  loading: false,
+  error: null,
+};
+
+export const sharerRatingsReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case FETCH_SHARER_RATINGS_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case FETCH_SHARER_RATINGS_SUCCESS:
+      return {
+        ...state,
+        ratings: action.payload,
+        loading: false,
+        error: null,
+      };
+    case FETCH_SHARER_RATINGS_FAILURE:
+      return {
+        ...state,
+        ratings: [],
+        loading: false,
+        error: action.payload,
+      };
+    default:
+      return state;
+  }
+};

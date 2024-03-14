@@ -1,11 +1,21 @@
 from django.contrib import admin
-from .models import Sharer, SharerUpload, Like, Comment
+from .models import Sharer, SharerUpload, Like, Comment, Rating
+from django.db.models import Count, DecimalField, ExpressionWrapper, F, Avg
 
 @admin.register(Sharer)
 class SharerAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'username', 'email', 'category', 'is_sharer')  
+    list_display = ('id', 'name', 'username', 'email', 'category', 'is_sharer', 'average_rating', 'comment_count')  
     search_fields = ('id', 'name', 'username', 'email', 'category')  
     list_filter = ('category',)
+
+    def average_rating(self, obj):
+        avg_rating = Rating.objects.filter(sharer=obj).aggregate(avg_rating=Avg('rating'))['avg_rating']
+        return avg_rating if avg_rating is not None else 0
+    average_rating.short_description = 'Average Rating'
+
+    def comment_count(self, obj):
+        return Comment.objects.filter(post__uploaded_by=obj).count()
+    comment_count.short_description = 'Comment Count'
 
 @admin.register(SharerUpload)
 class SharerUploadAdmin(admin.ModelAdmin):
@@ -51,3 +61,12 @@ class LikeAdmin(admin.ModelAdmin):
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'post', 'comments', 'created_at')  
     search_fields = ('user__username', 'post__title', 'comments')  
+
+
+
+class RatingAdmin(admin.ModelAdmin):
+    list_display = ('user', 'rating', 'comment')
+    search_fields = ('user__email', 'user__username')
+    list_filter = ('rating',)
+
+admin.site.register(Rating, RatingAdmin)

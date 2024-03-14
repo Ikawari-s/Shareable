@@ -18,5 +18,6 @@ urlpatterns = [
     path('comment/delete/<int:comment_id>/', views.CommentDeleteView.as_view(), name='comment-delete'),
     path('comments/<int:upload_id>/', views.CommentListView.as_view(), name='comment-list'),
     path('sharer-post-delete/<int:upload_id>/', views.SharerDeletePostView.as_view(), name='delete_sharer_post'),
+    path('ratings/<int:sharer_id>', views.RatingViews.as_view(), name='ratings'),
 
 ]

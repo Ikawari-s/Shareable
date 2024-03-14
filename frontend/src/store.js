@@ -2,10 +2,10 @@ import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/
 import {thunk} from 'redux-thunk'; // Correct import statement for thunk middleware
 import { CommentPostReducer, DeleteCommentPostReducer, LikeCountReducer, LikePostReducer, ListCommentPostReducer, UnlikePostReducer, UserProfileUpdateReducer, likesCountReducer, userChangePasswordReducer, userLoginReducer, } from './reducers/userReducer';
 import { userRegisterReducer, userResendOTPReducer, userSentOTPReducer, userVerifyOTPReducer } from './reducers/registerReducer';
-import {sharerListReducer, myProfileReducer, CheckSharerReducer, SharerDetailReducer, userSharerBeReducer, userSharerPostReducer, SharerLatestPostReducer, SharerUserProfileUpdateReducer} from './reducers/sharerReducer';
+import {sharerListReducer, myProfileReducer, CheckSharerReducer, SharerDetailReducer, userSharerBeReducer, userSharerPostReducer, SharerLatestPostReducer, SharerUserProfileUpdateReducer, sharerRatingsReducer} from './reducers/sharerReducer';
 import { sharerPostListReducer } from './reducers/sharerReducer';
 import { followReducer, unfollowReducer, followedSharerListReducer } from './reducers/followReducer';
-import { SharerUpdateProfile } from './actions/sharerActions';
+import { SharerUpdateProfile, fetchSharerRatings, sharerDeletePost } from './actions/sharerActions';
 
 
 const reducer = combineReducers({
@@ -37,7 +37,12 @@ const reducer = combineReducers({
   UserProfileUpdate : UserProfileUpdateReducer,
   SharerUpdateProfile: SharerUserProfileUpdateReducer,
   userChangePassword : userChangePasswordReducer,
-  //sharerDeletePost : sharerDeletePostReducer,
+  sharerDelete : sharerDeletePost,
+  fetchRating : fetchSharerRatings,
+  sharerRating : sharerRatingsReducer,
+
+
+
  
   
   
