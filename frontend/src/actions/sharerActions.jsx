@@ -38,6 +38,12 @@ import {
   SHARER_RATINGS_REQUEST,
   POST_SHARER_RATINGS_SUCCESS,
   POST_SHARER_RATINGS_FAILURE,
+  DELETE_SHARER_RATINGS_REQUEST,
+  DELETE_SHARER_RATINGS_SUCCESS,
+  DELETE_SHARER_RATINGS_FAILURE,
+  PATCH_SHARER_RATINGS_REQUEST,
+  PATCH_SHARER_RATINGS_SUCCESS,
+  PATCH_SHARER_RATINGS_FAILURE
 } from "../constants/sharerConstants";
 
 const instance = axios.create({
@@ -239,11 +245,6 @@ export const listSharerPosts = () => async (dispatch) => {
 
 
 
-
-
-
-
-
 export const profileSharers = () => async (dispatch) => {
   try {
     dispatch({ type: SHARER_PROFILE_REQUEST });
@@ -419,7 +420,7 @@ export const sharerDeletePost = (uploadId) => async (dispatch) => {
     };
 
     // Make API request to delete the post
-    await axios.delete(`/api/sharer/sharer-post-delete/${uploadId}/`, config);
+    await instance.delete(`/api/sharer/sharer-post-delete/${uploadId}/`, config);
 
     dispatch({ type: SHARER_DELETE_POST_SUCCESS, payload: uploadId }); // Pass the uploadId as payload
     dispatch({ type: REMOVE_DELETED_POST, payload: uploadId }); // Add a new action to remove the post from the state
@@ -438,7 +439,6 @@ export const fetchSharerRatings = (sharerId) => async (dispatch) => {
 
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
     const accessToken = userInfo ? userInfo.access_token : null;
-    const username = userInfo ? userInfo.user_info.username : null; // Extract username
 
     if (!accessToken) {
       throw new Error('Access token not found');
@@ -452,18 +452,22 @@ export const fetchSharerRatings = (sharerId) => async (dispatch) => {
       },
     };
 
-    const response = await axios.get(`/api/sharer/ratings/${sharerId}`, config);
-    const ratings = response.data.map((rating) => ({ ...rating, user: username })); // Assign username to each rating
+    const response = await instance.get(`/api/sharer/ratings/${sharerId}`, config);
+    const ratingsWithUsername = response.data.map(rating => ({
+      ...rating,
+      username: rating.username, // Assuming the backend response includes the username
+    }));
 
-    console.log('Fetched Ratings:', ratings); // Log ratings data
+    console.log('Fetched Ratings:', ratingsWithUsername); // Log ratings data with username
 
-    dispatch({ type: FETCH_SHARER_RATINGS_SUCCESS, payload: ratings });
+    dispatch({ type: FETCH_SHARER_RATINGS_SUCCESS, payload: ratingsWithUsername });
   } catch (error) {
     const errorMessage = error.response?.data?.message || 'Failed to fetch sharer ratings';
     console.error('Error Fetching Ratings:', errorMessage); // Log error message
     dispatch({ type: FETCH_SHARER_RATINGS_FAILURE, payload: errorMessage });
   }
 };
+
 
 
 export const postSharerRatings = (sharerId, ratingData) => async (dispatch) => {
@@ -504,3 +508,66 @@ export const postSharerRatings = (sharerId, ratingData) => async (dispatch) => {
     });
   }
 };
+
+
+export const deleteSharerRatings = (ratingId) => async (dispatch) => {
+  try {
+    dispatch({ type: DELETE_SHARER_RATINGS_REQUEST });
+
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const accessToken = userInfo ? userInfo.access_token : null;
+
+    if (!accessToken) {
+      throw new Error('Access token not found');
+    }
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+
+    const response = await instance.delete(`/api/sharer/delete-rating/${ratingId}`, config); // Pass the config object for authorization
+
+    dispatch({ type: DELETE_SHARER_RATINGS_SUCCESS, payload: response.data });
+  } catch (error) {
+    dispatch({
+      type: DELETE_SHARER_RATINGS_FAILURE,
+      payload: error.response.data.message || 'Failed to delete rating',
+    });
+  }
+};
+
+
+export const patchSharerRatings = (ratingId, newData) => async (dispatch) => {
+  try {
+    dispatch({ type: PATCH_SHARER_RATINGS_REQUEST });
+
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const accessToken = userInfo ? userInfo.access_token : null;
+
+    if (!accessToken) {
+      throw new Error('Access token not found');
+    }
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+
+    const response = await instance.patch(`/api/sharer/update-rating/${ratingId}`, newData, config); // Pass the config object for authorization
+
+    dispatch({ type: PATCH_SHARER_RATINGS_SUCCESS, payload: response.data });
+  } catch (error) {
+    dispatch({
+      type: PATCH_SHARER_RATINGS_FAILURE,
+      payload: error.response.data.message || 'Failed to update rating',
+    });
+  }
+};
+

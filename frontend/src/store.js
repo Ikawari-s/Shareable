@@ -5,7 +5,7 @@ import { userRegisterReducer, userResendOTPReducer, userSentOTPReducer, userVeri
 import {sharerListReducer, myProfileReducer, CheckSharerReducer, SharerDetailReducer, userSharerBeReducer, userSharerPostReducer, SharerLatestPostReducer, SharerUserProfileUpdateReducer, sharerRatingsReducer} from './reducers/sharerReducer';
 import { sharerPostListReducer } from './reducers/sharerReducer';
 import { followReducer, unfollowReducer, followedSharerListReducer } from './reducers/followReducer';
-import { SharerUpdateProfile, fetchSharerRatings, sharerDeletePost } from './actions/sharerActions';
+import { SharerUpdateProfile, deleteSharerRatings, fetchSharerRatings, patchSharerRatings, sharerDeletePost } from './actions/sharerActions';
 
 
 const reducer = combineReducers({
@@ -40,6 +40,8 @@ const reducer = combineReducers({
   sharerDelete : sharerDeletePost,
   fetchRating : fetchSharerRatings,
   sharerRating : sharerRatingsReducer,
+  deleteRating : deleteSharerRatings,
+  patchRating : patchSharerRatings,
 
 
 

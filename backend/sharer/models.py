@@ -61,8 +61,9 @@ class Sharer(models.Model):
         return self.user.is_sharer if self.user else False
 
     def save(self, *args, **kwargs):
+        if not self.username:  # Only update if username is not provided
+            self.username = self.user.username if self.user else ''
         self.email = self.user.email if self.user else ''
-        self.username = self.user.username if self.user else ''
         super().save(*args, **kwargs)
 
 class SharerUpload(models.Model):
@@ -104,7 +105,7 @@ class Comment(models.Model):
         self.username = self.user.username 
         super().save(*args, **kwargs)
 
-
+    
 
 class Rating(models.Model):
     sharer = models.ForeignKey(Sharer, on_delete=models.CASCADE, related_name='ratings')

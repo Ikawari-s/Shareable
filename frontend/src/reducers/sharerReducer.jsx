@@ -33,6 +33,12 @@ import {
   FETCH_SHARER_RATINGS_REQUEST,
   FETCH_SHARER_RATINGS_SUCCESS,
   FETCH_SHARER_RATINGS_FAILURE,
+  DELETE_SHARER_RATINGS_REQUEST,
+  DELETE_SHARER_RATINGS_SUCCESS,
+  DELETE_SHARER_RATINGS_FAILURE,
+  PATCH_SHARER_RATINGS_REQUEST,
+  PATCH_SHARER_RATINGS_SUCCESS,
+  PATCH_SHARER_RATINGS_FAILURE
 } from "../constants/sharerConstants";
 
 export const SharerDetailReducer = (state = {}, action) => {
@@ -258,6 +264,21 @@ export const sharerRatingsReducer = (state = initialState, action) => {
         loading: false,
         error: action.payload,
       };
+    default:
+      return state;
+  }
+};
+
+
+
+export const patchSharerRatingsReducer = (state = { updatedRating: null, loading: false, error: null }, action) => {
+  switch (action.type) {
+    case PATCH_SHARER_RATINGS_REQUEST:
+      return { ...state, loading: true, error: null };
+    case PATCH_SHARER_RATINGS_SUCCESS:
+      return { ...state, loading: false, updatedRating: action.payload, error: null };
+    case PATCH_SHARER_RATINGS_FAILURE:
+      return { ...state, loading: false, error: action.payload };
     default:
       return state;
   }
