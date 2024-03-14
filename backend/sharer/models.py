@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
 from django.core.validators import FileExtensionValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 def upload_image(instance, filename):
     filename = slugify(filename)
@@ -60,8 +61,9 @@ class Sharer(models.Model):
         return self.user.is_sharer if self.user else False
 
     def save(self, *args, **kwargs):
+        if not self.username:  # Only update if username is not provided
+            self.username = self.user.username if self.user else ''
         self.email = self.user.email if self.user else ''
-        self.username = self.user.username if self.user else ''
         super().save(*args, **kwargs)
 
 class SharerUpload(models.Model):
@@ -102,3 +104,14 @@ class Comment(models.Model):
     def save(self, *args, **kwargs):
         self.username = self.user.username 
         super().save(*args, **kwargs)
+
+    
+
+class Rating(models.Model):
+    sharer = models.ForeignKey(Sharer, on_delete=models.CASCADE, related_name='ratings')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    rating = models.DecimalField(max_digits=3, decimal_places=1, validators=[MinValueValidator(0), MaxValueValidator(5)])
+    comment = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"Rating {self.rating} by {self.user.username} for {self.sharer.name}"

@@ -131,11 +131,12 @@ class VerifyOTP(APIView):
 
 
 class UserLogin(APIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (AllowAny,)
     authentication_classes = (JWTAuthentication,)
 
     def post(self, request):
         data = request.data
+        # Your validation code here
         validate_email(data)
         validate_password(data)
 
@@ -152,46 +153,50 @@ class UserLogin(APIView):
                 sharer_id = None
                 profile_picture = None
                 name = None
+                rating_id = None
 
                 if is_sharer:
                     try:
                         sharer = Sharer.objects.get(user=user)
                         sharer_id = sharer.id
                         profile_picture = sharer.image.url
-                        name = sharer.name  # Set the name to the sharer's page_name
+                        name = sharer.name
                     except Sharer.DoesNotExist:
                         pass
                 else:
                     profile_picture = user.profile_picture.url if user.profile_picture else None
-                    name = user.username  # For non-sharer users, name is taken from username
+                    name = user.username
 
                 followed_sharers = user.follows.values_list('id', flat=True)
-
-                # Fetch comments for the user and extract comment IDs
                 comments = Comment.objects.filter(user=user).values_list('id', flat=True)
+
+                try:
+                    rating = Rating.objects.filter(user=user).first()
+                    if rating:
+                        rating_id = rating.id
+                except Rating.DoesNotExist:
+                    pass
 
                 response_data = {
                     'access_token': access_token,
                     'user_id': user.id,
                     'is_sharer': is_sharer,
                     'sharer_id': sharer_id,
-                    'name': name,  # Include name in the response
-                    # 'profile_picture': profile_picture,
+                    'name': name,
                     'followed_sharers': list(followed_sharers),
                     'user_info': {
                         'email': user.email,
                         'username': user.username
                     },
-                    'comment_ids': list(comments)  # Include only comment IDs in the response
+                    # 'comment_ids': list(comments),
+                    'rating_id': rating_id,
                 }
 
-                # Return the response as JSON
                 return JsonResponse(response_data, status=status.HTTP_200_OK)
             else:
                 return Response({'detail': 'Authentication failed'}, status=status.HTTP_401_UNAUTHORIZED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class UserLogout(APIView):
@@ -462,24 +467,3 @@ def change_password(request):
 
 
 
-# from django.utils.decorators import method_decorator
-# from django.views.decorators.csrf import csrf_exempt
-
-# class Ratings(APIView):
-#     permission_classes = [IsAuthenticated]  
-
-#     @method_decorator(csrf_exempt)
-#     def dispatch(self, *args, **kwargs):
-#         return super().dispatch(*args, **kwargs)
-        
-#     def post(self, request):
-#         serializer = RatingSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-#     def get(self, request):
-#         ratings = Rating.objects.all()
-#         serializer = RatingSerializer(ratings, many=True)
-#         return Response(serializer.data)

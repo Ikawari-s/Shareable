@@ -134,8 +134,3 @@ class ChangePasswordSerializer(serializers.Serializer):
     new_password = serializers.CharField(required=True)
 
 
-
-# class RatingSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Rating
-#         fields = ['id', 'user', 'rating', 'comments', 'created_at']

@@ -3,9 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
-import SharerLatestPost from './SharerLatestPost';
 import { DetailSharers } from '../actions/sharerActions';
+import SharerLatestPost from './SharerLatestPost';
 import { followSharer, unfollowSharer } from '../actions/followActions';
+import { FetchSharerRatingsComponent, PostSharerRatingsComponent } from '../components/Rating';
 
 const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unfollowSharer }) => {
   const { id } = useParams();
@@ -31,17 +32,13 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
     setIsFollowing(followedSharers.includes(idInt));
   }, [id, userInfo]);
   
-  
   const handleFollowToggle = () => {
     const updatedUserInfo = userInfo ? { ...userInfo } : {};
     updatedUserInfo.followed_sharers = updatedUserInfo.followed_sharers || [];
-  
     const idInt = parseInt(id);
-  
     const updatedFollowedSharers = updatedUserInfo.followed_sharers.includes(idInt)
       ? updatedUserInfo.followed_sharers.filter(sharerId => sharerId !== idInt)
       : [...updatedUserInfo.followed_sharers, idInt]; 
-  
     setIsFollowing(!isFollowing); 
     if (updatedUserInfo.followed_sharers.includes(idInt)) {
       updatedUserInfo.followed_sharers = updatedFollowedSharers;
@@ -94,6 +91,13 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
           <Link to={'/homepage'}>
             <Button variant="primary">Go Back</Button>
           </Link>
+
+          <div className="scroll-box overflow-auto">
+            <div className="fetch-ratings-box">
+              <FetchSharerRatingsComponent sharerId={id} />
+            </div>
+            {isFollowing && <PostSharerRatingsComponent sharerId={id} />}
+          </div>
         </div>
       ) : null}
     </div>

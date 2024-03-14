@@ -4,10 +4,12 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import *
+from accounts.models import *
 from .serializers import *
 from rest_framework import status, generics, permissions
 from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
+from django.core.exceptions import ObjectDoesNotExist
 
 
 @api_view(['GET'])
@@ -93,6 +95,25 @@ class SharerUploadViews(APIView):
         if serializer.is_valid():
             serializer.save(uploaded_by=sharer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class SharerUploadEditView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, pk):
+        try:
+            upload = SharerUpload.objects.get(pk=pk)
+        except SharerUpload.DoesNotExist:
+            return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Check if the user is the owner of the post
+        if upload.uploaded_by != request.user.sharer:
+            return Response({'error': 'You are not authorized to edit this post'}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = SharerUploadSerializer(upload, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -203,9 +224,6 @@ class IsSharer(permissions.BasePermission):
 
 
 
-
-
-
 class SharerUpdateProfile(APIView):
     permission_classes = [IsAuthenticated, IsSharer]
 
@@ -215,10 +233,19 @@ class SharerUpdateProfile(APIView):
         serializer = SharerSerializer(sharer, data=request.data, partial=True)
 
         if serializer.is_valid():
+
             serializer.save()
+
+            try:
+                app_user = AppUser.objects.get(email=sharer.email)
+                app_user.username = serializer.validated_data.get('username', app_user.username)
+                app_user.save()
+            except ObjectDoesNotExist:
+                pass 
+
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
 
 class SharerDeletePostView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated, IsSharerPermission]
@@ -236,3 +263,135 @@ class SharerDeletePostView(generics.DestroyAPIView):
 
         upload.delete()
         return Response({"message": "Post deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+    
+
+def is_follow(user, sharer_id):
+    """
+    Check if the user follows the specified sharer.
+    """
+    try:
+        sharer = Sharer.objects.get(pk=sharer_id)
+    except Sharer.DoesNotExist:
+        return False
+    return sharer in user.follows.all()
+
+
+from django.contrib.auth import get_user_model
+
+class RatingViews(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_username(self, user):
+        return user.username if user else None
+
+    def get(self, request, sharer_id=None):  
+        user = request.user
+
+        if sharer_id is not None:
+            try:
+                sharer_id = int(sharer_id)
+            except ValueError:
+                return Response({"error": "Invalid Sharer ID"}, status=status.HTTP_400_BAD_REQUEST)
+
+        followed_sharers = user.follows.all()
+        if sharer_id is not None:
+            ratings = Rating.objects.filter(sharer=sharer_id, rating__in=[i * 0.1 for i in range(1, 51)])  
+        else:
+            ratings = Rating.objects.filter(sharer__in=followed_sharers, rating__in=[i * 0.1 for i in range(1, 51)])  
+
+        serializer = RatingSerializer(ratings, many=True)
+        serialized_data = serializer.data
+
+        for rating_data in serialized_data:
+            user_id = rating_data['user']
+            user_instance = get_user_model().objects.filter(id=user_id).first()
+            username = self.get_username(user_instance)
+            print(f"Username for user ID {user_id}: {username}") 
+            rating_data['username'] = username
+
+        return Response(serialized_data)
+    def post(self, request, sharer_id):
+        user = request.user
+        try:
+            sharer_id = int(sharer_id)
+        except ValueError:
+            return Response({"error": "Invalid Sharer ID"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return self.handle_post(user, sharer_id, request.data)
+
+    def handle_post(self, user, sharer_id, data):
+        if not is_follow(user, sharer_id):
+            return Response({"error": "You can only rate sharers you follow"}, status=status.HTTP_403_FORBIDDEN)
+
+        if user.is_sharer and user.sharer.id == sharer_id:
+            return Response({"error": "You cannot rate your own sharer"}, status=status.HTTP_403_FORBIDDEN)
+
+        existing_rating = Rating.objects.filter(user=user, sharer_id=sharer_id).first()
+        if existing_rating:
+            return Response({"error": "You have already rated this sharer"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            rating = float(data.get('rating'))
+        except ValueError:
+            return Response({"error": "Invalid rating format"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if rating <= 0:
+            return Response({"error": "Rating must be greater than zero"}, status=status.HTTP_400_BAD_REQUEST)
+
+        data_copy = data.copy()
+        data_copy['rating'] = round(rating, 1)  
+        serializer = RatingSerializer(data=data_copy)
+        if serializer.is_valid():
+            serializer.save(user=user, sharer_id=sharer_id)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class DeleteRating(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, rating_id):
+        try:
+            rating = Rating.objects.get(pk=rating_id)
+        except Rating.DoesNotExist:
+            return Response({"error": "Rating not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check if the authenticated user is the owner of the rating
+        if request.user == rating.user:
+            if not is_follow(request.user, rating.sharer_id):
+                return Response({"error": "You can only delete ratings for sharers you follow"}, status=status.HTTP_403_FORBIDDEN)
+            rating.delete()
+            return Response({"message": "Rating deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({"error": "You are not authorized to delete this rating"}, status=status.HTTP_403_FORBIDDEN)
+        
+
+class RatingUpdateView(APIView):
+    def patch(self, request, rating_id):
+        user = request.user
+        try:
+            rating_id = int(rating_id)
+        except ValueError:
+            return Response({"error": "Invalid Rating ID"}, status=status.HTTP_400_BAD_REQUEST)
+
+        existing_rating = get_object_or_404(Rating, id=rating_id, user=user)
+
+        try:
+            rating = float(request.data.get('rating'))
+        except ValueError:
+            return Response({"error": "Invalid rating format"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if rating <= 0:
+            return Response({"error": "Rating must be greater than zero"}, status=status.HTTP_400_BAD_REQUEST)
+
+        comment = request.data.get('comment', existing_rating.comment)
+
+        data = {'rating': round(rating, 1), 'comment': comment}
+
+        if not is_follow(request.user, existing_rating.sharer_id):
+            return Response({"error": "You can only update ratings for sharers you follow"}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = RatingSerializer(existing_rating, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
