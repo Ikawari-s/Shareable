@@ -10,6 +10,9 @@ from rest_framework import status, generics, permissions
 from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth import get_user_model
+from datetime import datetime
+
 
 
 @api_view(['GET'])
@@ -100,21 +103,28 @@ class SharerUploadViews(APIView):
 class SharerUploadEditView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def put(self, request, pk):
+    def patch(self, request, upload_id):
         try:
-            upload = SharerUpload.objects.get(pk=pk)
+            upload = SharerUpload.objects.get(pk=upload_id)
         except SharerUpload.DoesNotExist:
             return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
         
-        # Check if the user is the owner of the post
         if upload.uploaded_by != request.user.sharer:
             return Response({'error': 'You are not authorized to edit this post'}, status=status.HTTP_403_FORBIDDEN)
 
-        serializer = SharerUploadSerializer(upload, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if 'title' in request.data or 'description' in request.data:
+            serializer = SharerUploadSerializer(upload, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.validated_data['edited_at'] = timezone.now()
+                serializer.validated_data['edited'] = True
+                serializer.save()
+                if serializer.validated_data['edited']:
+                    return Response({'message': 'Edited', 'data': serializer.data})
+                else:
+                    return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'error': 'At least one of title or description must be provided for editing'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LikePost(APIView):
@@ -276,7 +286,6 @@ def is_follow(user, sharer_id):
     return sharer in user.follows.all()
 
 
-from django.contrib.auth import get_user_model
 
 class RatingViews(APIView):
     permission_classes = [IsAuthenticated]

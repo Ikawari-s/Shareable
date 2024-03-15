@@ -75,6 +75,7 @@ class SharerUpload(models.Model):
     file = models.FileField(upload_to=upload_file, null=True, blank=True)  
     uploaded_by = models.ForeignKey(Sharer, on_delete=models.CASCADE, related_name='uploads')
     created_at = models.DateTimeField(auto_now_add=True)
+    edited_at = models.DateTimeField(null=True, blank=True)  # Add edited_at field
     
     def __str__(self):
         return f"{self.uploaded_by.email}'s Title: {self.title}"

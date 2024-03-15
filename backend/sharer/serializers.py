@@ -18,14 +18,23 @@ class SharerUploadListSerializer(serializers.ModelSerializer):
 
 class SharerUploadSerializer(serializers.ModelSerializer):
     created_at_formatted = serializers.SerializerMethodField()
-    
+    edited_at_formatted = serializers.SerializerMethodField()
+    edited = serializers.SerializerMethodField()
+
     class Meta:
         model = SharerUpload
-        fields = ['id', 'title', 'description', 'image', 'video', 'file', 'created_at', 'created_at_formatted']
+        fields = ['id', 'title', 'description', 'image', 'video', 'file', 'created_at', 'created_at_formatted', 'edited_at', 'edited_at_formatted', 'edited']
 
     def get_created_at_formatted(self, obj):
         return obj.created_at.strftime('%Y-%m-%d %H:%M:%S') if obj.created_at else None
+    
+    def get_edited_at_formatted(self, obj):
+        return obj.edited_at.strftime('%Y-%m-%d %H:%M:%S') if obj.edited_at else None
 
+    def get_edited(self, obj):
+        return obj.edited_at is not None
+    
+    
     def create(self, validated_data):
 
         file_type = None
