@@ -11,7 +11,7 @@ import SharerPost from "../components/SharerPost";
 import { useNavigate } from "react-router-dom";
 import LikeComponent from "../components/LikeComponents";
 import Comment from "../components/Comment";
-import "../designs/sharerPageScreen.css";
+import "../designs/deleteConfirmation.css";
 
 function SharerPageScreen() {
   const dispatch = useDispatch();
@@ -264,8 +264,10 @@ function SharerPageScreen() {
               Update Post
             </button>
           </form>
+          <div>
           <LikeComponent uploadId={post.id} />
-          <Comment uploadId={post.id} />
+          <Comment uploadId={post.id}/>
+          </div>
         </div>
       ))}
     </div>

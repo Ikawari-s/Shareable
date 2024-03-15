@@ -13,6 +13,7 @@ function Comment({ uploadId }) {
   );
   const [content, setContent] = useState("");
   const [fetchError, setFetchError] = useState(null);
+  const [deletingCommentId, setDeletingCommentId] = useState(null);
 
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const username =
@@ -48,11 +49,15 @@ function Comment({ uploadId }) {
   };
 
   const handleDelete = async (commentId) => {
-    console.log("Deleting comment with id:", commentId); // Log the commentId
+    console.log("Deleting comment with id:", commentId);
+    setDeletingCommentId(commentId);
+  };
+
+  const confirmDelete = async () => {
     try {
-      await dispatch(deleteComments(commentId));
+      await dispatch(deleteComments(deletingCommentId));
       await dispatch(listComments(uploadId));
-      // window.location.reload();
+      setDeletingCommentId(null); // Reset deletingCommentId after successful deletion
     } catch (error) {
       console.error("Failed to delete comment:", error);
       alert("Failed to delete comment. Please try again.");
@@ -72,13 +77,28 @@ function Comment({ uploadId }) {
         <ul>
           {comments && comments[uploadId] && comments[uploadId].length > 0 ? (
             comments[uploadId].map((comment) => (
-              <li key={comment.id}>
-                <strong>{comment.username}:</strong> {comment.comments}
+              <li key={comment.id} style={{ listStyle: 'none'}}>
+                 <div /* style={{ backgroundColor: 'white', padding: '10px', marginBottom: '10px', borderRadius: '5px', maxWidth: '60rem', overflow: 'auto', borderRadius: '1rem', textAlign: 'left'}}*/ >
+                <strong /* style={{color: "black", fontSize: '2rem'}} */>{comment.username}:</strong> <div /* style={{ marginTop: '0.1rem', }} */>{comment.comments}</div>
                 {userInfo.user_id === comment.user && (
-                  <button onClick={() => handleDelete(comment.id)}>
-                    Delete
-                  </button>
+                  <>
+                    <button onClick={() => handleDelete(comment.id)}>
+                      Delete
+                    </button>
+                    {deletingCommentId === comment.id && (
+                      <div className="delete-confirmation-overlay">
+                      <div className="delete-confirmation-modal">
+                      <div>
+                        Are you sure you want to delete this comment?
+                        <button onClick={confirmDelete}>Yes</button>
+                        <button onClick={() => setDeletingCommentId(null)}>No</button>
+                      </div>
+                      </div>
+                      </div>
+                    )}
+                  </>
                 )}
+                </div>
               </li>
             ))
           ) : (
