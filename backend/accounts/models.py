@@ -8,6 +8,7 @@ import string
 from django.conf import settings
 from sharer.models import Sharer
 from django.contrib.auth import get_user_model
+from django.core.validators import MinLengthValidator
 
 class AppUserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
@@ -29,17 +30,15 @@ class AppUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-
 class AppUser(AbstractBaseUser, PermissionsMixin):
     id = models.AutoField(primary_key=True)
     email = models.EmailField(max_length=50, unique=True)
-    username = models.CharField(max_length=50)
+    username = models.CharField(max_length=50, validators=[MinLengthValidator(4)])
     is_active = models.BooleanField(default=False)  
     is_staff = models.BooleanField(default=False)
     is_sharer = models.BooleanField(default=False)
     follows = models.ManyToManyField(Sharer, related_name="follower", symmetrical=False,  blank=True)
     profile_picture = models.ImageField(upload_to='uploads/images', default='uploads/default/default.png', null=True, blank=True)
-
 
     otp_code = models.CharField(max_length=6, blank=True, null=True)
     otp_created_at = models.DateTimeField(blank=True, null=True)

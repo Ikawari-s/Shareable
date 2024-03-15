@@ -182,15 +182,16 @@ class UserLogin(APIView):
                     'user_id': user.id,
                     'is_sharer': is_sharer,
                     'sharer_id': sharer_id,
+                    'sharer_category': sharer.category if is_sharer else None,
                     'name': name,
                     'followed_sharers': list(followed_sharers),
                     'user_info': {
                         'email': user.email,
                         'username': user.username
                     },
-                    # 'comment_ids': list(comments),
                     'rating_id': rating_id,
                 }
+
 
                 return JsonResponse(response_data, status=status.HTTP_200_OK)
             else:

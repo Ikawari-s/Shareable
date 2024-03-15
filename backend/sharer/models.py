@@ -3,6 +3,7 @@ from django.conf import settings
 from django.utils.text import slugify
 from django.core.validators import FileExtensionValidator
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinLengthValidator
 
 def upload_image(instance, filename):
     filename = slugify(filename)
@@ -50,7 +51,7 @@ class Sharer(models.Model):
     
     category = models.CharField(max_length=30, choices=CATEGORY_CHOICES, null=False, blank=False)
     
-    username = models.CharField(max_length=50)  
+    username = models.CharField(max_length=50, unique=True, validators=[MinLengthValidator(4)])  
     id = models.AutoField(primary_key=True)
     
     def __str__(self):
@@ -61,7 +62,7 @@ class Sharer(models.Model):
         return self.user.is_sharer if self.user else False
 
     def save(self, *args, **kwargs):
-        if not self.username:  # Only update if username is not provided
+        if not self.username: 
             self.username = self.user.username if self.user else ''
         self.email = self.user.email if self.user else ''
         super().save(*args, **kwargs)
@@ -75,7 +76,7 @@ class SharerUpload(models.Model):
     file = models.FileField(upload_to=upload_file, null=True, blank=True)  
     uploaded_by = models.ForeignKey(Sharer, on_delete=models.CASCADE, related_name='uploads')
     created_at = models.DateTimeField(auto_now_add=True)
-    edited_at = models.DateTimeField(null=True, blank=True)  # Add edited_at field
+    edited_at = models.DateTimeField(null=True, blank=True) 
     
     def __str__(self):
         return f"{self.uploaded_by.email}'s Title: {self.title}"
@@ -98,15 +99,17 @@ class Like(models.Model):
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     post = models.ForeignKey(SharerUpload, on_delete=models.CASCADE, related_name='comments')
-    username = models.CharField(max_length=150)  # Add a field to store the username
     comments = models.TextField(max_length=1000, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def save(self, *args, **kwargs):
-        self.username = self.user.username 
-        super().save(*args, **kwargs)
-
+    @property
+    def username(self):
+        return self.user.username
     
+    def save(self, *args, **kwargs):
+        if not self.pk and not self.username: 
+            self.username = self.user.username 
+        super().save(*args, **kwargs)
 
 class Rating(models.Model):
     sharer = models.ForeignKey(Sharer, on_delete=models.CASCADE, related_name='ratings')

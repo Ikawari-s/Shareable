@@ -53,12 +53,15 @@ const reducer = combineReducers({
 
 });
 
+
+const editedPostsFromStorage = JSON.parse(localStorage.getItem('editedPosts') || '{}');
+
 const userInfoFromStorage = localStorage.getItem('userInfo')
 JSON.parse(localStorage.getItem("key") || '{}')
 
 const initialState = {
   userLogin: { userInfo: userInfoFromStorage },
-
+  editedPosts: editedPostsFromStorage, 
 };
 
 const store = configureStore({

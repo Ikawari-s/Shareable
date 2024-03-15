@@ -92,7 +92,7 @@ class SharerUploadViews(APIView):
     def post(self, request):
         sharer = request.user.sharer
         
-        # Create a serializer with the request data
+
         serializer = SharerUploadSerializer(data=request.data)
         
         if serializer.is_valid():
@@ -192,11 +192,12 @@ class CommentPost(APIView):
         except SharerUpload.DoesNotExist:
             return Response({"message": "Post does not exist"}, status=status.HTTP_404_NOT_FOUND)
         
-        serializer = CommentSerializer(data=request.data)
+        serializer = CommentSerializer(data=request.data, context={'user': user, 'post': upload})
         if serializer.is_valid():
-            serializer.save(user=user, post=upload)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
 
 class CommentDeleteView(generics.DestroyAPIView):
@@ -208,12 +209,12 @@ class CommentDeleteView(generics.DestroyAPIView):
         except Comment.DoesNotExist:
             return Response({"message": "Comment does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
-    
-        if comment.user != request.user:
+        if comment.user.id != request.user.id: 
             return Response({"message": "You are not the owner of this comment"}, status=status.HTTP_403_FORBIDDEN)
 
         comment.delete()
         return Response({"message": "Comment deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
     
     
     
@@ -225,7 +226,6 @@ class CommentListView(generics.ListAPIView):
         upload_id = self.kwargs.get('upload_id')
         queryset = Comment.objects.filter(post_id=upload_id)  
         return queryset
-    
 
 
 class IsSharer(permissions.BasePermission):
