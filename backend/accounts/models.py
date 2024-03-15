@@ -7,7 +7,6 @@ import random
 import string
 from django.conf import settings
 from sharer.models import Sharer
-from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator
 
 class AppUserManager(BaseUserManager):
@@ -23,22 +22,21 @@ class AppUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, username, password=None, **extra_fields):
-        extra_fields.setdefault('is_active', True)  
-        user = self.create_user(email=email, username=username, password=password, **extra_fields)
-        user.is_superuser = True
-        user.is_staff = True
-        user.save(using=self._db)
-        return user
+        extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault('is_staff', True)  # Set is_staff to True for superuser
+        return self.create_user(email, username, password, **extra_fields)
 
 class AppUser(AbstractBaseUser, PermissionsMixin):
     id = models.AutoField(primary_key=True)
     email = models.EmailField(max_length=50, unique=True)
     username = models.CharField(max_length=50, validators=[MinLengthValidator(4)])
-    is_active = models.BooleanField(default=False)  
+    is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_sharer = models.BooleanField(default=False)
-    follows = models.ManyToManyField(Sharer, related_name="follower", symmetrical=False,  blank=True)
+    follows = models.ManyToManyField(Sharer, related_name="follower", symmetrical=False, blank=True)
     profile_picture = models.ImageField(upload_to='uploads/images', default='uploads/default/default.png', null=True, blank=True)
+
+    otp_id = models.CharField(max_length=50, blank=True, null=True)  # Add otp_id field
 
     otp_code = models.CharField(max_length=6, blank=True, null=True)
     otp_created_at = models.DateTimeField(blank=True, null=True)
@@ -55,11 +53,12 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
     def generate_otp(self):
         return ''.join(random.choices(string.digits, k=6))
 
-    def send_otp(self):
+    def send_otp(self, otp_id):
         otp = self.generate_otp()
         self.otp_code = otp
         self.otp_created_at = timezone.now()
-        self.otp_expires_at = self.otp_created_at + timezone.timedelta(minutes=5)  # OTP expires in 5 minutes
+        self.otp_expires_at = self.otp_created_at + timezone.timedelta(minutes=5)
+        self.otp_id = otp_id  # Store OTP ID
         self.save()
 
         subject = 'Your OTP for verification'
@@ -69,14 +68,14 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
 
         send_mail(subject, message, from_email, to)
 
-    def verify_otp(self, otp):
-        return self.otp_code == otp and self.otp_expires_at > timezone.now()
+    def verify_otp(self, otp, otp_id):
+        return self.otp_code == otp and self.otp_expires_at > timezone.now() and self.otp_id == otp_id  # Check OTP ID as well
 
     def save(self, *args, **kwargs):
-        if self.pk is not None:  
-            orig = AppUser.objects.get(pk=self.pk) 
+        if self.pk is not None:
+            orig = AppUser.objects.get(pk=self.pk)
             if orig.is_sharer and not self.is_sharer:
-                self.sharer.delete() 
+                self.sharer.delete()
         super().save(*args, **kwargs)
 
 class beSharer(models.Model):
@@ -85,5 +84,3 @@ class beSharer(models.Model):
 
     def __str__(self):
         return self.title
-
-

@@ -37,7 +37,7 @@ function Signup() {
       const data = await dispatch(register(formData.email, formData.password, formData.username));
 
       if (data.userId) {
-        navigate(`/otp/${data.userId}`);
+        navigate(`/otp/${data.userId}/${data.otpId}`);
       } else {
         throw new Error('User ID not found in response');
       }

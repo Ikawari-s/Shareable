@@ -30,7 +30,7 @@ export const register = (email, password, username) => async (dispatch) => {
 
     const { data } = await axios.post(
       "/api/register/",
-      { email, password, username },
+      { email, password, username }, 
       config
     );
 
@@ -52,7 +52,7 @@ export const register = (email, password, username) => async (dispatch) => {
   }
 };
 
-export const verifyOTP = (userId, otp) => async (dispatch) => {
+export const verifyOTP = (userId, otp, otpId) => async (dispatch) => { 
   try {
     dispatch({ type: USER_VERIFY_REQUEST });
 
@@ -64,7 +64,7 @@ export const verifyOTP = (userId, otp) => async (dispatch) => {
 
     const { data } = await instance.post(
       "api/verify-otp/",
-      { user_id: userId, otp },
+      { user_id: userId, otp, otp_id: otpId }, 
       config
     );
 
@@ -73,7 +73,7 @@ export const verifyOTP = (userId, otp) => async (dispatch) => {
       payload: data,
     });
 
-    return data; // Return the data for success handling in the component
+    return data; 
   } catch (error) {
     dispatch({
       type: USER_VERIFY_FAIL,
@@ -82,11 +82,11 @@ export const verifyOTP = (userId, otp) => async (dispatch) => {
           ? error.response.data.error
           : error.message,
     });
-    throw error; // Throw the error for error handling in the component
+    throw error; 
   }
 };
 
-export const resendOTP = (userId) => async (dispatch) => {
+export const resendOTP = (userId, otpId) => async (dispatch) => { 
   try {
     dispatch({ type: USER_OTP_RESEND_REQUEST });
 
@@ -98,7 +98,7 @@ export const resendOTP = (userId) => async (dispatch) => {
 
     const { data } = await instance.post(
       "api/resend-otp/",
-      { user_id: userId },
+      { user_id: userId, otp_id: otpId }, 
       config
     );
 

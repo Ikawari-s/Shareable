@@ -45,20 +45,18 @@ class UserRegister(APIView):
         if serializer.is_valid(raise_exception=True):
             username = serializer.validated_data['username']
             
-
             if get_user_model().objects.filter(username=username).exists():
                 return Response({"error": "Username already exists"}, status=status.HTTP_400_BAD_REQUEST)
             
-
             user = serializer.save(is_active=False)
             if user:
                 if not user.is_active:
-                    user.send_otp()
-                    return Response({"message": "OTP sent successfully", "userId": user.id}, status=status.HTTP_200_OK)
+                    otp_id = ''.join(random.choices(string.ascii_letters + string.digits, k=16))  # Generate OTP ID
+                    user.send_otp(otp_id)  # Pass OTP ID to send_otp method
+                    return Response({"message": "OTP sent successfully", "userId": user.id, "otpId": otp_id}, status=status.HTTP_200_OK)
                 else:
                     return Response({"error": "User is already active"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)
-
 
 class SendOTP(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -67,6 +65,7 @@ class SendOTP(APIView):
         serializer = SendOTPSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user_id = serializer.validated_data['user_id']
+            otp_id = serializer.validated_data.get('otp_id') 
             try:
                 user = AppUser.objects.get(id=user_id)
             except ObjectDoesNotExist:
@@ -75,7 +74,7 @@ class SendOTP(APIView):
             if user.is_active:
                 return Response({"error": "User is already active"}, status=status.HTTP_400_BAD_REQUEST)
 
-            user.send_otp()
+            user.send_otp(otp_id)  
             return Response({"message": "OTP sent successfully"}, status=status.HTTP_200_OK)
 
 class ResendOTP(APIView):
@@ -100,10 +99,13 @@ class ResendOTP(APIView):
                     time_remaining = timedelta(seconds=60) - time_since_last_sent
                     return Response({"error": f"Please wait {time_remaining.seconds} seconds before resending OTP"}, status=status.HTTP_400_BAD_REQUEST)
 
-            user.send_otp()
-            cache.set(f'resend_otp_{user_id}_time', datetime.now(), timeout=60)  # Cache the current time
-            return Response({"message": "OTP resent successfully"}, status=status.HTTP_200_OK)
+            otp_id = user.otp_id  
+            user.send_otp(otp_id)  
+            cache.set(f'resend_otp_{user_id}_time', datetime.now(), timeout=60)  
+            return Response({"message": "OTP resent successfully", "otpId": otp_id}, status=status.HTTP_200_OK)
 
+
+        
 class VerifyOTP(APIView):
     permission_classes = (permissions.AllowAny,)
 
@@ -112,6 +114,8 @@ class VerifyOTP(APIView):
         if serializer.is_valid(raise_exception=True):
             user_id = serializer.validated_data['user_id']
             otp = serializer.validated_data['otp']
+            otp_id = serializer.validated_data['otp_id']
+            
             try:
                 user = AppUser.objects.get(id=user_id)
             except ObjectDoesNotExist:
@@ -120,14 +124,12 @@ class VerifyOTP(APIView):
             if user.is_active:
                 return Response({"error": "User is already active"}, status=status.HTTP_400_BAD_REQUEST)
 
-            if user.verify_otp(otp):
+            if user.verify_otp(otp, otp_id): 
                 user.is_active = True
                 user.save()
                 return Response({"message": "OTP verified successfully and user activated"}, status=status.HTTP_200_OK)
             else:
-                return Response({"error": "Invalid OTP or OTP expired"}, status=status.HTTP_400_BAD_REQUEST)
-
-
+                return Response({"error": "Invalid OTP, OTP expired, or OTP ID mismatch"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserLogin(APIView):
