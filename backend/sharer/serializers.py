@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from .models import *
+from accounts.models import AppUser
+
+
 
 class SharerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,14 +21,23 @@ class SharerUploadListSerializer(serializers.ModelSerializer):
 
 class SharerUploadSerializer(serializers.ModelSerializer):
     created_at_formatted = serializers.SerializerMethodField()
-    
+    edited_at_formatted = serializers.SerializerMethodField()
+    edited = serializers.SerializerMethodField()
+
     class Meta:
         model = SharerUpload
-        fields = ['id', 'title', 'description', 'image', 'video', 'file', 'created_at', 'created_at_formatted']
+        fields = ['id', 'title', 'description', 'image', 'video', 'file', 'created_at', 'created_at_formatted', 'edited_at', 'edited_at_formatted', 'edited']
 
     def get_created_at_formatted(self, obj):
         return obj.created_at.strftime('%Y-%m-%d %H:%M:%S') if obj.created_at else None
+    
+    def get_edited_at_formatted(self, obj):
+        return obj.edited_at.strftime('%Y-%m-%d %H:%M:%S') if obj.edited_at else None
 
+    def get_edited(self, obj):
+        return obj.edited_at is not None
+    
+    
     def create(self, validated_data):
 
         file_type = None
@@ -62,11 +74,26 @@ class LikeSerializer(serializers.ModelSerializer):
         fields = ['user', 'post', 'liked']
 
 
-
 class CommentSerializer(serializers.ModelSerializer):
+    username = serializers.SerializerMethodField()
+
     class Meta:
         model = Comment
-        fields = ['id', 'comments', 'username']
+        fields = ['id','user', 'username', 'post', 'comments']
+
+    def get_username(self, obj):
+        user_id = obj.user_id
+        try:
+            user = AppUser.objects.get(id=user_id)
+            return user.username
+        except AppUser.DoesNotExist:
+            return None
+
+    def create(self, validated_data):
+        post = validated_data.pop('post')
+        return Comment.objects.create(post=post, **validated_data)
+
+
 
 
 class RatingSerializer(serializers.ModelSerializer):

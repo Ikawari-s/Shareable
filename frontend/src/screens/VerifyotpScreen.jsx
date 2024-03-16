@@ -4,10 +4,10 @@ import { verifyOTP, resendOTP } from '../actions/registerActions';
 import { useParams, useNavigate } from 'react-router-dom';
 
 function VerifyotpScreen() {
-  const { userId } = useParams(); 
+  const { userId, otpId } = useParams(); // Get userId and otpId from URL params
   const [otp, setOtp] = useState('');
-  const [resendDisabled, setResendDisabled] = useState(false); // State to manage resend button disable
-  const [countdown, setCountdown] = useState(60); // Countdown timer
+  const [resendDisabled, setResendDisabled] = useState(false);
+  const [countdown, setCountdown] = useState(60);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const verifyOtpError = useSelector(state => state.verifyOtpError);
@@ -22,7 +22,7 @@ function VerifyotpScreen() {
 
   useEffect(() => {
     if (verifyOtpError) {
-      setErrorMessage(verifyOtpError); // Set error message when verifyOtpError state changes
+      setErrorMessage(verifyOtpError);
     }
   }, [verifyOtpError]);
 
@@ -47,8 +47,7 @@ function VerifyotpScreen() {
     event.preventDefault();
 
     try {
-      const data = await dispatch(verifyOTP(userId, otp)); 
-      console.log('OTP submitted:', otp);
+      await dispatch(verifyOTP(userId, otp, otpId)); // Pass otpId to verifyOTP action
       navigate('/homepage');
     } catch (error) {
       console.error('OTP verification failed:', error);
@@ -57,12 +56,10 @@ function VerifyotpScreen() {
   };
 
   const handleResendOTP = () => {
-    console.log('OTP re-sent');
     dispatch(resendOTP(userId)) 
       .then(() => {
-        console.log('OTP re-sent successfully');
-        setErrorMessage(''); // Clear error message when OTP is resent successfully
-        setResendDisabled(true); // Disable resend button
+        setErrorMessage('');
+        setResendDisabled(true);
       })
       .catch((error) => {
         console.error('Failed to resend OTP:', error);
@@ -80,7 +77,7 @@ function VerifyotpScreen() {
       </form>
       <button onClick={handleResendOTP} disabled={resendDisabled}>Re-send OTP</button>
       {resendDisabled && <p>Resend OTP in: {countdown} seconds</p>}
-      {errorMessage && <p>{errorMessage}</p>} {/* Display error message */}
+      {errorMessage && <p>{errorMessage}</p>}
     </div>
   );
 }

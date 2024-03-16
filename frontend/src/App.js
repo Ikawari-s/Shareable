@@ -39,12 +39,12 @@ function App() {
           <Route path="/contact" element={<ContactScreen />} />
           <Route path="/about" element={<AboutScreen />} />
           <Route path="/invalid" element={<InvalidScreen/>}/> 
-          <Route path="/otp/:userId" element={<VerifyotpScreen />} />
+          <Route path="/otp/:userId/:otpId" element={<VerifyotpScreen />} />
           <Route path="/contact" element={<ContactScreen />}/>
 
           {/* USER LEVEL ALL PROTECTED  */}
 
-
+ 
           <Route path="/sharers/:id" element={<ProtectedRoute><SharerDetail /></ProtectedRoute>} />
 
           <Route path="/dashboard" element={<ProtectedRoute ><SharerDashboard /></ProtectedRoute>} /> 

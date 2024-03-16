@@ -43,7 +43,10 @@ import {
   DELETE_SHARER_RATINGS_FAILURE,
   PATCH_SHARER_RATINGS_REQUEST,
   PATCH_SHARER_RATINGS_SUCCESS,
-  PATCH_SHARER_RATINGS_FAILURE
+  PATCH_SHARER_RATINGS_FAILURE,
+  SHARER_EDIT_POST_REQUEST,
+  SHARER_EDIT_POST_SUCCESS,
+  SHARER_EDIT_POST_FAILURE,
 } from "../constants/sharerConstants";
 
 const instance = axios.create({
@@ -571,3 +574,52 @@ export const patchSharerRatings = (ratingId, newData) => async (dispatch) => {
   }
 };
 
+export const editSharerPost = (upload_id, postData = {}) => async (dispatch) => {
+  try {
+    dispatch({ type: SHARER_EDIT_POST_REQUEST });
+
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    if (Object.keys(postData).length > 0) {
+      // Add edited_at field to postData if title or description is present
+      if (postData.title || postData.description) {
+        postData.edited_at = new Date().toISOString(); 
+        postData.edited = true; // Add edited field
+      }
+    }
+
+    const response = await instance.patch(
+      `api/sharer/sharer-upload-edit/${upload_id}/`,
+      postData,
+      config
+    );
+
+    dispatch({
+      type: SHARER_EDIT_POST_SUCCESS,
+      payload: response.data,
+    });
+
+    return response;
+  } catch (error) {
+    dispatch({
+      type: SHARER_EDIT_POST_FAILURE,
+      payload: error.response
+        ? error.response.data.detail || error.response.data.message
+        : error.message,
+    });
+    throw error;
+  }
+};

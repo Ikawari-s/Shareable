@@ -121,6 +121,8 @@ class ResendOTPSerializer(serializers.Serializer):
 class VerifyOTPSerializer(serializers.Serializer):
     user_id = serializers.IntegerField() 
     otp = serializers.CharField(max_length=6)
+    otp_id = serializers.CharField() 
+
 
 
 

@@ -2,7 +2,7 @@ import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/
 import {thunk} from 'redux-thunk'; // Correct import statement for thunk middleware
 import { CommentPostReducer, DeleteCommentPostReducer, LikeCountReducer, LikePostReducer, ListCommentPostReducer, UnlikePostReducer, UserProfileUpdateReducer, likesCountReducer, userChangePasswordReducer, userLoginReducer, } from './reducers/userReducer';
 import { userRegisterReducer, userResendOTPReducer, userSentOTPReducer, userVerifyOTPReducer } from './reducers/registerReducer';
-import {sharerListReducer, myProfileReducer, CheckSharerReducer, SharerDetailReducer, userSharerBeReducer, userSharerPostReducer, SharerLatestPostReducer, SharerUserProfileUpdateReducer, sharerRatingsReducer} from './reducers/sharerReducer';
+import {sharerListReducer, myProfileReducer, CheckSharerReducer, SharerDetailReducer, userSharerBeReducer, userSharerPostReducer, SharerLatestPostReducer, SharerUserProfileUpdateReducer, sharerRatingsReducer, sharerEditPostReducer} from './reducers/sharerReducer';
 import { sharerPostListReducer } from './reducers/sharerReducer';
 import { followReducer, unfollowReducer, followedSharerListReducer } from './reducers/followReducer';
 import { SharerUpdateProfile, deleteSharerRatings, fetchSharerRatings, patchSharerRatings, sharerDeletePost } from './actions/sharerActions';
@@ -42,6 +42,7 @@ const reducer = combineReducers({
   sharerRating : sharerRatingsReducer,
   deleteRating : deleteSharerRatings,
   patchRating : patchSharerRatings,
+  sharerEditPost : sharerEditPostReducer,
 
 
 
@@ -52,12 +53,15 @@ const reducer = combineReducers({
 
 });
 
+
+const editedPostsFromStorage = JSON.parse(localStorage.getItem('editedPosts') || '{}');
+
 const userInfoFromStorage = localStorage.getItem('userInfo')
 JSON.parse(localStorage.getItem("key") || '{}')
 
 const initialState = {
   userLogin: { userInfo: userInfoFromStorage },
-
+  editedPosts: editedPostsFromStorage, 
 };
 
 const store = configureStore({

@@ -21,6 +21,6 @@ urlpatterns = [
     path('ratings/<int:sharer_id>', views.RatingViews.as_view(), name='ratings'),
     path('delete-rating/<int:rating_id>', views.DeleteRating.as_view(), name='delete-ratings'),
     path('update-rating/<int:rating_id>', views.RatingUpdateView.as_view(), name='update-rating'),
-    path('sharer-upload-edit/<int:pk>/', views.SharerUploadEditView.as_view(), name='sharer-upload-edit'),
+    path('sharer-upload-edit/<int:upload_id>/', views.SharerUploadEditView.as_view(), name='sharer-upload-edit'),
 
 ]

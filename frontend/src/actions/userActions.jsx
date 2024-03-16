@@ -224,7 +224,7 @@ export const fetchLikesCount = (uploadId) => {
 };
 
 
-export const postComment = (uploadId, comments, accessToken, username) => async (dispatch) => {
+export const postComment = (userId, uploadId, comments, accessToken) => async (dispatch) => {
   try {
     dispatch({ type: USER_COMMENT_REQUEST });
     const config = {
@@ -235,9 +235,11 @@ export const postComment = (uploadId, comments, accessToken, username) => async 
       },
     };
     const requestData = {
-      username: username,
+      user: userId,
+      post: uploadId,
       comments: comments,
     };
+    console.log("Submitting comment with data:", requestData); // Log the fields
     const response = await instance.post(
       `api/sharer/posts/comment/${uploadId}/`,
       requestData,
@@ -288,6 +290,7 @@ export const deleteComments = (commentId) => async (dispatch) => {
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     const response = await instance.delete(`api/sharer/comment/delete/${commentId}/`, config);
     const { data } = response;
     dispatch({ type: USER_DELETE_COMMENT_SUCCESS, payload: { comments: data, commentId } });

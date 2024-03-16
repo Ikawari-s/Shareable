@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   listSharerPosts,
   profileSharers,
+  editSharerPost,
   SharerUpdateProfile,
   sharerDeletePost,
 } from "../actions/sharerActions";
@@ -10,7 +11,7 @@ import SharerPost from "../components/SharerPost";
 import { useNavigate } from "react-router-dom";
 import LikeComponent from "../components/LikeComponents";
 import Comment from "../components/Comment";
-import '../designs/sharerPageScreen.css'
+import "../designs/deleteConfirmation.css";
 
 function SharerPageScreen() {
   const dispatch = useDispatch();
@@ -24,14 +25,15 @@ function SharerPageScreen() {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState(""); // New state for category
+  const [category, setCategory] = useState("");
   const [newName, setNewName] = useState("");
   const [newProfilePicture, setNewProfilePicture] = useState(null);
   const [newUsername, setNewUsername] = useState("");
-  const [newVideo, setNewVideo] = useState(null);
-  const [newImage, setNewImage] = useState(null);
+  const [newTitle, setNewTitle] = useState("");
+  const [newDescription, setNewDescription] = useState("");
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [deletePostId, setDeletePostId] = useState(null);
+  const [editedPosts, setEditedPosts] = useState({});
 
   const CATEGORY_CHOICES = [
     { value: "", label: "Select a category" },
@@ -63,17 +65,21 @@ function SharerPageScreen() {
   useEffect(() => {
     dispatch(listSharerPosts());
     dispatch(profileSharers());
+    const storedEditedPosts = JSON.parse(localStorage.getItem("editedPosts")) || {};
+    setEditedPosts(storedEditedPosts);
   }, [dispatch]);
 
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const storedEditedPosts = JSON.parse(localStorage.getItem("editedPosts")) || {};
     if (userInfo && !userInfo.is_sharer) {
       navigate("/homepage");
     }
     setName(userInfo.name);
     setUsername(userInfo.user_info.username);
     setDescription(userInfo.user_info.description);
-    setCategory(userInfo.user_info.category); // Set category from user info
+    setCategory(userInfo.sharer_category); // Update category based on response data
+    setEditedPosts(storedEditedPosts);
   }, [navigate, userProfile]);
 
   const handleUpdateProfile = async (e) => {
@@ -99,7 +105,7 @@ function SharerPageScreen() {
         updatedUserInfo.name = newName;
         updatedUserInfo.user_info.username = newUsername;
         updatedUserInfo.user_info.description = description;
-        updatedUserInfo.user_info.category = category; // Update category in local storage
+        updatedUserInfo.sharer_category = category; // Update category in local storage
         if (newProfilePicture) {
           const filename = newProfilePicture.name.replace(/\s+/g, "_");
           updatedUserInfo.image = `/media/uploads/images/${filename}`;
@@ -111,7 +117,22 @@ function SharerPageScreen() {
     }
   };
 
-  
+  const handleUpdatePost = async (postId) => {
+    try {
+      await dispatch(
+        editSharerPost(postId, {
+          title: newTitle || undefined,
+          description: newDescription || undefined,
+        })
+      );
+      dispatch(listSharerPosts());
+      setNewTitle("");
+      setNewDescription("");
+      setEditedPosts((prev) => ({ ...prev, [postId]: true }));
+    } catch (error) {
+      console.error("Error updating post:", error);
+    }
+  };
 
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
@@ -126,24 +147,22 @@ function SharerPageScreen() {
   }
 
   const sortedPosts = Array.isArray(sharerPostList)
-    ? sharerPostList
-        .slice()
-        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    ? sharerPostList.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     : [];
 
-    const handleDeletePostConfirmation = (uploadId) => {
-      setDeletePostId(uploadId);
-      setShowDeleteConfirmation(true);
-    };
-  
-    const handleDeleteConfirmation = () => {
-      dispatch(sharerDeletePost(deletePostId));
-      setShowDeleteConfirmation(false);
-    };
-  
-    const handleCancelDelete = () => {
-      setShowDeleteConfirmation(false);
-    };
+  const handleDeletePostConfirmation = (uploadId) => {
+    setDeletePostId(uploadId);
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleDeleteConfirmation = () => {
+    dispatch(sharerDeletePost(deletePostId));
+    setShowDeleteConfirmation(false);
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirmation(false);
+  };
 
   return (
     <div>
@@ -174,7 +193,7 @@ function SharerPageScreen() {
       <div className="my-4">
         <form onSubmit={handleUpdateProfile}>
           <div>
-            <label>New Title:</label>
+            <label>New Name:</label>
             <input
               type="text"
               value={newName}
@@ -192,19 +211,12 @@ function SharerPageScreen() {
             />
           </div>
           <div>
-            <label>Description:</label> {/* Add description field */}
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
+            <label>Description:</label>
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
           </div>
           <div>
             <label>New Profile Picture:</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setNewProfilePicture(e.target.files[0])}
-            />
+            <input type="file" accept="image/*" onChange={(e) => setNewProfilePicture(e.target.files[0])} />
           </div>
           <button type="submit" className="btn btn-primary mt-3">
             Update Profile
@@ -215,35 +227,49 @@ function SharerPageScreen() {
       <div>
         <SharerPost />
       </div>
-      {sortedPosts.map((post) => {
-        return (
-          <div key={post.id}>
-            <h2>{post.title}</h2>  <button onClick={() => handleDeletePostConfirmation(post.id)}>DELETE POST</button>
-            {/* Delete confirmation modal */}
-            {showDeleteConfirmation && deletePostId === post.id && (
-              <div className="delete-confirmation-overlay">
-                <div className="delete-confirmation-modal">
-                  <p>Are you sure you want to delete this post?</p>
-                  <button onClick={handleDeleteConfirmation}>Yes</button>
-                  <button onClick={handleCancelDelete}>No</button>
-                </div>
+      {sortedPosts.map((post) => (
+        <div key={post.id}>
+          <h2>
+            {post.title} {editedPosts[post.id] && <span>Edited</span>}
+          </h2>
+          <button onClick={() => handleDeletePostConfirmation(post.id)}>DELETE POST</button>
+          {showDeleteConfirmation && deletePostId === post.id && (
+            <div className="delete-confirmation-overlay">
+              <div className="delete-confirmation-modal">
+                <p>Are you sure you want to delete this post?</p>
+                <button onClick={handleDeleteConfirmation}>Yes</button>
+                <button onClick={handleCancelDelete}>No</button>
               </div>
-            )}
-            <p>{post.description}</p>
-            <p>Time: {post.created_at_formatted}</p>
-            {post.image && <img src={post.image} alt="Post Image" />}
-            {post.video && <video src={post.video} controls></video>}
-            {post.file && (
-              <a href={post.file} download>
-                Download File
-              </a>
-            )}
-
-            <LikeComponent uploadId={post.id} />
-            <Comment uploadId={post.id} />
+            </div>
+          )}
+          <p>{post.description}</p>
+          <p>Time: {post.created_at_formatted}</p>
+          {post.image && <img src={post.image} alt="Post Image" />}
+          {post.video && <video src={post.video} controls></video>}
+          {post.file && (
+            <a href={post.file} download>
+              Download File
+            </a>
+          )}
+          <form onSubmit={() => handleUpdatePost(post.id)}>
+            <div>
+              <label>New Title:</label>
+              <input type="text" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+            </div>
+            <div>
+              <label>New Description:</label>
+              <textarea value={newDescription} onChange={(e) => setNewDescription(e.target.value)} />
+            </div>
+            <button type="submit" className="btn btn-primary mt-3">
+              Update Post
+            </button>
+          </form>
+          <div>
+          <LikeComponent uploadId={post.id} />
+          <Comment uploadId={post.id}/>
           </div>
-        );
-      })}
+        </div>
+      ))}
     </div>
   );
 }
