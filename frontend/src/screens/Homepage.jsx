@@ -7,6 +7,7 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import FollowedSharersList from "../components/FollowedSharersList";
 import {Row, Col} from 'react-bootstrap';
+import { Link } from "react-router-dom";
 
 
 
@@ -78,11 +79,9 @@ function Homepage({ sharerList, listSharers,}) {
                     </Card.Text>
                     
                   </div>
-                  <a href={`sharers/${sharer.id}`}>
-                    {" "}
-                    <Button variant="primary">See More</Button>{" "}
-                    
-                  </a>
+                  <Link to={`/homepage/sharers/${sharer.id}`}>
+                    <Button variant="primary">See More</Button>
+                  </Link>
                 </Card.Body>
               </Card>
             </div>

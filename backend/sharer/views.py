@@ -91,14 +91,14 @@ class SharerUploadViews(APIView):
 
     def post(self, request):
         sharer = request.user.sharer
-        
 
-        serializer = SharerUploadSerializer(data=request.data)
+        serializer = SharerUploadSerializer(data=request.data, context={'request': request})
         
         if serializer.is_valid():
             serializer.save(uploaded_by=sharer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
 class SharerUploadEditView(APIView):
     permission_classes = [IsAuthenticated]
@@ -118,14 +118,21 @@ class SharerUploadEditView(APIView):
                 serializer.validated_data['edited_at'] = timezone.now()
                 serializer.validated_data['edited'] = True
                 serializer.save()
-                if serializer.validated_data['edited']:
-                    return Response({'message': 'Edited', 'data': serializer.data})
-                else:
-                    return Response(serializer.data)
+
+                # Format edited_at field before including it in the response
+                formatted_edited_at = format(upload.edited_at, 'Y-m-d H:i:s')
+
+                # Include both edited_at and edited_at_formatted in the response data
+                response_data = {
+                    'edited_at': upload.edited_at,
+                    'edited_at_formatted': formatted_edited_at,
+                    **serializer.data
+                }
+
+                return Response({'message': 'Edited', 'data': response_data})
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'error': 'At least one of title or description must be provided for editing'}, status=status.HTTP_400_BAD_REQUEST)
-
 
 class LikePost(APIView):
     permission_classes = [IsAuthenticated]

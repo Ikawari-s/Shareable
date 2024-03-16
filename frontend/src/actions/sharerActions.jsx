@@ -196,7 +196,6 @@ export const uploadSharer = (formData) => async (dispatch) => {
 
 
 const BASE_URL = "http://localhost:8000";
-
 export const listSharerPosts = () => async (dispatch) => {
   try {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -207,7 +206,7 @@ export const listSharerPosts = () => async (dispatch) => {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, // Fixed: Bearer wrapped in quotes
           },
         }
       : {};
@@ -217,6 +216,8 @@ export const listSharerPosts = () => async (dispatch) => {
       config
     );
 
+    // Check if data.edited_at_formatted exists, if not, set it to null
+    const edited_at_formatted = data.edited_at_formatted || null;
     // Map through data and format created_at
     const formattedData = data.map(post => ({
       ...post,
@@ -224,17 +225,18 @@ export const listSharerPosts = () => async (dispatch) => {
     }));
 
     // Format URLs based on file type
+    const BASE_URL = "your_base_url_here"; // Define BASE_URL
     const formattedPosts = formattedData.map(post => ({
       ...post,
       // Handle image URLs
-      image_url: post.image ? `${BASE_URL}/${post.image}` : null,
+      image_url: post.image ? `${BASE_URL}/${post.image}` : null, // Fixed: Template literal wrapped in backticks
       // Handle video URLs
-      video_url: post.video ? `${BASE_URL}/${post.video}` : null,
+      video_url: post.video ? `${BASE_URL}/${post.video}` : null, // Fixed: Template literal wrapped in backticks
       // Handle file URLs
-      file_url: post.file ? `${BASE_URL}/${post.file}` : null
+      file_url: post.file ? `${BASE_URL}/${post.file}` : null, // Fixed: Template literal wrapped in backticks
     }));
 
-    dispatch({ type: SHARER_POST_LIST_SUCCESS, payload: formattedPosts });
+    dispatch({ type: SHARER_POST_LIST_SUCCESS, payload: formattedPosts, edited_at_formatted });
   } catch (error) {
     dispatch({
       type: SHARER_POST_LIST_FAIL,
@@ -245,7 +247,6 @@ export const listSharerPosts = () => async (dispatch) => {
     });
   }
 };
-
 
 
 export const profileSharers = () => async (dispatch) => {

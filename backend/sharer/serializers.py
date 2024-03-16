@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import *
 from accounts.models import AppUser
-
+from django.utils import timezone
 
 
 class SharerSerializer(serializers.ModelSerializer):
@@ -12,10 +12,22 @@ class SharerSerializer(serializers.ModelSerializer):
 
 class SharerUploadListSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S')
+    edited_at_formatted = serializers.SerializerMethodField()
+    edited = serializers.SerializerMethodField()  # Add edited field
 
     class Meta:
         model = SharerUpload
-        fields = ['id', 'title', 'description', 'image', 'video', 'file', 'created_at']
+        fields = ['id', 'title', 'description', 'image', 'video', 'file', 'created_at', 'edited_at_formatted', 'edited']  # Include 'edited' field in the fields list
+
+    def get_edited_at_formatted(self, instance):
+        edited_at = instance.edited_at
+        if edited_at:
+            return timezone.localtime(edited_at).strftime('%Y-%m-%d %H:%M:%S')
+        return None
+ 
+    # Define method to determine edited status
+    def get_edited(self, instance):
+        return instance.edited_at is not None
 
 
 
