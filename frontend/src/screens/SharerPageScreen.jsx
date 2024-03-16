@@ -34,6 +34,7 @@ function SharerPageScreen() {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [deletePostId, setDeletePostId] = useState(null);
   const [editedPosts, setEditedPosts] = useState({});
+  const [editedPostsFormatted, setEditedPostsFormatted] = useState({});
 
   const CATEGORY_CHOICES = [
     { value: "", label: "Select a category" },
@@ -70,6 +71,7 @@ function SharerPageScreen() {
   }, [dispatch]);
 
   useEffect(() => {
+    // Update component state with user profile data when userProfile changes
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const storedEditedPosts = JSON.parse(localStorage.getItem("editedPosts")) || {};
     if (userInfo && !userInfo.is_sharer) {
@@ -78,13 +80,13 @@ function SharerPageScreen() {
     setName(userInfo.name);
     setUsername(userInfo.user_info.username);
     setDescription(userInfo.user_info.description);
-    setCategory(userInfo.sharer_category); // Update category based on response data
+    setCategory(userInfo.sharer_category);
     setEditedPosts(storedEditedPosts);
   }, [navigate, userProfile]);
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-
+  
     try {
       await dispatch(
         SharerUpdateProfile({
@@ -99,7 +101,7 @@ function SharerPageScreen() {
       setNewName("");
       setNewProfilePicture(null);
       setNewUsername("");
-
+  
       const updatedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
       if (updatedUserInfo) {
         updatedUserInfo.name = newName;
@@ -116,6 +118,7 @@ function SharerPageScreen() {
       console.error("Error updating profile:", error);
     }
   };
+  
 
   const handleUpdatePost = async (postId) => {
     try {
@@ -230,7 +233,7 @@ function SharerPageScreen() {
       {sortedPosts.map((post) => (
         <div key={post.id}>
           <h2>
-            {post.title} {editedPosts[post.id] && <span>Edited</span>}
+            {post.title}
           </h2>
           <button onClick={() => handleDeletePostConfirmation(post.id)}>DELETE POST</button>
           {showDeleteConfirmation && deletePostId === post.id && (
@@ -244,6 +247,7 @@ function SharerPageScreen() {
           )}
           <p>{post.description}</p>
           <p>Time: {post.created_at_formatted}</p>
+          {post.edited && <p>Edited At: {post.edited_at_formatted}</p>}
           {post.image && <img src={post.image} alt="Post Image" />}
           {post.video && <video src={post.video} controls></video>}
           {post.file && (

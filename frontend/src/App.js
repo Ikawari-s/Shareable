@@ -45,7 +45,7 @@ function App() {
           {/* USER LEVEL ALL PROTECTED  */}
 
  
-          <Route path="/sharers/:id" element={<ProtectedRoute><SharerDetail /></ProtectedRoute>} />
+          <Route path="/homepage/sharers/:id" element={<ProtectedRoute><SharerDetail /></ProtectedRoute>} />
 
           <Route path="/dashboard" element={<ProtectedRoute ><SharerDashboard /></ProtectedRoute>} /> 
           <Route path="/homepage" element={<ProtectedRoute ><Homepage /></ProtectedRoute>} />
