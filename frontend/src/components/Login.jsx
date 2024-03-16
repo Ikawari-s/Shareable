@@ -8,7 +8,6 @@ function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { userInfo, loading } = useSelector((state) => state.userLogin);
-
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -39,7 +38,7 @@ function Login() {
   }, [userInfo, navigate]);
 
   return (
-    <div id="specificArea" className="container mt-5">
+    <div id="LogInPage" className="container mt-5">
       <GuestHeader />
       <div className="card custom-card-background">
         <div className="card-header">

@@ -1,6 +1,6 @@
 .bodhi {
   position: fixed;
-  top: 0;
+  top: 0; 
   left: 0;
   width: 100%;
   /* background-color: rgba(51, 51, 51, 0.8); */
@@ -19,12 +19,14 @@
   margin-left: 5%;
   margin-right: 5%;
   width: 90%;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 
 #logotext{
   padding-bottom: .5rem;
   padding-top: .4rem;
-  width: 45% !important;
+  margin-right: 2rem;
+  width: 11% !important;
   height: auto;
 }
