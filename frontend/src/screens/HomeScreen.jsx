@@ -6,8 +6,7 @@ import { login } from "../actions/userActions";
 import GuestHeader from "../components/GuestHeader";
 import Footer from '../components/Footer'
 import creator from '../designs/creator.png';
-import Login from "../components/Login";
-import Signup from "../components/Signup";
+import '../designs/HomeScreen.css';
 
 
 function HomeScreen() {
@@ -53,7 +52,7 @@ function HomeScreen() {
       }
     }, [userInfo, navigate]);
 
-    return <>
+  return (
     <div id="FindSharer">
       <GuestHeader />
       <img src={creator} alt="creator" style={{
@@ -65,14 +64,157 @@ function HomeScreen() {
       backgroundPosition: 'center'
       }}></img>
 
-<Login />
 
-<Signup />
+
+      <div id="LogInPage" className="container mt-5">
+      <div className="card custom-card-background wrapper">
+        <div className="card-header">
+          <h1 className="text-center">Log in</h1>
+        </div>
+
+        <div className="card-body">
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label htmlFor="email" className="form-label">
+                Email:
+              </label>
+              <input
+                type="email"
+                placeholder="Email"
+                className="form-control"
+                id="email"
+                name="email"
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="password" className="form-label">
+                Password:
+              </label>
+              <input
+                type="password"
+                placeholder="Password"
+                className="form-control"
+                id="password"
+                name="password"
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="d-grid gap-2 cum">
+              <button
+                className="btn btn-primary"
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? "Logging in..." : "Login"}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div className="card-footer text-">
+          Don't have an Account? <Link to="/signup">Sign Up</Link>
+          <Link to="/reset-password">Forgot Password? </Link>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <div id="SignUpPage" className="container mt-5">
+      <div className="card grabber">
+        <div className="card-header">
+          <h1 className="text-center">Sign Up</h1>
+        </div>
+
+        <div className="card-body">
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Label>Email:</Form.Label>
+              <Form.Control
+                type="email"
+                placeholder="Email"
+                id="email"
+                name="email"
+                onChange={handleChange}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Username:</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Username"
+                id="username"
+                name="username"
+                onChange={handleChange}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Password:</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Password"
+                id="password"
+                name="password"
+                onChange={handleChange}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Retype Password:</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Retype Password"
+                id="retypePassword"
+                name="retypePassword"
+                onChange={handleChange}
+              />
+            </Form.Group>
+
+            <div className="d-grid gap-2 cum">
+              <Button variant="primary" type="submit" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Spinner animation="border" size="sm" /> Creating...
+                  </>
+                ) : (
+                  'Create!'
+                )}
+              </Button>
+            </div>
+          </Form>
+          {error && <Alert variant="danger">{error}</Alert>}
+        </div>
+
+        <div className="card-footer text-muted text-center">
+          Already have an Account? <Link to="/">Login</Link>
+        </div>
+      </div>
+      <br></br>
+      <br></br>
       
+    </div>  
       <Footer />
     </div>
   );
-  </>
 }
 
 export default HomeScreen;

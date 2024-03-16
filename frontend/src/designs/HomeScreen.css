@@ -1,0 +1,55 @@
+#LogInPage{
+    padding-top: 6rem;
+    height: 40rem !important;
+}
+
+#SignUpPage{
+    padding-top: 6rem;
+}
+
+.wrapper{
+    position: absolute;
+    margin-left: 54rem;
+    max-width: 28rem;
+    width: 100%;
+    padding: 1.5rem;
+    /* background-color: white !important; */
+    border-radius: 30px !important;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+
+.grabber{
+    position: absolute;
+    margin-right: 54rem;
+    max-width: 28rem;
+    width: 100%;
+    padding: 1.5rem;
+    border-radius: 30px !important;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+
+.card-body{
+    /* background-color: green; */
+
+}
+
+.cum button{
+   border-radius: 100px;
+   border-color: #084d6e;
+   background-color: #084d6e;
+}
+
+.cum button:hover{
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    border-color: #0071bd;
+    background-color: #0071bd;
+ } 
+
+.card-body label{
+padding-left: 1rem;
+}
+
+.card-body input{
+    border-radius: 100px;
+    /* background-color: aliceblue; */
+}

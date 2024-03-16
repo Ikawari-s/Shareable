@@ -50,7 +50,8 @@ function Signup() {
   };
 
   return (
-    <div id="SignUpPage" className="container mt-5">
+    <div className="container mt-5">
+      <GuestHeader />
       <div className="card">
         <div className="card-header">
           <h3 className="text-center">Sign Up</h3>
@@ -120,7 +121,7 @@ function Signup() {
       <br></br>
       <br></br>
       
-    </div>  
+    </div>
   );
 }
 

@@ -3,12 +3,23 @@
   top: 0; 
   left: 0;
   width: 100%;
-  /* background-color: rgba(51, 51, 51, 0.8); */
   backdrop-filter: blur(5px);
   color: #232323;
+
   /* padding-top: 8px; */
   transition: border-radius 0.3s ease, margin 0.3s ease, width 0.3s ease, background-color 0.3s ease;
   z-index: 1000; /* Ensure it stays above other content */
+}
+
+
+.yea:hover {
+  background-color: #084d6e;
+  color: white !important;
+}
+
+.yea:active{
+  background-color: #0071bd;
+  color: white !important;
 }
 
 .circular {
