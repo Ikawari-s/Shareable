@@ -5,8 +5,11 @@ import { Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { login } from "../actions/userActions";
 import GuestHeader from "../components/GuestHeader";
 import Footer from '../components/Footer'
-import creator from '../designs/creator.png';
+import creator1 from '../designs/images/creator1.png';
 import '../designs/HomeScreen.css';
+import logotext from '../designs/images/logotext.png'
+import logo from '../designs/images/logo.png'
+import content2 from '../designs/images/content2.jpg'
 
 
 function HomeScreen() {
@@ -55,18 +58,96 @@ function HomeScreen() {
   return (
     <div id="FindSharer">
       <GuestHeader />
-      <img src={creator} alt="creator" style={{
-      position: 'relative',
-      width: '100%',
-      height: '100%',
-      backgroundImage: `url(${creator})`,
+      <img className="creator1" src={creator1} alt="creator"></img>
+    <div className="contenti">
+      cum
+    </div>
+    <div id="SignUpPage" style={{
+      backgroundImage: `url(${content2})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center'
-      }}></img>
+      }}> 
+      <div id="fab">
+      <h1>Sign up today, Become part of Shareable!</h1>
+      </div>
+    <div className="container">
+      <div className="card grabber">
+        <div className="card-header logo">
+          <img src={logo} alt="Logo" />
+        </div>
 
+        <div className="card-body">
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Label>Email:</Form.Label>
+              <Form.Control
+                type="email"
+                placeholder="Email"
+                id="email"
+                name="email"
+                onChange={handleChange}
+              />
+            </Form.Group>
 
+            <Form.Group className="mb-3">
+              <Form.Label>Username:</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Username"
+                id="username"
+                name="username"
+                onChange={handleChange}
+              />
+            </Form.Group>
 
-      <div id="LogInPage" className="container mt-5">
+            <Form.Group className="mb-3">
+              <Form.Label>Password:</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Password"
+                id="password"
+                name="password"
+                onChange={handleChange}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Retype Password:</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Retype Password"
+                id="retypePassword"
+                name="retypePassword"
+                onChange={handleChange}
+              />
+            </Form.Group>
+
+            <div className="d-grid gap-2 cum">
+              <Button variant="primary" type="submit" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Spinner animation="border" size="sm" /> Creating...
+                  </>
+                ) : (
+                  'Create!'
+                )}
+              </Button>
+            </div>
+          </Form>
+          {error && <Alert variant="danger">{error}</Alert>}
+        </div>
+        <p className="text-center texto">Shareable Copyright ©</p>
+
+        {/* <div className="card-footer text-muted text-center">
+          Already have an Account? <Link to="/">Login</Link>
+        </div> */}
+      </div>
+    </div>
+    
+  </div>
+  <div id="LogInPage">
+      <div id="gab"> <img src={logotext} alt="Logo" /></div>
+    <div className="container mt-5">
       <div className="card custom-card-background wrapper">
         <div className="card-header">
           <h1 className="text-center">Log in</h1>
@@ -115,11 +196,12 @@ function HomeScreen() {
         </div>
 
         <div className="card-footer text-">
-          Don't have an Account? <Link to="/signup">Sign Up</Link>
-          <Link to="/reset-password">Forgot Password? </Link>
+          {/* Don't have an Account? <Link to="/signup">Sign Up</Link> */}
+          <Link id="da-link" to="/reset-password">Forgot Password? </Link>
         </div>
       </div>
     </div>
+  </div>
 
 
 
@@ -136,8 +218,7 @@ function HomeScreen() {
 
 
 
-
-      <div id="SignUpPage" className="container mt-5">
+      {/* <div id="SignUpPage" className="container mt-5">
       <div className="card grabber">
         <div className="card-header">
           <h1 className="text-center">Sign Up</h1>
@@ -211,7 +292,7 @@ function HomeScreen() {
       <br></br>
       <br></br>
       
-    </div>  
+    </div>   */}
       <Footer />
     </div>
   );

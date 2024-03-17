@@ -3,7 +3,7 @@ import { Navbar, Container, Nav } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import '../designs/GuestHeader.css';
-import logotext from '../designs/logotext.png';
+import logotext from '../designs/images/logotext.png'
 
 
 
@@ -47,6 +47,7 @@ function GuestHeader({ scrollToSpecificHeight }) {
       SignUpPage.scrollIntoView({ behavior: 'smooth' });
     }
   }; 
+  
 
   
   return (
@@ -55,9 +56,9 @@ function GuestHeader({ scrollToSpecificHeight }) {
           <nav className="d-flex justify-content-center">
               <img src={logotext} alt="Logo" id='logotext' />
             <Nav.Link className="d-flex justify-content-center yea" style={{ color: 'gray', fontWeight: '', paddingTop: '1rem', fontWeight: '600'}} onClick={scrollToFindSharer}>FIND A SHARER</Nav.Link>
+            <Nav.Link className="d-flex justify-content-center yea" style={{ color: 'gray', fontWeight: '', paddingTop: '1rem', fontWeight: '600'}} onClick={scrollToSignUpPage}>SIGN UP</Nav.Link>
             <Nav.Link className="d-flex justify-content-center yea" style={{ color: 'gray', fontWeight: '', paddingTop: '1rem', fontWeight: '600'}} onClick={scrollToLogInPage}>LOG IN</Nav.Link>
             {/* <Nav.Link className="d-flex justify-content-center" style={{ color: 'gray', fontWeight: '', paddingTop: '1rem', fontWeight: '600'}} as={Link} to="/login">LOG IN</Nav.Link> */}
-            <Nav.Link className="d-flex justify-content-center yea" style={{ color: 'gray', fontWeight: '', paddingTop: '1rem', fontWeight: '600'}} onClick={scrollToSignUpPage}>SIGN UP</Nav.Link>
             {/* <Nav.Link className="d-flex justify-content-center" style={{ color: 'gray', fontWeight: '', paddingTop: '1rem', fontWeight: '600'}} as={Link} to="/signup">SIGN UP</Nav.Link> */}
           </nav>
 

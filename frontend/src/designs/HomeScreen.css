@@ -1,10 +1,98 @@
-#LogInPage{
-    padding-top: 6rem;
-    height: 40rem !important;
+.creator1{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;    
 }
 
-#SignUpPage{
-    padding-top: 6rem;
+.contenti{
+    position: relative;
+    width: 100%;
+    height: 70rem;
+    background-color: #dafff6;
+    background-size: cover;
+    background-position: center;
+}
+
+#LogInPage{
+    padding-top: .5rem;
+    padding-bottom: 3.7rem;
+    background-image: linear-gradient(to bottom, #0b1550, #014981);
+    background-size: cover;
+    background-position: center
+}
+
+#fab{
+    position: relative;
+    width: 30% !important;
+    height: 0 !important;
+    left: 900px;
+    top:200px;
+}
+
+#fab h1{
+    font-size: 4rem !important;
+    line-height: 5.5rem;
+    text-align: left;
+    font-weight: 500;
+}
+
+#gab{
+    position: relative;
+    width: 75% !important;
+    height: 0px !important;
+    left: 40px;
+    top:250px;
+}
+
+.grabber{
+    position: absolute;
+    margin-right: 54rem;
+    max-width: 33rem;
+    background-color: white !important;
+    width: 100%;
+    padding: 1.5rem;
+    padding-bottom: 2rem;
+    padding-top: 1rem;
+    border-radius: 0rem !important;
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+}
+.logo{
+    display: flex; /* or use display: grid; */
+    justify-content: center; /* horizontally center */
+    align-items: center;
+    width: 30rem;
+    height: 3rem;
+}
+
+.logo img{
+    height: 2rem;
+    width: 2rem;
+}
+
+#SignUpPage label, #SignUpPage form, #SignUpPage input{
+    color: #333333 !important;
+    border-color: gray;
+}
+
+#SignUpPage p{
+    padding-top: 1rem;
+    color: #333333 !important;
+    font-size: .8rem;
+}
+
+.welcome{
+    font-size: 2.4rem;
+    margin-bottom: 0;
+}
+
+#SignUpPage ::placeholder{
+    color: gray;
+}
+
+#SignUpPage input:hover{
+    border-color: #333333;
 }
 
 .wrapper{
@@ -12,20 +100,14 @@
     margin-left: 54rem;
     max-width: 28rem;
     width: 100%;
-    padding: 1.5rem;
-    /* background-color: white !important; */
-    border-radius: 30px !important;
-    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    padding: 1.25rem;
+    border-radius: 1.875rem !important;
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
 }
 
-.grabber{
-    position: absolute;
-    margin-right: 54rem;
-    max-width: 28rem;
-    width: 100%;
-    padding: 1.5rem;
-    border-radius: 30px !important;
-    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+#LogInPage input:hover{
+    border-color: white;
+    color: white;
 }
 
 .card-body{
@@ -34,7 +116,7 @@
 }
 
 .cum button{
-   border-radius: 100px;
+   border-radius: 6.25rem;
    border-color: #084d6e;
    background-color: #084d6e;
 }
@@ -50,6 +132,17 @@ padding-left: 1rem;
 }
 
 .card-body input{
-    border-radius: 100px;
+    border-radius: 6.25rem;
     /* background-color: aliceblue; */
+}
+
+#da-link{
+    font-size: small !important;
+    text-align: right;
+    left: 14rem;
+    width: 6.7rem;
+}
+
+#da-link:hover {
+    background-color: transparent;
 }
