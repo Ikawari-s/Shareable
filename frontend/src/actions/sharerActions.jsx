@@ -249,14 +249,11 @@ export const listSharerPosts = () => async (dispatch) => {
 };
 
 
-export const profileSharers = () => async (dispatch) => {
+export const profileSharers = (userEmail) => async (dispatch) => { 
   try {
     dispatch({ type: SHARER_PROFILE_REQUEST });
 
-    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-    const token = userInfo ? userInfo.access_token : null;
-    const userEmail = userInfo ? userInfo.email : null; // Get user email from userInfo
-
+    const token = JSON.parse(localStorage.getItem('userInfo')).access_token;
     const config = {
       headers: {
         'Content-Type': 'application/json',
@@ -265,11 +262,14 @@ export const profileSharers = () => async (dispatch) => {
       },
     };
 
-    const { data } = await instance.get('api/sharer/user-sharer-profile/', config);
+    const { data } = await instance.get('api/sharer/user-sharer-profile/', {
+      ...config,
+      params: { email: userEmail },
+    });
 
     dispatch({
       type: SHARER_PROFILE_SUCCESS,
-      payload: { ...data, userEmail }, // Include userEmail in the payload
+      payload: { ...data, userEmail }, 
     });
   } catch (error) {
     dispatch({

@@ -72,17 +72,13 @@ function SharerPageScreen() {
 
   useEffect(() => {
     // Update component state with user profile data when userProfile changes
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    const storedEditedPosts = JSON.parse(localStorage.getItem("editedPosts")) || {};
-    if (userInfo && !userInfo.is_sharer) {
-      navigate("/homepage");
+    if (userProfile) {
+      setName(userProfile.name);
+      setUsername(userProfile.username);
+      setDescription(userProfile.description);
+      setCategory(userProfile.category);
     }
-    setName(userInfo.name);
-    setUsername(userInfo.user_info.username);
-    setDescription(userInfo.user_info.description);
-    setCategory(userInfo.sharer_category);
-    setEditedPosts(storedEditedPosts);
-  }, [navigate, userProfile]);
+  }, [userProfile]);
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -101,25 +97,11 @@ function SharerPageScreen() {
       setNewName("");
       setNewProfilePicture(null);
       setNewUsername("");
-  
-      const updatedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
-      if (updatedUserInfo) {
-        updatedUserInfo.name = newName;
-        updatedUserInfo.user_info.username = newUsername;
-        updatedUserInfo.user_info.description = description;
-        updatedUserInfo.sharer_category = category; // Update category in local storage
-        if (newProfilePicture) {
-          const filename = newProfilePicture.name.replace(/\s+/g, "_");
-          updatedUserInfo.image = `/media/uploads/images/${filename}`;
-        }
-        localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
-      }
     } catch (error) {
       console.error("Error updating profile:", error);
     }
   };
   
-
   const handleUpdatePost = async (postId) => {
     try {
       await dispatch(

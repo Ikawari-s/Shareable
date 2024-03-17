@@ -240,7 +240,7 @@ class IsSharer(permissions.BasePermission):
         return request.user.is_authenticated and request.user.is_sharer
 
 
-
+User = get_user_model()
 class SharerUpdateProfile(APIView):
     permission_classes = [IsAuthenticated, IsSharer]
 
@@ -250,12 +250,17 @@ class SharerUpdateProfile(APIView):
         serializer = SharerSerializer(sharer, data=request.data, partial=True)
 
         if serializer.is_valid():
+            username = serializer.validated_data.get('username')
+            if username:
+                # Check if the provided username is already in use
+                if User.objects.exclude(pk=user.pk).filter(username=username).exists():
+                    return Response({"detail": "The username is already in use."}, status=status.HTTP_400_BAD_REQUEST)
 
             serializer.save()
 
             try:
                 app_user = AppUser.objects.get(email=sharer.email)
-                app_user.username = serializer.validated_data.get('username', app_user.username)
+                app_user.username = username
                 app_user.save()
             except ObjectDoesNotExist:
                 pass 

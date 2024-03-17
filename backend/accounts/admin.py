@@ -10,7 +10,7 @@ class AppUserAdmin(UserAdmin):
 
     fieldsets = (
         (None, {'fields': ('email', 'username', 'password')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_sharer', 'groups', 'user_permissions', 'follows')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_sharer', 'follows')}),
         ('Profile Picture', {'fields': ('profile_picture',)}), 
     )
 
@@ -21,11 +21,6 @@ class AppUserAdmin(UserAdmin):
         ),
     )
 
-
-# @admin.register(Rating)
-# class RatingAdmin(admin.ModelAdmin):
-#     list_display = ('user', 'rating', 'comments', 'created_at')
-#     search_fields = ('user__username', 'comments')
-#     list_filter = ('created_at',)
+    list_filter = ('is_active', 'is_staff', 'is_sharer')
 
 admin.site.register(AppUser, AppUserAdmin)

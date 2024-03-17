@@ -439,13 +439,18 @@ class ProfileUpdateView(APIView):
         if not username:
             return Response({"detail": "Provide a username for update."}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Check if the provided username is already in use
+        if User.objects.exclude(pk=request.user.pk).filter(username=username).exists():
+            return Response({"detail": "The username is already in use."}, status=status.HTTP_400_BAD_REQUEST)
+
         user_serializer = ProfileUpdateSerializer(request.user, data=request.data, partial=True)
         if user_serializer.is_valid():
             user_serializer.save()
             return Response({"user": user_serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": "Invalid data provided for profile update."}, status=status.HTTP_400_BAD_REQUEST)
-
+        
+        
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
 def change_password(request):

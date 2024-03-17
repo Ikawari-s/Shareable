@@ -23,13 +23,15 @@ class AppUserManager(BaseUserManager):
 
     def create_superuser(self, email, username, password=None, **extra_fields):
         extra_fields.setdefault('is_active', True)
-        extra_fields.setdefault('is_staff', True)  # Set is_staff to True for superuser
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)  # Set is_superuser to True for superuser
         return self.create_user(email, username, password, **extra_fields)
+
 
 class AppUser(AbstractBaseUser, PermissionsMixin):
     id = models.AutoField(primary_key=True)
     email = models.EmailField(max_length=50, unique=True)
-    username = models.CharField(max_length=50, validators=[MinLengthValidator(4)])
+    username = models.CharField(max_length=50, unique=True, validators=[MinLengthValidator(4)])
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_sharer = models.BooleanField(default=False)

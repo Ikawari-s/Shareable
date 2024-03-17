@@ -101,11 +101,8 @@ class Comment(models.Model):
     post = models.ForeignKey(SharerUpload, on_delete=models.CASCADE, related_name='comments')
     comments = models.TextField(max_length=1000, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    username = models.CharField(max_length=50)  # Add username field
 
-    @property
-    def username(self):
-        return self.user.username
-    
     def save(self, *args, **kwargs):
         if not self.pk and not self.username: 
             self.username = self.user.username 

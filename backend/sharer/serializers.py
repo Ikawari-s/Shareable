@@ -76,7 +76,7 @@ class SharerUploadSerializer(serializers.ModelSerializer):
 class SharerProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sharer
-        fields = ['id', 'email', 'image', 'username', 'name']
+        fields = ['id', 'email', 'image', 'username', 'name', 'category']
 
 
 
@@ -91,15 +91,11 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ['id','user', 'username', 'post', 'comments']
+        fields = ['id', 'user', 'username', 'post', 'comments', 'created_at']
 
     def get_username(self, obj):
-        user_id = obj.user_id
-        try:
-            user = AppUser.objects.get(id=user_id)
-            return user.username
-        except AppUser.DoesNotExist:
-            return None
+        return obj.user.username
+
 
     def create(self, validated_data):
         post = validated_data.pop('post')
