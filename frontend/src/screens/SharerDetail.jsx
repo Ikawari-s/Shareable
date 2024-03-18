@@ -81,12 +81,13 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
           <p>{sharer.description}</p>
           <p>Category: {sharer.category}</p>
           <Button onClick={handleFollowToggle}>{isFollowing ? 'Unfollow Sharer' : 'Follow Sharer'}</Button>
-          
+          <div >
           {isFollowing ? (
-            <SharerLatestPost id={id} />
+            <SharerLatestPost id={id}/>
           ) : (
             <p>FOLLOW NOW</p>
           )}
+          </div>
 
           <Link to={'/homepage'}>
             <Button variant="primary">Go Back</Button>
@@ -98,6 +99,7 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
             </div>
             {isFollowing && <PostSharerRatingsComponent sharerId={id} />}
           </div>
+          
         </div>
       ) : null}
     </div>

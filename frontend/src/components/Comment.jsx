@@ -77,17 +77,27 @@ function Comment({ uploadId }) {
         <ul>
           {comments && comments[uploadId] && comments[uploadId].length > 0 ? (
             comments[uploadId].map((comment) => (
-              <li key={comment.id} style={{ listStyle: 'none'}}>
-                 <div /* style={{ backgroundColor: 'white', padding: '10px', marginBottom: '10px', borderRadius: '5px', maxWidth: '60rem', overflow: 'auto', borderRadius: '1rem', textAlign: 'left'}}*/ >
-                <strong /* style={{color: "black", fontSize: '2rem'}} */>{comment.username}:</strong> <div /* style={{ marginTop: '0.1rem', }} */>{comment.comments}</div>
+              <li key={comment.id} style={{ listStyle: 'none', marginBottom: '1rem'}}>
+                <div style={{ backgroundColor: 'white',
+                padding: '10px',
+                marginBottom: '20rem',
+                borderRadius: '1rem',
+                maxWidth: '60rem',
+                overflow: 'auto',
+                borderRadius: '1rem',
+                textAlign: 'left',
+                justifyContent: 'center',
+                margin: '0 auto',
+                }}>
+                <strong  style={{color: "black", fontSize: '2rem'}} >{comment.username}:</strong> <div  style={{ marginTop: '0.1rem', color: 'black'}} >{comment.comments}</div>
                 {userInfo.user_id === comment.user && (
                   <>
                     <button onClick={() => handleDelete(comment.id)}>
                       Delete
                     </button>
                     {deletingCommentId === comment.id && (
-                      <div className="delete-confirmation-overlay">
-                      <div className="delete-confirmation-modal">
+                      <div className="confirmation-overlay">
+                      <div className="confirmation-modal">
                       <div>
                         Are you sure you want to delete this comment?
                         <button onClick={confirmDelete}>Yes</button>
