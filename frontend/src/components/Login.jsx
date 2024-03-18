@@ -42,7 +42,7 @@ function Login() {
   return (
     <div id="LogInPage">
       <div id="gab"> <img src={logotext} alt="Logo" /></div>
-    <div className="container mt-5">
+    <div className="container" style={{ paddingTop: '3.5rem'}}>
       <div className="card custom-card-background wrapper">
         <div className="card-header">
           <h1 className="text-center">Log in</h1>
@@ -91,7 +91,7 @@ function Login() {
         </div>
 
         <div className="card-footer text-">
-          {/* Don't have an Account? <Link to="/signup">Sign Up</Link> */}
+          <Link id="da-link" to="/signup">Sign Up</Link>
           <Link id="da-link" to="/reset-password">Forgot Password? </Link>
         </div>
       </div>
