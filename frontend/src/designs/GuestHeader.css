@@ -6,7 +6,7 @@
   backdrop-filter: blur(.313rem);
   color: #232323;
   transition: border-radius 0.3s ease, margin 0.3s ease, width 0.3s ease, background-color 0.3s ease;
-  z-index: 1000; /* Ensure it stays above other content */
+  z-index: 1000;
 }
 
 
