@@ -33,6 +33,7 @@ function SharerPageScreen() {
   const [newDescription, setNewDescription] = useState("");
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [deletePostId, setDeletePostId] = useState(null);
+  const [coverPhoto, setCoverPhoto] = useState(null); // State for cover photo
   const [editedPosts, setEditedPosts] = useState({});
   const [editedPostsFormatted, setEditedPostsFormatted] = useState({});
 
@@ -66,7 +67,8 @@ function SharerPageScreen() {
   useEffect(() => {
     dispatch(listSharerPosts());
     dispatch(profileSharers());
-    const storedEditedPosts = JSON.parse(localStorage.getItem("editedPosts")) || {};
+    const storedEditedPosts =
+      JSON.parse(localStorage.getItem("editedPosts")) || {};
     setEditedPosts(storedEditedPosts);
   }, [dispatch]);
 
@@ -82,7 +84,7 @@ function SharerPageScreen() {
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-  
+
     try {
       await dispatch(
         SharerUpdateProfile({
@@ -90,18 +92,20 @@ function SharerPageScreen() {
           image: newProfilePicture,
           username: newUsername,
           description: description,
-          category: category, // Include category in update profile request
+          category: category,
+          coverPhoto: coverPhoto, // Include cover photo in update profile request
         })
       );
       dispatch(profileSharers());
       setNewName("");
       setNewProfilePicture(null);
       setNewUsername("");
+      setCoverPhoto(null); // Reset cover photo state after updating
     } catch (error) {
       console.error("Error updating profile:", error);
     }
   };
-  
+
   const handleUpdatePost = async (postId) => {
     try {
       await dispatch(
@@ -132,7 +136,9 @@ function SharerPageScreen() {
   }
 
   const sortedPosts = Array.isArray(sharerPostList)
-    ? sharerPostList.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    ? sharerPostList
+        .slice()
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     : [];
 
   const handleDeletePostConfirmation = (uploadId) => {
@@ -150,74 +156,109 @@ function SharerPageScreen() {
   };
 
   return (
-    <div>
-      <p>PAGE TITLE: {name}</p>
-      <p>User Email: {userProfile.email}</p>
-      <p>Username: {username}</p>
+    <div className="row">
+      <div className="col-md-3">
+        <div className="mb-4">
+          <h1>COVER PHOTO PAAYOS</h1>
+          {userProfile.cover_photo && (
+            <img
+              src={userProfile.cover_photo}
+              alt="Cover Photo"
+              className="img-fluid mb-4"
+              onError={() => {
+                console.error(
+                  "Error loading cover photo:",
+                  userProfile.cover_photo
+                );
+              }}
+            />
+          )}
 
-      <div>
-        <label>Category:</label>
-        <select value={category} onChange={handleCategoryChange}>
-          {CATEGORY_CHOICES.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
+          <h1>PROFILE: </h1>
+          <img
+            src={userProfile.image}
+            className="card-img-top rounded-circle"
+            alt="Profile"
+            id="profile-image"
+            onError={() => {
+              console.error(
+                "Error loading profile picture:",
+                userProfile.image
+              );
+            }}
+          />
+        </div>
+
+        <p className="mb-1">PAGE TITLE: {name}</p>
+        <p className="mb-1">User Email: {userProfile.email}</p>
+        <p className="mb-1">Username: {username}</p>
+        <div className="mb-4">
+          <label className="mb-0">Category:</label>
+          <select
+            value={category}
+            onChange={handleCategoryChange}
+            className="form-control"
+          >
+            <option value="" disabled>
+              Select a category
             </option>
-          ))}
-        </select>
-      </div>
-      <img
-        src={userProfile.image}
-        className="card-img-top"
-        alt="Profile"
-        id="profile-image"
-        onError={() => {
-          console.error("Error loading profile picture:", userProfile.image);
-        }}
-      />
-
-      <div className="my-4">
+            {CATEGORY_CHOICES.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
         <form onSubmit={handleUpdateProfile}>
-          <div>
-            <label>New Name:</label>
+          <div className="mb-3">
             <input
               type="text"
               value={newName}
               placeholder={name}
               onChange={(e) => setNewName(e.target.value)}
+              className="form-control mb-2"
             />
-          </div>
-          <div>
-            <label>New Username:</label>
             <input
               type="text"
               value={newUsername}
               placeholder={username}
               onChange={(e) => setNewUsername(e.target.value)}
+              className="form-control mb-2"
             />
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="form-control mb-2"
+            />
+            <h3>Change Profile   Photo</h3>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setNewProfilePicture(e.target.files[0])}
+              className="form-control mb-2"
+            />
+            <h3>Change Cover Photo</h3>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setCoverPhoto(e.target.files[0])} // Set cover photo state
+              className="form-control mb-2"
+            />
+            <button type="submit" className="btn btn-primary">
+              Update Profile
+            </button>
           </div>
-          <div>
-            <label>Description:</label>
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
-          </div>
-          <div>
-            <label>New Profile Picture:</label>
-            <input type="file" accept="image/*" onChange={(e) => setNewProfilePicture(e.target.files[0])} />
-          </div>
-          <button type="submit" className="btn btn-primary mt-3">
-            Update Profile
-          </button>
         </form>
       </div>
-
       <div>
         <SharerPost />
       </div>
       {sortedPosts.map((post) => (
         <div key={post.id}>
-          <h2>
-            {post.title}
-          </h2>
-          <button onClick={() => handleDeletePostConfirmation(post.id)}>DELETE POST</button>
+          <h2>{post.title}</h2>
+          <button onClick={() => handleDeletePostConfirmation(post.id)}>
+            DELETE POST
+          </button>
           {showDeleteConfirmation && deletePostId === post.id && (
             <div className="confirmation-overlay">
               <div className="confirmation-modal">
@@ -240,17 +281,27 @@ function SharerPageScreen() {
           <form onSubmit={() => handleUpdatePost(post.id)}>
             <div>
               <label>New Title:</label>
-              <input type="text" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+              <input
+                type="text"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+              />
             </div>
             <div>
               <label>New Description:</label>
-              <textarea value={newDescription} onChange={(e) => setNewDescription(e.target.value)} />
+              <textarea
+                value={newDescription}
+                onChange={(e) => setNewDescription(e.target.value)}
+              />
             </div>
             <button type="submit" className="btn btn-primary mt-3">
               Update Post
             </button>
           </form>
           <div>
+            <LikeComponent uploadId={post.id} />
+            <Comment uploadId={post.id} />
+
           <LikeComponent uploadId={post.id}/>
           <Comment uploadId={post.id}/>
           </div>

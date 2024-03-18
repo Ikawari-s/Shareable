@@ -1,11 +1,12 @@
 from django.contrib import admin
 from .models import Sharer, SharerUpload, Like, Comment, Rating
 from django.db.models import Count, DecimalField, ExpressionWrapper, F, Avg
+from django.utils.html import format_html
 
 @admin.register(Sharer)
 class SharerAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'username', 'email', 'category', 'is_sharer', 'average_rating', 'comment_count')  
-    search_fields = ('id', 'name', 'username', 'email', 'category')  
+    search_fields = ('id', 'name', 'username', 'email', 'category')     
     list_filter = ('category',)
 
     def average_rating(self, obj):
@@ -59,8 +60,16 @@ class LikeAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'post', 'comments', 'created_at')  
+    list_display = ('id', 'user', 'profile_picture', 'post', 'comments', 'created_at')  
     search_fields = ('user__username', 'post__title', 'comments')  
+
+    def profile_picture(self, obj):
+        if obj.user.profile_picture:
+            return format_html('<img src="{}" style="max-height: 100px; max-width: 100px;" />'.format(obj.user.profile_picture.url))
+        else:
+            return None
+
+    profile_picture.short_description = 'Profile Picture'
 
 
 

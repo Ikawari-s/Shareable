@@ -3,15 +3,17 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
-import { DetailSharers } from '../actions/sharerActions';
+import { DetailSharers, getSharerPostCount } from '../actions/sharerActions';
 import SharerLatestPost from './SharerLatestPost';
 import { followSharer, unfollowSharer } from '../actions/followActions';
 import { FetchSharerRatingsComponent, PostSharerRatingsComponent } from '../components/Rating';
+import PostCount from '../components/PostCount';
 
-const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unfollowSharer }) => {
+const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unfollowSharer, getSharerPostCount }) => {
   const { id } = useParams();
   const userInfo = JSON.parse(localStorage.getItem('userInfo'));
   const [isFollowing, setIsFollowing] = useState(false);
+  const [userHasRated, setUserHasRated] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,9 +24,10 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
   
   useEffect(() => {
     DetailSharers(id);
+    getSharerPostCount(id); 
     const followedSharers = JSON.parse(localStorage.getItem('followedSharers')) || [];
     setIsFollowing(followedSharers.includes(id));
-  }, [id, DetailSharers]);
+  }, [id, DetailSharers, getSharerPostCount]);
   
   useEffect(() => {
     const idInt = parseInt(id);
@@ -60,9 +63,9 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
       ) : sharer ? (
         <div className="text-center py-3" style={{ textAlign: 'center' }}>
           {sharer.cover_photo && <img src={sharer.cover_photo} alt="Cover-Photo" style={{ position: 'relative', width: '100%', height: '50vh' }} />}
-          {sharer.profile_pic && (
+          {sharer.image && (
             <img
-              src={sharer.profile_pic}
+              src={sharer.image}
               alt="Profile"
               style={{
                 width: '10rem',
@@ -80,6 +83,7 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
           <h2>{sharer.name}</h2>
           <p>{sharer.description}</p>
           <p>Category: {sharer.category}</p>
+          <PostCount sharerId={id} />
           <Button onClick={handleFollowToggle}>{isFollowing ? 'Unfollow Sharer' : 'Follow Sharer'}</Button>
           <div >
           {isFollowing ? (
@@ -97,7 +101,7 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
             <div className="fetch-ratings-box">
               <FetchSharerRatingsComponent sharerId={id} />
             </div>
-            {isFollowing && <PostSharerRatingsComponent sharerId={id} />}
+            {isFollowing && !userHasRated && <PostSharerRatingsComponent sharerId={id} />}
           </div>
           
         </div>
@@ -116,6 +120,7 @@ const mapDispatchToProps = {
   DetailSharers,
   followSharer,
   unfollowSharer,
+  getSharerPostCount, // Add the action to mapDispatchToProps
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SharerDetail);

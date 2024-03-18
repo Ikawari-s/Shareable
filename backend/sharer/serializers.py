@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import *
 from accounts.models import AppUser
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 
 
 class SharerSerializer(serializers.ModelSerializer):
@@ -73,10 +74,13 @@ class SharerUploadSerializer(serializers.ModelSerializer):
         return sharer_upload
 
 
+
 class SharerProfileSerializer(serializers.ModelSerializer):
+    cover_photo = serializers.ImageField(source='user.profile_picture', read_only=True)
+
     class Meta:
         model = Sharer
-        fields = ['id', 'email', 'image', 'username', 'name', 'category']
+        fields = ['id', 'email', 'image', 'username', 'name', 'category', 'cover_photo']
 
 
 
@@ -88,14 +92,14 @@ class LikeSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
+    profile_picture = serializers.ImageField(source='user.profile_picture', read_only=True)
 
     class Meta:
         model = Comment
-        fields = ['id', 'user', 'username', 'post', 'comments', 'created_at']
+        fields = ['id', 'user', 'username', 'post', 'comments', 'created_at', 'profile_picture']
 
     def get_username(self, obj):
         return obj.user.username
-
 
     def create(self, validated_data):
         post = validated_data.pop('post')
@@ -103,8 +107,25 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 
-
 class RatingSerializer(serializers.ModelSerializer):
+    username = serializers.SerializerMethodField()
+    profile_picture = serializers.SerializerMethodField()
+    user_rated = serializers.SerializerMethodField()  # New field
+    already_rated = serializers.BooleanField(read_only=True)  # New field
+
     class Meta:
         model = Rating
-        fields = ['id', 'sharer', 'user', 'rating', 'comment']
+        fields = ['id', 'sharer', 'user', 'rating', 'comment', 'username', 'profile_picture', 'user_rated', 'already_rated']
+
+    def get_username(self, obj):
+        return obj.user.username if obj.user else None
+
+    def get_profile_picture(self, obj):
+        user_id = obj.user_id
+        user_instance = get_user_model().objects.filter(id=user_id).first()
+        return user_instance.profile_picture.url if user_instance and user_instance.profile_picture else None
+
+    def get_user_rated(self, obj):  # Method to determine if the user has rated the sharer
+        user = self.context['user']
+        return Rating.objects.filter(user=user, sharer=obj.sharer).exists()
+

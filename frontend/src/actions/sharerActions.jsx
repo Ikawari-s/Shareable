@@ -47,6 +47,9 @@ import {
   SHARER_EDIT_POST_REQUEST,
   SHARER_EDIT_POST_SUCCESS,
   SHARER_EDIT_POST_FAILURE,
+  SHARER_POST_COUNT_REQUEST,
+  SHARER_POST_COUNT_SUCCESS,
+  SHARER_POST_COUNT_FAILURE
 } from "../constants/sharerConstants";
 
 const instance = axios.create({
@@ -362,27 +365,32 @@ export const CheckerSharer = () => async (dispatch) => {
   }
 };
 
-export const SharerUpdateProfile = ({ name, image, username, description, category }) => {
+export const SharerUpdateProfile = ({ name, image, username, description, category, coverPhoto }) => {
   return async (dispatch) => {
     try {
       const userInfo = JSON.parse(localStorage.getItem('userInfo'));
       const token = userInfo ? userInfo.access_token : null;
 
       const formData = new FormData();
-      if (name) {
+
+      // Only append fields that are not null and not empty strings
+      if (name !== null && name.trim() !== "") {
         formData.append('name', name);
       }
-      if (image) {
+      if (image !== null) {
         formData.append('image', image);
       }
-      if (username) {
+      if (username !== null && username.trim() !== "") {
         formData.append('username', username);
       }
-      if (description) {
+      if (description !== null) {
         formData.append('description', description);
       }
-      if (category) {
-        formData.append('category', category); // Add the category to formData
+      if (category !== null) {
+        formData.append('category', category);
+      }
+      if (coverPhoto !== null) {
+        formData.append('cover_photo', coverPhoto);
       }
 
       const config = {
@@ -402,6 +410,7 @@ export const SharerUpdateProfile = ({ name, image, username, description, catego
     }
   };
 };
+
 
 export const sharerDeletePost = (uploadId) => async (dispatch) => {
   try {
@@ -622,5 +631,38 @@ export const editSharerPost = (upload_id, postData = {}) => async (dispatch) => 
         : error.message,
     });
     throw error;
+  }
+};
+
+
+
+export const getSharerPostCount = (sharerId) => async (dispatch) => {
+  try {
+    dispatch({ type: SHARER_POST_COUNT_REQUEST });
+
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
+
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
+
+    const { data } = await instance.get(`api/sharer/posts/count-posts/${sharerId}/`, config);
+    
+    dispatch({ type: SHARER_POST_COUNT_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: SHARER_POST_COUNT_FAILURE,
+      payload:
+        error.message && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
   }
 };

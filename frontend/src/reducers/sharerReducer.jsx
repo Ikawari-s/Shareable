@@ -42,6 +42,9 @@ import {
   SHARER_EDIT_POST_REQUEST,
   SHARER_EDIT_POST_SUCCESS,
   SHARER_EDIT_POST_FAILURE,
+  SHARER_POST_COUNT_REQUEST,
+  SHARER_POST_COUNT_SUCCESS,
+  SHARER_POST_COUNT_FAILURE,
 } from "../constants/sharerConstants";
 
 export const SharerDetailReducer = (state = {}, action) => {
@@ -314,6 +317,21 @@ export const sharerEditPostReducer = (state = {
         success: false,
         error: action.payload
       };
+    default:
+      return state;
+  }
+};
+
+
+
+export const sharerPostCountReducer = (state = { postCount: null, loading: false, error: null }, action) => {
+  switch (action.type) {
+    case SHARER_POST_COUNT_REQUEST:
+      return { ...state, loading: true, error: null };
+    case SHARER_POST_COUNT_SUCCESS:
+      return { ...state, loading: false, postCount: action.payload };
+    case SHARER_POST_COUNT_FAILURE:
+      return { ...state, loading: false, error: action.payload };
     default:
       return state;
   }

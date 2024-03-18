@@ -74,49 +74,50 @@ function Comment({ uploadId }) {
       ) : fetchError ? (
         <div>Error: {fetchError}</div>
       ) : (
-        <ul>
+        <>
           {comments && comments[uploadId] && comments[uploadId].length > 0 ? (
             comments[uploadId].map((comment) => (
               <li key={comment.id} style={{ listStyle: 'none', marginBottom: '1rem'}}>
                 <div style={{ backgroundColor: 'white',
-                padding: '10px',
-                marginBottom: '20rem',
-                borderRadius: '1rem',
-                maxWidth: '60rem',
-                overflow: 'auto',
-                borderRadius: '1rem',
-                textAlign: 'left',
-                justifyContent: 'center',
-                margin: '0 auto',
+                  padding: '10px',
+                  marginBottom: '20rem',
+                  borderRadius: '1rem',
+                  maxWidth: '60rem',
+                  overflow: 'auto',
+                  borderRadius: '1rem',
+                  textAlign: 'left',
+                  justifyContent: 'center',
+                  margin: '0 auto',
                 }}>
-                <strong  style={{color: "black", fontSize: '2rem'}} >{comment.username}:</strong> <div  style={{ marginTop: '0.1rem', color: 'black'}} >{comment.comments}</div>
-                {userInfo.user_id === comment.user && (
-                  <>
-                    <button onClick={() => handleDelete(comment.id)}>
-                      Delete
-                    </button>
-                    {deletingCommentId === comment.id && (
-                      <div className="confirmation-overlay">
-                      <div className="confirmation-modal">
-                      <div>
-                        Are you sure you want to delete this comment?
-                        <button onClick={confirmDelete}>Yes</button>
-                        <button onClick={() => setDeletingCommentId(null)}>No</button>
-                      </div>
-                      </div>
-                      </div>
-                    )}
-                  </>
-                )}
+                  {comment.profile_picture && (
+                    <img src={comment.profile_picture} alt="Profile" style={{ width: 50, height: 50, borderRadius: "50%" }} />
+                  )}
+                  <strong style={{color: "black", fontSize: '2rem'}}>{comment.username}:</strong> 
+                  <div style={{ marginTop: '0.1rem', color: 'black'}}>{comment.comments}</div>
+                  {userInfo.user_id === comment.user && (
+                    <>
+                      <button onClick={() => handleDelete(comment.id)}>Delete</button>
+                      {deletingCommentId === comment.id && (
+                        <div className="confirmation-overlay">
+                          <div className="confirmation-modal">
+                            <div>
+                              Are you sure you want to delete this comment?
+                              <button onClick={confirmDelete}>Yes</button>
+                              <button onClick={() => setDeletingCommentId(null)}>No</button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
               </li>
             ))
           ) : (
             <p>No comments available for this post.</p>
           )}
-        </ul>
+        </>
       )}
-
       <textarea
         rows="4"
         cols="50"
@@ -125,7 +126,6 @@ function Comment({ uploadId }) {
         placeholder="Write your comment here..."
       ></textarea>
       <br />
-
       <button onClick={handleSubmit}>Submit Comment</button>
     </div>
   );

@@ -69,9 +69,8 @@ class UserSharerProfile(APIView):
 
     def get(self, request):
         user = request.user
-        serializer = SharerProfileSerializer(user.sharer, many=False)  
+        serializer = SharerSerializer(user.sharer, many=False, context={'request': request})  # Pass request context
         return Response(serializer.data)
-
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -119,10 +118,9 @@ class SharerUploadEditView(APIView):
                 serializer.validated_data['edited'] = True
                 serializer.save()
 
-                # Format edited_at field before including it in the response
+
                 formatted_edited_at = format(upload.edited_at, 'Y-m-d H:i:s')
 
-                # Include both edited_at and edited_at_formatted in the response data
                 response_data = {
                     'edited_at': upload.edited_at,
                     'edited_at_formatted': formatted_edited_at,
@@ -199,7 +197,7 @@ class CommentPost(APIView):
         except SharerUpload.DoesNotExist:
             return Response({"message": "Post does not exist"}, status=status.HTTP_404_NOT_FOUND)
         
-        serializer = CommentSerializer(data=request.data, context={'user': user, 'post': upload})
+        serializer = CommentSerializer(data=request.data, context={'request': request, 'user': user, 'post': upload})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -231,7 +229,7 @@ class CommentListView(generics.ListAPIView):
 
     def get_queryset(self):
         upload_id = self.kwargs.get('upload_id')
-        queryset = Comment.objects.filter(post_id=upload_id)  
+        queryset = Comment.objects.filter(post_id=upload_id).select_related('user') 
         return queryset
 
 
@@ -246,24 +244,30 @@ class SharerUpdateProfile(APIView):
 
     def patch(self, request):
         user = request.user
-        sharer = Sharer.objects.get(user=user)
-        serializer = SharerSerializer(sharer, data=request.data, partial=True)
+        sharer = Sharer.objects.get(email=user.email) 
+
+        request_data = request.data.copy()
+        
+
+        if 'email' in request_data:
+            return Response({"detail": "You cannot update your email address."}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = SharerSerializer(sharer, data=request_data, partial=True)
 
         if serializer.is_valid():
             username = serializer.validated_data.get('username')
             if username:
-                # Check if the provided username is already in use
-                if User.objects.exclude(pk=user.pk).filter(username=username).exists():
+                if User.objects.exclude(email=user.email).filter(username=username).exists():
                     return Response({"detail": "The username is already in use."}, status=status.HTTP_400_BAD_REQUEST)
 
-            serializer.save()
+                user.username = username
+                user.save()
 
-            try:
-                app_user = AppUser.objects.get(email=sharer.email)
-                app_user.username = username
-                app_user.save()
-            except ObjectDoesNotExist:
-                pass 
+            if 'cover_photo' in request_data:
+                cover_photo = request_data['cover_photo']
+                sharer.cover_photo = cover_photo
+
+            serializer.save()
 
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -302,9 +306,6 @@ def is_follow(user, sharer_id):
 class RatingViews(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get_username(self, user):
-        return user.username if user else None
-
     def get(self, request, sharer_id=None):  
         user = request.user
 
@@ -320,23 +321,23 @@ class RatingViews(APIView):
         else:
             ratings = Rating.objects.filter(sharer__in=followed_sharers, rating__in=[i * 0.1 for i in range(1, 51)])  
 
-        serializer = RatingSerializer(ratings, many=True)
-        serialized_data = serializer.data
-
-        for rating_data in serialized_data:
-            user_id = rating_data['user']
-            user_instance = get_user_model().objects.filter(id=user_id).first()
-            username = self.get_username(user_instance)
-            print(f"Username for user ID {user_id}: {username}") 
-            rating_data['username'] = username
+        serialized_data = []
+        for rating in ratings:
+            serializer = RatingSerializer(rating, context={'user': user})
+            serialized_data.append(serializer.data)
 
         return Response(serialized_data)
+
     def post(self, request, sharer_id):
         user = request.user
         try:
             sharer_id = int(sharer_id)
         except ValueError:
             return Response({"error": "Invalid Sharer ID"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        already_rated = Rating.objects.filter(user=user, sharer_id=sharer_id).exists()  # Check if user has already rated
+        if already_rated:
+            return Response({"error": "You have already rated this sharer"}, status=status.HTTP_400_BAD_REQUEST)
         
         return self.handle_post(user, sharer_id, request.data)
 
@@ -361,7 +362,7 @@ class RatingViews(APIView):
 
         data_copy = data.copy()
         data_copy['rating'] = round(rating, 1)  
-        serializer = RatingSerializer(data=data_copy)
+        serializer = RatingSerializer(data=data_copy, context={'user': user})
         if serializer.is_valid():
             serializer.save(user=user, sharer_id=sharer_id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -416,3 +417,20 @@ class RatingUpdateView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class PostCount(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, sharer_id):
+ 
+        try:
+            sharer_id = int(sharer_id)
+        except ValueError:
+            return Response({"error": "Invalid Sharer ID"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        post_count = SharerUpload.objects.filter(uploaded_by_id=sharer_id).count()
+
+        return Response({"post_count": post_count}, status=status.HTTP_200_OK)

@@ -17,6 +17,11 @@ def upload_file(instance, filename):
     filename = slugify(filename)
     return f'uploads/files/{filename}'
 
+def upload_cover_photo(instance, filename):
+    filename = slugify(filename)
+    return f'uploads/cover_photo/{filename}'
+
+
 
 class Sharer(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -24,7 +29,8 @@ class Sharer(models.Model):
     image = models.ImageField(upload_to=upload_image, null=False, blank=False)
     name = models.CharField(max_length=30, null=False, blank=False)
     description = models.CharField(max_length=150, null=False, blank=False)
-    
+    cover_photo = models.ImageField(upload_to='cover_photos', default='uploads/default/default_cover.jpg', null=True, blank=True)
+
     CATEGORY_CHOICES = [
         ('', 'Not specified'),
         ('Art', 'Art'),
@@ -48,24 +54,29 @@ class Sharer(models.Model):
         ('Business & Entrepreneurship', 'Business & Entrepreneurship'),
         ('Parenting & Family', 'Parenting & Family'),
     ]
-    
+
     category = models.CharField(max_length=30, choices=CATEGORY_CHOICES, null=False, blank=False)
-    
-    username = models.CharField(max_length=50, unique=True, validators=[MinLengthValidator(4)])  
+    username = models.CharField(max_length=50, unique=True, validators=[MinLengthValidator(4)])
     id = models.AutoField(primary_key=True)
-    
+
     def __str__(self):
         return self.name
-    
+
     @property
     def is_sharer(self):
         return self.user.is_sharer if self.user else False
 
     def save(self, *args, **kwargs):
-        if not self.username: 
-            self.username = self.user.username if self.user else ''
-        self.email = self.user.email if self.user else ''
+        if self.pk is not None:  # Check if it's an update
+            original_instance = Sharer.objects.get(pk=self.pk)
+            if original_instance.image != self.image:  # Check if image has changed
+                self.user.profile_picture = self.image
+                self.user.save()
+
         super().save(*args, **kwargs)
+
+
+
 
 class SharerUpload(models.Model):
     id = models.AutoField(primary_key=True)
@@ -101,12 +112,14 @@ class Comment(models.Model):
     post = models.ForeignKey(SharerUpload, on_delete=models.CASCADE, related_name='comments')
     comments = models.TextField(max_length=1000, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    username = models.CharField(max_length=50)  # Add username field
+    profile_picture = models.ImageField(upload_to='uploads/images', default='uploads/default/default.png', null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        if not self.pk and not self.username: 
-            self.username = self.user.username 
+        if not self.pk and not self.user: 
+            self.user = self.user  # Assign user from context
+            self.profile_picture = self.user.profile_picture  # Assign profile_picture from user
         super().save(*args, **kwargs)
+
 
 class Rating(models.Model):
     sharer = models.ForeignKey(Sharer, on_delete=models.CASCADE, related_name='ratings')

@@ -25,7 +25,7 @@ const FollowedSharersList = () => {
       ) : (
         <ul>
           {followedSharers.map((sharer) => (
-            <Link to={`/sharers/${sharer.id}`}><li key={sharer.id}>{sharer.name}</li></Link>
+            <Link to={`/homepage/sharers/${sharer.id}`}><li key={sharer.id}>{sharer.name}</li></Link>
           ))}
         </ul>
       )}

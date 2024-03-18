@@ -30,8 +30,7 @@ function SharerLatestPost({ id }) {
                   <div style={{ background: 'black',marginBottom: '2rem', padding: '3rem'}}>
                   <h2>{post.title} hello</h2>
                   <p>Uploaded at: {post.created_at_formatted}</p>
-                  <p>{post.description}</p>
-                  
+                  {post.edited && <p>Updated at: {post.edited_at_formatted} </p>}
                   {post.image && <img src={post.image} style={{maxWidth: '30rem'}}alt="Post Image" />}
                   {post.video && <video src={post.video} controls></video>}
                   {post.file && (
