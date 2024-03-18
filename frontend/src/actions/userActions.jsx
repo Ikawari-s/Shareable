@@ -85,18 +85,27 @@ export const logout = () => async (dispatch) => {
           },
         }
       : {};
-    await instance.post("api/logout/");
+
+    if (token) {
+      await instance.post("api/logout/", {}, config);
+    }
+
     localStorage.removeItem("userInfo");
     dispatch({ type: USER_LOGOUT });
     console.log("Logout successful");
   } catch (error) {
-    console.error("Error during logout:", error);
-    dispatch({
-      type: USER_LOGIN_FAIL,
-      payload: "Logout failed. Please try again.",
-    });
+    if (error.response && error.response.status === 401) {
+      console.error("Unauthorized access. Redirecting to login page...");
+    } else {
+      console.error("Error during logout:", error);
+      dispatch({
+        type: USER_LOGIN_FAIL,
+        payload: "Logout failed. Please try again.",
+      });
+    }
   }
 };
+
 
 export const sendPasswordRequest = (email) => async (dispatch) => {
   try {

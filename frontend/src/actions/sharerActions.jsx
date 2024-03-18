@@ -372,23 +372,25 @@ export const SharerUpdateProfile = ({ name, image, username, description, catego
       const token = userInfo ? userInfo.access_token : null;
 
       const formData = new FormData();
-      if (name) {
+
+      // Only append fields that are not null and not empty strings
+      if (name !== null && name.trim() !== "") {
         formData.append('name', name);
       }
-      if (image) {
+      if (image !== null) {
         formData.append('image', image);
       }
-      if (username) {
+      if (username !== null && username.trim() !== "") {
         formData.append('username', username);
       }
-      if (description) {
+      if (description !== null) {
         formData.append('description', description);
       }
-      if (category) {
+      if (category !== null) {
         formData.append('category', category);
       }
-      if (coverPhoto) {
-        formData.append('cover_photo', coverPhoto); // Add cover photo to formData
+      if (coverPhoto !== null) {
+        formData.append('cover_photo', coverPhoto);
       }
 
       const config = {
@@ -408,6 +410,7 @@ export const SharerUpdateProfile = ({ name, image, username, description, catego
     }
   };
 };
+
 
 export const sharerDeletePost = (uploadId) => async (dispatch) => {
   try {

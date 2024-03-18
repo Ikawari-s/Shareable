@@ -110,10 +110,12 @@ class CommentSerializer(serializers.ModelSerializer):
 class RatingSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
     profile_picture = serializers.SerializerMethodField()
+    user_rated = serializers.SerializerMethodField()  # New field
+    already_rated = serializers.BooleanField(read_only=True)  # New field
 
     class Meta:
         model = Rating
-        fields = ['id', 'sharer', 'user', 'rating', 'comment', 'username', 'profile_picture']
+        fields = ['id', 'sharer', 'user', 'rating', 'comment', 'username', 'profile_picture', 'user_rated', 'already_rated']
 
     def get_username(self, obj):
         return obj.user.username if obj.user else None
@@ -122,3 +124,8 @@ class RatingSerializer(serializers.ModelSerializer):
         user_id = obj.user_id
         user_instance = get_user_model().objects.filter(id=user_id).first()
         return user_instance.profile_picture.url if user_instance and user_instance.profile_picture else None
+
+    def get_user_rated(self, obj):  # Method to determine if the user has rated the sharer
+        user = self.context['user']
+        return Rating.objects.filter(user=user, sharer=obj.sharer).exists()
+

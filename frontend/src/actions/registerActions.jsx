@@ -75,14 +75,17 @@ export const verifyOTP = (userId, otp, otpId) => async (dispatch) => {
 
     return data; 
   } catch (error) {
+    const errorMessage =
+      error.response && error.response.data.error
+        ? error.response.data.error
+        : error.message;
+
     dispatch({
       type: USER_VERIFY_FAIL,
-      payload:
-        error.response && error.response.data.error
-          ? error.response.data.error
-          : error.message,
+      payload: errorMessage,
     });
-    throw error; 
+
+    throw errorMessage; // Throw error message instead of error object
   }
 };
 
@@ -107,12 +110,16 @@ export const resendOTP = (userId, otpId) => async (dispatch) => {
       payload: data,
     });
   } catch (error) {
+    const errorMessage =
+      error.response && error.response.data.error
+        ? error.response.data.error
+        : error.message;
+
     dispatch({
       type: USER_OTP_RESEND_FAIL,
-      payload:
-        error.response && error.response.data.error
-          ? error.response.data.error
-          : error.message,
+      payload: errorMessage,
     });
+
+    throw errorMessage; // Throw error message instead of error object
   }
 };

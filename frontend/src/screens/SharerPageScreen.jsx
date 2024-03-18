@@ -299,13 +299,11 @@ function SharerPageScreen() {
             </button>
           </form>
           <div>
-<<<<<<< HEAD
             <LikeComponent uploadId={post.id} />
             <Comment uploadId={post.id} />
-=======
+
           <LikeComponent uploadId={post.id}/>
           <Comment uploadId={post.id}/>
->>>>>>> origin/main
           </div>
         </div>
       ))}

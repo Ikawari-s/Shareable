@@ -13,6 +13,7 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
   const { id } = useParams();
   const userInfo = JSON.parse(localStorage.getItem('userInfo'));
   const [isFollowing, setIsFollowing] = useState(false);
+  const [userHasRated, setUserHasRated] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -92,8 +93,6 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
           )}
           </div>
 
-
-
           <Link to={'/homepage'}>
             <Button variant="primary">Go Back</Button>
           </Link>
@@ -102,7 +101,7 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
             <div className="fetch-ratings-box">
               <FetchSharerRatingsComponent sharerId={id} />
             </div>
-            {isFollowing && <PostSharerRatingsComponent sharerId={id} />}
+            {isFollowing && !userHasRated && <PostSharerRatingsComponent sharerId={id} />}
           </div>
           
         </div>

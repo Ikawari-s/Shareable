@@ -306,9 +306,6 @@ def is_follow(user, sharer_id):
 class RatingViews(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get_username(self, user):
-        return user.username if user else None
-
     def get(self, request, sharer_id=None):  
         user = request.user
 
@@ -324,23 +321,23 @@ class RatingViews(APIView):
         else:
             ratings = Rating.objects.filter(sharer__in=followed_sharers, rating__in=[i * 0.1 for i in range(1, 51)])  
 
-        serializer = RatingSerializer(ratings, many=True)
-        serialized_data = serializer.data
-
-        for rating_data in serialized_data:
-            user_id = rating_data['user']
-            user_instance = get_user_model().objects.filter(id=user_id).first()
-            username = self.get_username(user_instance)
-            print(f"Username for user ID {user_id}: {username}") 
-            rating_data['username'] = username
+        serialized_data = []
+        for rating in ratings:
+            serializer = RatingSerializer(rating, context={'user': user})
+            serialized_data.append(serializer.data)
 
         return Response(serialized_data)
+
     def post(self, request, sharer_id):
         user = request.user
         try:
             sharer_id = int(sharer_id)
         except ValueError:
             return Response({"error": "Invalid Sharer ID"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        already_rated = Rating.objects.filter(user=user, sharer_id=sharer_id).exists()  # Check if user has already rated
+        if already_rated:
+            return Response({"error": "You have already rated this sharer"}, status=status.HTTP_400_BAD_REQUEST)
         
         return self.handle_post(user, sharer_id, request.data)
 
@@ -365,7 +362,7 @@ class RatingViews(APIView):
 
         data_copy = data.copy()
         data_copy['rating'] = round(rating, 1)  
-        serializer = RatingSerializer(data=data_copy)
+        serializer = RatingSerializer(data=data_copy, context={'user': user})
         if serializer.is_valid():
             serializer.save(user=user, sharer_id=sharer_id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)

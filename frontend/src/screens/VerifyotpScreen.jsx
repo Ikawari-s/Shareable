@@ -51,7 +51,7 @@ function VerifyotpScreen() {
       navigate('/homepage');
     } catch (error) {
       console.error('OTP verification failed:', error);
-      setErrorMessage('OTP verification failed. Please try again.');
+      setErrorMessage(error); // Display error message to the user
     }
   };
 
@@ -63,7 +63,7 @@ function VerifyotpScreen() {
       })
       .catch((error) => {
         console.error('Failed to resend OTP:', error);
-        setErrorMessage('Failed to resend OTP. Please try again.');
+        setErrorMessage(error); // Display error message to the user
       });
   };
 
