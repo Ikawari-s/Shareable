@@ -5,11 +5,23 @@ import { Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { login } from "../actions/userActions";
 import GuestHeader from "../components/GuestHeader";
 import Footer from '../components/Footer'
-import creator1 from '../designs/images/creator1.png';
 import '../designs/HomeScreen.css';
-import logotext from '../designs/images/logotext.png'
-import logo from '../designs/images/logo.png'
-import content2 from '../designs/images/content2.jpg'
+import logotext from '../designs/images/logotext.png';
+import logo from '../designs/images/logo.png';
+import art1 from '../designs/images/art1.jpg';
+import art2 from '../designs/images/art2.jpg';
+import art3 from '../designs/images/art3.png';
+import creator1 from '../designs/images/creator1.png';
+import creator2 from '../designs/images/creator2.jpg';
+import food1 from '../designs/images/food1.jpg';
+import food2 from '../designs/images/food2.png';
+import food3 from '../designs/images/food3.png';
+import food4 from '../designs/images/food4.png';
+import photo1 from '../designs/images/photo1.jpg';
+import photo2 from '../designs/images/photo2.png';
+import photo3 from '../designs/images/photo3.png';
+import photo4 from '../designs/images/photo4.png';
+import photo5 from '../designs/images/photo5.png';
 
 
 function HomeScreen() {
@@ -58,12 +70,52 @@ function HomeScreen() {
   return (
     <div id="FindSharer">
       <GuestHeader />
-      <img className="creator1" src={creator1} alt="creator"></img>
-    <div className="contenti">
-      cum
+      <div className="creator1" style={{
+      backgroundImage: `url(${creator1})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center'
+      }}>
+          <div id="tab">
+            <h1>Where Creativity Finds its Audience.</h1>
+          </div>
     </div>
+
+    <div className="content1">
+      <img src={art3} id="art3"/>
+      <img src={art2} id="art2"/>
+      <img src={art1} id="art1"/>
+          <div id="dab">
+            <h1>Feeling Artistic?</h1>
+            <p>Explore, Connect, Create - Your Canvas Awaits, plenty of artistic creators in Shareable!</p>
+          </div>
+    </div>
+    
+    <div className="content2">
+      <img src={food1} id="food1"/>
+      <img src={food2} id="food2"/>
+      <img src={food3} id="food3"/>
+      <img src={food4} id="food4"/>
+          <div id="sab">
+            <h1>Ready</h1>
+            <h1>to Cook?</h1>
+            <p>Your Kitchen Awaits, with a feast of talented chefs on Shareable!</p>
+          </div>
+    </div>
+    
+    <div className="content3">
+      <img src={photo1} id="photo1"/>
+      <img src={photo2} id="photo2"/>
+      <img src={photo3} id="photo3"/>
+      <img src={photo4} id="photo4"/>
+      <img src={photo5} id="photo5"/>
+          <div id="dab">
+            <h1>Interested in Photography?</h1>
+            <p>Unleash Your Creativity Through the Lens with Shareable!</p>
+          </div>
+    </div>
+    
     <div id="SignUpPage" style={{
-      backgroundImage: `url(${content2})`,
+      backgroundImage: `url(${creator2})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center'
       }}> 
@@ -137,10 +189,6 @@ function HomeScreen() {
           {error && <Alert variant="danger">{error}</Alert>}
         </div>
         <p className="text-center texto">Shareable Copyright ©</p>
-
-        {/* <div className="card-footer text-muted text-center">
-          Already have an Account? <Link to="/">Login</Link>
-        </div> */}
       </div>
     </div>
     

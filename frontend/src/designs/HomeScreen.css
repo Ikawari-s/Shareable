@@ -1,16 +1,34 @@
 .creator1{
     position: relative;
     width: 100%;
-    height: 100%;
+    height: 70rem;
     background-size: cover;
     background-position: center;    
 }
 
-.contenti{
+.content1{
     position: relative;
     width: 100%;
-    height: 70rem;
+    height: 50rem;
     background-color: #dafff6;
+    background-size: cover;
+    background-position: center;
+}
+
+.content2{
+    position: relative;
+    width: 100%;
+    height: 50rem;
+    background-color: #fffc94;
+    background-size: cover;
+    background-position: center;
+}
+
+.content3{
+    position: relative;
+    width: 100%;
+    height: 50rem;
+    background-color: #ffe4ec;
     background-size: cover;
     background-position: center;
 }
@@ -23,13 +41,222 @@
     background-position: center
 }
 
+#art3{
+    position: absolute;
+    object-fit: cover;
+    width: 20rem !important;
+    height: 30rem !important;
+    left: 5.5rem;
+    top: 8.625rem;
+    border-radius: 4rem !important;
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+}
+
+#art2{
+    position: absolute;
+    object-fit: cover;
+    width: 15rem !important;
+    height: 20rem !important;
+    left: 15.5rem;
+    top: 23.625rem;
+    border-radius: 4rem !important;
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+}
+
+#art1{
+    position: absolute;
+    object-fit: cover;
+    width: 7rem !important;
+    height: 10rem !important;
+    left: 22.5rem;
+    top: 6.625rem;
+    border-radius: 2rem !important;
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+}
+
+#food1{
+    position: absolute;
+    object-fit: cover;
+    width: 18rem !important;
+    height: 22rem !important;
+    left: 50.5rem;
+    top: 5.625rem;
+    border-radius: 3rem !important;
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+}
+#food2{
+    position: absolute;
+    object-fit: cover;
+    width: 20rem !important;
+    height: 25rem !important;
+    left: 60.5rem;
+    top: 16.625rem;
+    border-radius: 4rem !important;
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+}
+
+#food3{
+    position: absolute;
+    object-fit: cover;
+    width: 14rem !important;
+    height: 18rem !important;
+    left: 75.5rem;
+    top: 5.625rem;
+    border-radius: 4rem !important;
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+}
+
+#food4{
+    position: absolute;
+    object-fit: cover;
+    width: 10rem !important;
+    height: 10rem !important;
+    left: 54.5rem;
+    top: 35 .625rem;
+    border-radius: 2.5rem !important;
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+}
+
+#art1{
+    position: absolute;
+    object-fit: cover;
+    width: 7rem !important;
+    height: 10rem !important;
+    left: 22.5rem;
+    top: 6.625rem;
+    border-radius: 2rem !important;
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+}
+
+#photo1{
+    position: absolute;
+    object-fit: cover;
+    width: 11rem !important;
+    height: 15rem !important;   
+    left: 10.5rem;
+    top: 1.5rem;
+    border-radius: 2rem !important;
+    /* border-top-left-radius: 0rem !important;
+    border-top-right-radius: 0rem !important; */
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+}
+
+#photo2{
+    position: absolute;
+    object-fit: cover;
+    width: 11rem !important;
+    height: 15rem !important;
+    left: 23.5rem;
+    top: 9.5rem;
+    border-radius: 2rem !important;
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+}
+
+#photo3{
+    position: absolute;
+    object-fit: cover;
+    width: 11rem !important;
+    height: 15rem !important;
+    left: 10.5rem;
+    top: 17.5rem;
+    border-radius: 2rem !important;
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+}
+
+#photo4{
+    position: absolute;
+    object-fit: cover;
+    width: 11rem !important;
+    height: 15rem !important;
+    left: 23.5rem;
+    top: 25.5rem;
+    border-radius: 2rem !important;
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+}
+
+#photo5{
+    position: absolute;
+    object-fit: cover;
+    width: 11rem !important;
+    height: 15rem !important;
+    left: 10.5rem;
+    top: 33.5rem;
+    border-radius: 2rem !important;
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+}
+
+#dab{
+    position: relative;
+    width: 30% !important;
+    height: 0 !important;
+    left: 56.25rem;
+    top: 14.5rem;
+}
+
+#dab h1{
+    font-size: 5rem !important;
+    line-height: 5.5rem;
+    text-align: left;
+    font-weight: 500;
+    color: #333333;
+}
+
+#sab{
+    position: relative;
+    width: 30% !important;
+    height: 0 !important;
+    left: 12.25rem;
+    top: 14.5rem;
+}
+
+#sab h1{
+    font-size: 5rem !important;
+    line-height: 4.3rem;
+    text-align: left;
+    font-weight: 500;
+    color: #333333;
+}
+
+#sab p{
+    padding-top: 2rem;
+    font-size: 1.5rem !important;
+    text-align: left;
+    font-weight: 500;
+    color: #333333;
+}
+
+#dab p{
+    padding-top: 2rem;
+    font-size: 1.5rem !important;
+    text-align: left;
+    font-weight: 500;
+    color: #333333;
+}
+
+#tab{
+    position: relative;
+    width: 30% !important;
+    height: 0 !important;
+    left: 3.125rem;
+    top: 3.125rem;
+}
+
+#tab h1{
+    font-size: 4rem !important;
+    line-height: 5.5rem;
+    text-align: left;
+    font-weight: 500;
+    color: #333333;
+}
+
 #fab{
     position: relative;
     width: 30% !important;
     height: 0 !important;
-    left: 900px;
-    top:200px;
+    left: 56.25rem;
+    top: 12.5rem;
 }
+
 
 #fab h1{
     font-size: 4rem !important;
@@ -41,9 +268,9 @@
 #gab{
     position: relative;
     width: 75% !important;
-    height: 0px !important;
-    left: 40px;
-    top:250px;
+    height: 0rem !important;
+    left: 2.5rem;
+    top: 15.625rem;
 }
 
 .grabber{
@@ -55,8 +282,7 @@
     padding: 1.5rem;
     padding-bottom: 2rem;
     padding-top: 1rem;
-    border-radius: 0rem !important;
-    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+    border-radius: 0rem !important;  
 }
 .logo{
     display: flex; /* or use display: grid; */
@@ -110,11 +336,6 @@
     color: white;
 }
 
-.card-body{
-    /* background-color: green; */
-
-}
-
 .cum button{
    border-radius: 6.25rem;
    border-color: #084d6e;
@@ -122,7 +343,7 @@
 }
 
 .cum button:hover{
-    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
     border-color: #0071bd;
     background-color: #0071bd;
  } 
