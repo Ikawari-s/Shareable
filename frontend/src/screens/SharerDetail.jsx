@@ -84,12 +84,13 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
           <p>Category: {sharer.category}</p>
           <PostCount sharerId={id} />
           <Button onClick={handleFollowToggle}>{isFollowing ? 'Unfollow Sharer' : 'Follow Sharer'}</Button>
-          
+          <div >
           {isFollowing ? (
-            <SharerLatestPost id={id} />
+            <SharerLatestPost id={id}/>
           ) : (
             <p>FOLLOW NOW</p>
           )}
+          </div>
 
 
 
@@ -103,6 +104,7 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
             </div>
             {isFollowing && <PostSharerRatingsComponent sharerId={id} />}
           </div>
+          
         </div>
       ) : null}
     </div>

@@ -11,7 +11,7 @@ import SharerPost from "../components/SharerPost";
 import { useNavigate } from "react-router-dom";
 import LikeComponent from "../components/LikeComponents";
 import Comment from "../components/Comment";
-import "../designs/deleteConfirmation.css";
+import "../designs/actionConfirmation.css";
 
 function SharerPageScreen() {
   const dispatch = useDispatch();
@@ -260,8 +260,8 @@ function SharerPageScreen() {
             DELETE POST
           </button>
           {showDeleteConfirmation && deletePostId === post.id && (
-            <div className="delete-confirmation-overlay">
-              <div className="delete-confirmation-modal">
+            <div className="confirmation-overlay">
+              <div className="confirmation-modal">
                 <p>Are you sure you want to delete this post?</p>
                 <button onClick={handleDeleteConfirmation}>Yes</button>
                 <button onClick={handleCancelDelete}>No</button>
@@ -299,8 +299,13 @@ function SharerPageScreen() {
             </button>
           </form>
           <div>
+<<<<<<< HEAD
             <LikeComponent uploadId={post.id} />
             <Comment uploadId={post.id} />
+=======
+          <LikeComponent uploadId={post.id}/>
+          <Comment uploadId={post.id}/>
+>>>>>>> origin/main
           </div>
         </div>
       ))}

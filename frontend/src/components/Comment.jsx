@@ -77,6 +77,7 @@ function Comment({ uploadId }) {
         <>
           {comments && comments[uploadId] && comments[uploadId].length > 0 ? (
             comments[uploadId].map((comment) => (
+<<<<<<< HEAD
               <li key={comment.id} style={{ listStyle: 'none'}}>
                 <div /* style={{ backgroundColor: 'white', padding: '10px', marginBottom: '10px', borderRadius: '5px', maxWidth: '60rem', overflow: 'auto', borderRadius: '1rem', textAlign: 'left'}}*/ >
                   {comment.profile_picture && (
@@ -100,6 +101,39 @@ function Comment({ uploadId }) {
                       )}
                     </>
                   )}
+=======
+              <li key={comment.id} style={{ listStyle: 'none', marginBottom: '1rem'}}>
+                <div style={{ backgroundColor: 'white',
+                padding: '10px',
+                marginBottom: '20rem',
+                borderRadius: '1rem',
+                maxWidth: '60rem',
+                overflow: 'auto',
+                borderRadius: '1rem',
+                textAlign: 'left',
+                justifyContent: 'center',
+                margin: '0 auto',
+                }}>
+                <strong  style={{color: "black", fontSize: '2rem'}} >{comment.username}:</strong> <div  style={{ marginTop: '0.1rem', color: 'black'}} >{comment.comments}</div>
+                {userInfo.user_id === comment.user && (
+                  <>
+                    <button onClick={() => handleDelete(comment.id)}>
+                      Delete
+                    </button>
+                    {deletingCommentId === comment.id && (
+                      <div className="confirmation-overlay">
+                      <div className="confirmation-modal">
+                      <div>
+                        Are you sure you want to delete this comment?
+                        <button onClick={confirmDelete}>Yes</button>
+                        <button onClick={() => setDeletingCommentId(null)}>No</button>
+                      </div>
+                      </div>
+                      </div>
+                    )}
+                  </>
+                )}
+>>>>>>> origin/main
                 </div>
               </li>
             ))

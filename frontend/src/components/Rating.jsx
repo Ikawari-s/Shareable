@@ -29,14 +29,25 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
       console.error('Error updating rating:', error);
     }
   };
+  const [deletingRatingId, setDeletingRatingId] = useState(null);
 
   const handleDeleteRating = async (ratingId) => {
     try {
       console.log("Deleting rating with id:", ratingId);
-      await dispatch(deleteSharerRatings(ratingId));
-      dispatch(fetchSharerRatings(sharerId));
+      setDeletingRatingId(ratingId);
     } catch (error) {
       console.error('Error deleting rating:', error);
+    }
+  };
+
+  const confirmDeleteRating = async () => {
+    try {
+      await dispatch(deleteSharerRatings(deletingRatingId));
+      dispatch(fetchSharerRatings(sharerId));
+      setDeletingRatingId(null); // Reset deletingRatingId after successful deletion
+    } catch (error) {
+      console.error("Failed to delete rating:", error);
+      alert("Failed to delete rating. Please try again.");
     }
   };
 
@@ -61,11 +72,12 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
   const averageRating = calculateAverageRating();
 
   return (
-    <div className="scroll-box overflow-auto">
+    <div className="scroll-box overflow-auto" style={{ background: 'black', maxWidth: '60rem', margin: '0 auto'}}>
       <h2>Sharer Ratings</h2>
       <div>Average Rating: {averageRating !== null ? averageRating.toFixed(1) : "No ratings available"}</div>
       <ul>
         {ratings.map((rating) => (
+<<<<<<< HEAD
           <li key={rating.id}>
             <div>
               {rating.profile_picture && (
@@ -79,6 +91,28 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
                 <button onClick={() => setUpdateRatingId(rating.id)}>Update</button>
               </>
             )}
+=======
+          <li key={rating.id} style={{ listStyle: 'none'}}>
+            <div style={{ background: 'green'}}>
+              User: {rating.username}, Rating: {rating.rating}, Comment: {rating.comment}
+              
+              {(followedSharers.includes(rating.sharer) && rating.user === userId) && (
+                <>
+                  <button onClick={() => handleDeleteRating(rating.id)}>Delete</button>
+                  {deletingRatingId === rating.id && (
+                    <div className="confirmation-overlay">
+                      <div className="confirmation-modal">
+                        <div>
+                          Are you sure you want to delete this rating?
+                          <button onClick={confirmDeleteRating}>Yes</button>
+                          <button onClick={() => setDeletingRatingId(null)}>No</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+>>>>>>> origin/main
             {updateRatingId === rating.id && (
               <div>
                 <input
@@ -95,8 +129,11 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
                   onChange={(e) => setUpdateComment(e.target.value)}
                 />
                 <button onClick={handleUpdateRating}>Update Rating</button>
+                
               </div>
+              
             )}
+            </div>
           </li>
         ))}
       </ul>
