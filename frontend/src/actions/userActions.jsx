@@ -267,11 +267,13 @@ export const listComments = (uploadId) => async (dispatch) => {
     }
     const response = await instance.get(`api/sharer/comments/${uploadId}/`, config);
     const { data } = response;
+    console.log("Comments data:", data); // Log comments data
     dispatch({ type: USER_LIST_COMMENT_SUCCESS, payload: { comments: data, uploadId } });
   } catch (error) {
     dispatch({ type: USER_LIST_COMMENT_FAIL, payload: error.response ? error.response.data.message : error.message });
   }
 };
+
 
 
 

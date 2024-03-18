@@ -69,9 +69,8 @@ class UserSharerProfile(APIView):
 
     def get(self, request):
         user = request.user
-        serializer = SharerProfileSerializer(user.sharer, many=False)  
+        serializer = SharerSerializer(user.sharer, many=False, context={'request': request})  # Pass request context
         return Response(serializer.data)
-
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -119,10 +118,9 @@ class SharerUploadEditView(APIView):
                 serializer.validated_data['edited'] = True
                 serializer.save()
 
-                # Format edited_at field before including it in the response
+
                 formatted_edited_at = format(upload.edited_at, 'Y-m-d H:i:s')
 
-                # Include both edited_at and edited_at_formatted in the response data
                 response_data = {
                     'edited_at': upload.edited_at,
                     'edited_at_formatted': formatted_edited_at,
@@ -199,7 +197,7 @@ class CommentPost(APIView):
         except SharerUpload.DoesNotExist:
             return Response({"message": "Post does not exist"}, status=status.HTTP_404_NOT_FOUND)
         
-        serializer = CommentSerializer(data=request.data, context={'user': user, 'post': upload})
+        serializer = CommentSerializer(data=request.data, context={'request': request, 'user': user, 'post': upload})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -231,7 +229,7 @@ class CommentListView(generics.ListAPIView):
 
     def get_queryset(self):
         upload_id = self.kwargs.get('upload_id')
-        queryset = Comment.objects.filter(post_id=upload_id)  
+        queryset = Comment.objects.filter(post_id=upload_id).select_related('user') 
         return queryset
 
 
@@ -246,24 +244,30 @@ class SharerUpdateProfile(APIView):
 
     def patch(self, request):
         user = request.user
-        sharer = Sharer.objects.get(user=user)
-        serializer = SharerSerializer(sharer, data=request.data, partial=True)
+        sharer = Sharer.objects.get(email=user.email) 
+
+        request_data = request.data.copy()
+        
+
+        if 'email' in request_data:
+            return Response({"detail": "You cannot update your email address."}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = SharerSerializer(sharer, data=request_data, partial=True)
 
         if serializer.is_valid():
             username = serializer.validated_data.get('username')
             if username:
-                # Check if the provided username is already in use
-                if User.objects.exclude(pk=user.pk).filter(username=username).exists():
+                if User.objects.exclude(email=user.email).filter(username=username).exists():
                     return Response({"detail": "The username is already in use."}, status=status.HTTP_400_BAD_REQUEST)
 
-            serializer.save()
+                user.username = username
+                user.save()
 
-            try:
-                app_user = AppUser.objects.get(email=sharer.email)
-                app_user.username = username
-                app_user.save()
-            except ObjectDoesNotExist:
-                pass 
+            if 'cover_photo' in request_data:
+                cover_photo = request_data['cover_photo']
+                sharer.cover_photo = cover_photo
+
+            serializer.save()
 
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -416,3 +420,20 @@ class RatingUpdateView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class PostCount(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, sharer_id):
+ 
+        try:
+            sharer_id = int(sharer_id)
+        except ValueError:
+            return Response({"error": "Invalid Sharer ID"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        post_count = SharerUpload.objects.filter(uploaded_by_id=sharer_id).count()
+
+        return Response({"post_count": post_count}, status=status.HTTP_200_OK)

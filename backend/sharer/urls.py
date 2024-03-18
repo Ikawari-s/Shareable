@@ -5,7 +5,7 @@ from .views import *
 
 urlpatterns = [
     path('', views.SharerView, name='sharer-view'),
-     path('update-profile-sharer/', SharerUpdateProfile.as_view(), name='update_profile'),
+    path('update-profile-sharer/', SharerUpdateProfile.as_view(), name='update_profile'),
     path('sharer-upload', views.SharerUploadViews.as_view(), name='sharer-post'),
     path('sharer-upload-list', views.SharerUploadListView, name='sharer-post-list'),
     path('sharer-profile/<int:sharer_id>/', views.SharerProfileDetail.as_view(), name='sharer-profile'),
@@ -22,5 +22,7 @@ urlpatterns = [
     path('delete-rating/<int:rating_id>', views.DeleteRating.as_view(), name='delete-ratings'),
     path('update-rating/<int:rating_id>', views.RatingUpdateView.as_view(), name='update-rating'),
     path('sharer-upload-edit/<int:upload_id>/', views.SharerUploadEditView.as_view(), name='sharer-upload-edit'),
+    path('posts/count-posts/<int:sharer_id>/', views.PostCount.as_view(), name='count_posts'),
+
 
 ]

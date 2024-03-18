@@ -311,7 +311,7 @@ class Be_sharer(APIView):
                                 'name': page_name,  # Set the sharer's name to the provided page_name
                                 'description': f"Sharer profile for {page_name}",
                                 'category': "Default Category",
-                                'username': page_name  # Set the username to the page_name
+                                'username': user.username  # Set the username to the user's username
                             }
                             sharer_instance = Sharer.objects.create(**sharer_instance_data)
 

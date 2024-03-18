@@ -67,7 +67,12 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
       <ul>
         {ratings.map((rating) => (
           <li key={rating.id}>
-             User: {rating.username}, Rating: {rating.rating}, Comment: {rating.comment}
+            <div>
+              {rating.profile_picture && (
+                <img src={rating.profile_picture} alt="Profile" style={{ width: 50, height: 50, borderRadius: "50%" }} />
+              )}  
+              : {rating.username}, Rating: {rating.rating}, Comment: {rating.comment}
+            </div>
             {(followedSharers.includes(rating.sharer) && rating.user === userId) && (
               <>
                 <button onClick={() => handleDeleteRating(rating.id)}>Delete</button>
@@ -98,7 +103,6 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
     </div>
   );
 };
-
 
 const PostSharerRatingsComponent = ({ sharerId }) => {
   const dispatch = useDispatch();
