@@ -23,6 +23,8 @@ urlpatterns = [
     path('update-rating/<int:rating_id>', views.RatingUpdateView.as_view(), name='update-rating'),
     path('sharer-upload-edit/<int:upload_id>/', views.SharerUploadEditView.as_view(), name='sharer-upload-edit'),
     path('posts/count-posts/<int:sharer_id>/', views.PostCount.as_view(), name='count_posts'),
+    path('preview-content/<int:post_id>/', views.PreviewContent.as_view(), name='preview_content'),
+    path('preview-list-content/<int:sharer_id>/', PreviewContentList.as_view(), name='sharer_content_list'),
 
 
 ]

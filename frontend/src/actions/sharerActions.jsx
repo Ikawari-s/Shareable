@@ -49,7 +49,13 @@ import {
   SHARER_EDIT_POST_FAILURE,
   SHARER_POST_COUNT_REQUEST,
   SHARER_POST_COUNT_SUCCESS,
-  SHARER_POST_COUNT_FAILURE
+  SHARER_POST_COUNT_FAILURE,
+  SHARER_PREVIEW_LIST_REQUEST,
+  SHARER_PREVIEW_LIST_SUCCESS,
+  SHARER_PREVIEW_LIST_FAILURE,
+  SHARER_PREVIEW_REQUEST,
+  SHARER_PREVIEW_SUCCESS,
+  SHARER_PREVIEW_FAILURE
 } from "../constants/sharerConstants";
 
 const instance = axios.create({
@@ -171,7 +177,6 @@ export const uploadSharer = (formData) => async (dispatch) => {
         }
       : {};
 
-    // Remove null values from formData
     const formDataUpload = new FormData();
     Object.keys(formData).forEach((key) => {
       if (formData[key] !== null) {
@@ -196,6 +201,7 @@ export const uploadSharer = (formData) => async (dispatch) => {
     });
   }
 };
+
 
 
 const BASE_URL = "http://localhost:8000";
@@ -247,6 +253,64 @@ export const listSharerPosts = () => async (dispatch) => {
         error.response && error.response.data.detail
           ? error.response.data.detail
           : error.message,
+    });
+  }
+};
+
+
+export const FetchSharerPreviewList = (sharerId) => async (dispatch) => {
+  try {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
+
+    const config = token
+      ? {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        }
+      : {};
+      
+    dispatch({ type: SHARER_PREVIEW_LIST_REQUEST });
+    const response = await instance.get(`api/sharer/preview-list-content/${sharerId}/`, config);
+    console.log('Preview list response data:', response.data); // Log response data
+    dispatch({ type: SHARER_PREVIEW_LIST_SUCCESS, payload: response.data });
+  } catch (error) {
+    console.error('Error fetching preview list:', error);
+    dispatch({
+      type: SHARER_PREVIEW_LIST_FAILURE,
+      payload: error.response && error.response.data.detail
+        ? error.response.data.detail
+        : error.message,
+    });
+  }
+};
+
+
+
+export const FetchSharerPreview = (postId) => async (dispatch) => {
+  try {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
+
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
+      
+    dispatch({ type: SHARER_PREVIEW_REQUEST });
+    const response = await instance.get(`api/sharer/preview-content/${postId}/`, config);
+    dispatch({ type: SHARER_PREVIEW_SUCCESS, payload: response.data });
+  } catch (error) {
+    dispatch({
+      type: SHARER_PREVIEW_FAILURE,
+      payload: error.response && error.response.data.detail
+        ? error.response.data.detail
+        : error.message,
     });
   }
 };

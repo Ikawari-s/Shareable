@@ -45,6 +45,12 @@ import {
   SHARER_POST_COUNT_REQUEST,
   SHARER_POST_COUNT_SUCCESS,
   SHARER_POST_COUNT_FAILURE,
+  SHARER_PREVIEW_LIST_REQUEST,
+  SHARER_PREVIEW_LIST_SUCCESS,
+  SHARER_PREVIEW_LIST_FAILURE,
+  SHARER_PREVIEW_REQUEST,
+  SHARER_PREVIEW_SUCCESS,
+  SHARER_PREVIEW_FAILURE
 } from "../constants/sharerConstants";
 
 export const SharerDetailReducer = (state = {}, action) => {
@@ -331,6 +337,36 @@ export const sharerPostCountReducer = (state = { postCount: null, loading: false
     case SHARER_POST_COUNT_SUCCESS:
       return { ...state, loading: false, postCount: action.payload };
     case SHARER_POST_COUNT_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+
+// Reducer for fetching list of sharer previews
+export const sharerPreviewListReducer = (state = { previews: [], loading: false, error: null }, action) => {
+  switch (action.type) {
+    case SHARER_PREVIEW_LIST_REQUEST:
+      return { ...state, loading: true, error: null };
+    case SHARER_PREVIEW_LIST_SUCCESS:
+      return { ...state, loading: false, previews: action.payload }; // Update previews with action payload
+    case SHARER_PREVIEW_LIST_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+
+// Reducer for fetching individual sharer preview
+export const sharerPreviewReducer = (state = { preview: null, loading: false, error: null }, action) => {
+  switch (action.type) {
+    case SHARER_PREVIEW_REQUEST:
+      return { ...state, loading: true, error: null };
+    case SHARER_PREVIEW_SUCCESS:
+      return { ...state, loading: false, preview: action.payload };
+    case SHARER_PREVIEW_FAILURE:
       return { ...state, loading: false, error: action.payload };
     default:
       return state;

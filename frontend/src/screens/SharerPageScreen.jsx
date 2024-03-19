@@ -271,6 +271,8 @@ function SharerPageScreen() {
           <p>{post.description}</p>
           <p>Time: {post.created_at_formatted}</p>
           {post.edited && <p>Edited At: {post.edited_at_formatted}</p>}
+          <p>Visibility: {post.visibility}</p> 
+          {/* ayusin mo nalang later  */}
           {post.image && <img src={post.image} alt="Post Image" />}
           {post.video && <video src={post.video} controls></video>}
           {post.file && (
@@ -301,9 +303,6 @@ function SharerPageScreen() {
           <div>
             <LikeComponent uploadId={post.id} />
             <Comment uploadId={post.id} />
-
-          <LikeComponent uploadId={post.id}/>
-          <Comment uploadId={post.id}/>
           </div>
         </div>
       ))}

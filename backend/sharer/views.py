@@ -14,6 +14,10 @@ from django.contrib.auth import get_user_model
 from datetime import datetime
 
 
+class IsSharerPermission(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.is_sharer
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -69,7 +73,7 @@ class UserSharerProfile(APIView):
 
     def get(self, request):
         user = request.user
-        serializer = SharerSerializer(user.sharer, many=False, context={'request': request})  # Pass request context
+        serializer = SharerSerializer(user.sharer, many=False, context={'request': request})  
         return Response(serializer.data)
 
 @api_view(['GET'])
@@ -78,11 +82,6 @@ def SharerUploadListView(request):
     queryset = SharerUpload.objects.filter(uploaded_by=request.user.sharer).order_by('-created_at')  
     serializer = SharerUploadListSerializer(queryset, many=True)
     return Response(serializer.data)
-
-
-class IsSharerPermission(BasePermission):
-    def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.is_sharer
 
 
 class SharerUploadViews(APIView):
@@ -94,9 +93,47 @@ class SharerUploadViews(APIView):
         serializer = SharerUploadSerializer(data=request.data, context={'request': request})
         
         if serializer.is_valid():
-            serializer.save(uploaded_by=sharer)
+            serializer.save(uploaded_by=sharer)  
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    
+
+class PreviewContent(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, post_id):
+        try:
+            post = SharerUpload.objects.get(pk=post_id)
+            sharer = post.uploaded_by
+            current_user = request.user
+            is_follower = current_user in sharer.followers.all()
+            
+            if is_follower or post.visibility == 'ALL':
+                serializer = SharerUploadSerializer(post)
+                return Response(serializer.data)
+            else:
+                return Response({"message": "No Preview Content"})
+            
+        except SharerUpload.DoesNotExist:
+            return Response({"message": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+class PreviewContentList(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, sharer_id):
+        try:
+            sharer_content = SharerUpload.objects.filter(uploaded_by_id=sharer_id)
+            
+            # Filter sharer_content based on visibility (only 'ALL' should be visible)
+            sharer_content = sharer_content.filter(visibility='ALL')
+            
+            serializer = SharerUploadSerializer(sharer_content, many=True)
+            return Response(serializer.data)
+            
+        except SharerUpload.DoesNotExist:
+            return Response({"message": "No content found for this sharer"}, status=status.HTTP_404_NOT_FOUND)
+
 
     
 class SharerUploadEditView(APIView):
@@ -434,3 +471,6 @@ class PostCount(APIView):
         post_count = SharerUpload.objects.filter(uploaded_by_id=sharer_id).count()
 
         return Response({"post_count": post_count}, status=status.HTTP_200_OK)
+
+
+

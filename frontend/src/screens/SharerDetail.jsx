@@ -8,6 +8,7 @@ import SharerLatestPost from './SharerLatestPost';
 import { followSharer, unfollowSharer } from '../actions/followActions';
 import { FetchSharerRatingsComponent, PostSharerRatingsComponent } from '../components/Rating';
 import PostCount from '../components/PostCount';
+import PreviewContent from '../components/PreviewContent';
 
 const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unfollowSharer, getSharerPostCount }) => {
   const { id } = useParams();
@@ -85,12 +86,18 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
           <p>Category: {sharer.category}</p>
           <PostCount sharerId={id} />
           <Button onClick={handleFollowToggle}>{isFollowing ? 'Unfollow Sharer' : 'Follow Sharer'}</Button>
-          <div >
-          {isFollowing ? (
-            <SharerLatestPost id={id}/>
-          ) : (
-            <p>FOLLOW NOW</p>
-          )}
+          
+          <div>
+            {isFollowing ? (
+              <SharerLatestPost id={id} />
+            ) : (
+              <div>
+                <h6>FOLLOW NOW!</h6>
+                <h3>Preview Content</h3>
+                <PreviewContent sharerId={id} />
+                
+              </div>
+            )}
           </div>
 
           <Link to={'/homepage'}>

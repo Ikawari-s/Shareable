@@ -14,11 +14,12 @@ class SharerSerializer(serializers.ModelSerializer):
 class SharerUploadListSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S')
     edited_at_formatted = serializers.SerializerMethodField()
-    edited = serializers.SerializerMethodField()  # Add edited field
+    edited = serializers.SerializerMethodField()
+    visibility = serializers.CharField()  # Add visibility field
 
     class Meta:
         model = SharerUpload
-        fields = ['id', 'title', 'description', 'image', 'video', 'file', 'created_at', 'edited_at_formatted', 'edited']  # Include 'edited' field in the fields list
+        fields = ['id', 'title', 'description', 'image', 'video', 'file', 'created_at', 'edited_at_formatted', 'edited', 'visibility']  
 
     def get_edited_at_formatted(self, instance):
         edited_at = instance.edited_at
@@ -26,7 +27,6 @@ class SharerUploadListSerializer(serializers.ModelSerializer):
             return timezone.localtime(edited_at).strftime('%Y-%m-%d %H:%M:%S')
         return None
  
-    # Define method to determine edited status
     def get_edited(self, instance):
         return instance.edited_at is not None
 
@@ -39,7 +39,7 @@ class SharerUploadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SharerUpload
-        fields = ['id', 'title', 'description', 'image', 'video', 'file', 'created_at', 'created_at_formatted', 'edited_at', 'edited_at_formatted', 'edited']
+        fields = ['id', 'title', 'description', 'image', 'video', 'file', 'created_at', 'created_at_formatted', 'edited_at', 'edited_at_formatted', 'edited', 'visibility']
 
     def get_created_at_formatted(self, obj):
         return obj.created_at.strftime('%Y-%m-%d %H:%M:%S') if obj.created_at else None
@@ -50,9 +50,7 @@ class SharerUploadSerializer(serializers.ModelSerializer):
     def get_edited(self, obj):
         return obj.edited_at is not None
     
-    
     def create(self, validated_data):
-
         file_type = None
         if 'image' in validated_data:
             file_type = 'image'
@@ -61,7 +59,10 @@ class SharerUploadSerializer(serializers.ModelSerializer):
         elif 'file' in validated_data:
             file_type = 'file'
 
-        sharer_upload = SharerUpload.objects.create(**validated_data)
+
+        visibility = validated_data.pop('visibility', 'ALL')
+
+        sharer_upload = SharerUpload.objects.create(visibility=visibility, **validated_data)
 
         if file_type == 'image':
             sharer_upload.image = validated_data.pop('image')
