@@ -1,8 +1,7 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import '../designs/footer.css';
-import logotext from '../designs/logotext.png';
-
+import '../designs/Footer.css';
+import logotext from '../designs/images/logotext.png';
 import { Link } from "react-router-dom";
 
 
@@ -38,7 +37,7 @@ function Footer() {
           </Col>
         </Row>
         <Row >
-          <Col className="text-center py-3" >Liam Liam Liam Copyright &copy;</Col>
+          <Col className="text-center py-3" >Shareable Copyright &copy;</Col>
         </Row>
       </Container>
     </div>
