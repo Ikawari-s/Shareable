@@ -6,9 +6,25 @@ from django.contrib.auth import get_user_model
 
 
 class SharerSerializer(serializers.ModelSerializer):
+    total_followers = serializers.SerializerMethodField()
+    average_rating = serializers.SerializerMethodField()
     class Meta:
         model = Sharer
         fields = '__all__'
+
+    def get_total_followers(self, obj):
+        return obj.total_followers
+    
+    def get_total_followers(self, obj):
+        return obj.total_followers
+
+    def get_average_rating(self, obj):
+        ratings = obj.ratings.all()
+        if ratings.exists():
+            total_ratings = ratings.count()
+            sum_ratings = sum([rating.rating for rating in ratings])
+            return sum_ratings / total_ratings
+        return 0  # Return 0 if no ratings exist for the sharer
 
 
 class SharerUploadListSerializer(serializers.ModelSerializer):

@@ -65,6 +65,10 @@ class Sharer(models.Model):
     @property
     def is_sharer(self):
         return self.user.is_sharer if self.user else False
+    
+    @property
+    def total_followers(self):
+        return self.follower.count() 
 
     def save(self, *args, **kwargs):
         if self.pk is not None:  # Check if it's an update

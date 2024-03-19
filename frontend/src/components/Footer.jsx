@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import '../designs/Footer.css';
+
 import logotext from '../designs/images/logotext.png';
 import { Link } from "react-router-dom";
 
