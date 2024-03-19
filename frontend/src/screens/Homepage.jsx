@@ -77,6 +77,8 @@ function Homepage({ sharerList, listSharers,}) {
                     <Card.Text>
                       <small className="text-muted">{sharer.category}</small>
                     </Card.Text>
+                    <Card.Text>followers : {sharer.total_followers}</Card.Text>
+                    <Card.Text>average rating : {sharer.average_rating}</Card.Text>
                     
                   </div>
                   <Link to={`/homepage/sharers/${sharer.id}`}>
