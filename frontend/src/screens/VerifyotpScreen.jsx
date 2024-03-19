@@ -63,7 +63,7 @@ function VerifyotpScreen() {
       })
       .catch((error) => {
         console.error('Failed to resend OTP:', error);
-        setErrorMessage(error); // Display error message to the user
+        setErrorMessage(error); 
       });
   };
 

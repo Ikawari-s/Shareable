@@ -93,6 +93,13 @@ class SharerUpload(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(null=True, blank=True) 
     
+    VISIBILITY_CHOICES = [
+        ('ALL', 'All (followers and non-followers)'),
+        ('FOLLOWERS', 'Followers only'),
+    ]
+    
+    visibility = models.CharField(max_length=20, choices=VISIBILITY_CHOICES, default='ALL')
+
     def __str__(self):
         return f"{self.uploaded_by.email}'s Title: {self.title}"
     

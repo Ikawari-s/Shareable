@@ -9,6 +9,7 @@ function SharerPost({ uploadSharer }) {
     image: null,
     video: null,
     file: null,
+    visibility: 'ALL', // Set default visibility
   });
 
   const [loading, setLoading] = useState(false);
@@ -24,22 +25,13 @@ function SharerPost({ uploadSharer }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
-  
+
     setLoading(true);
 
-    // Remove null values from formData
-    const formDataUpload = {};
-    Object.keys(formData).forEach((key) => {
-      if (formData[key] !== null) {
-        formDataUpload[key] = formData[key];
-      }
-    });
-  
-    await uploadSharer(formDataUpload);
+    await uploadSharer(formData);
     setLoading(false);
     window.location.reload();
   };
-  
 
   return (
     <div>
@@ -64,6 +56,13 @@ function SharerPost({ uploadSharer }) {
         <div>
           <label>Upload File:</label>
           <input type="file" name="file" onChange={handleFileChange} />
+        </div>
+        <div>
+          <label>Visibility:</label>
+          <select name="visibility" value={formData.visibility} onChange={handleChange}>
+            <option value="ALL">All (followers and non-followers)</option>
+            <option value="FOLLOWERS">Followers only</option>
+          </select>
         </div>
         <button type="submit" disabled={loading}>Upload</button>
       </form>
