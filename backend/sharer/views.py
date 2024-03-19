@@ -125,14 +125,18 @@ class PreviewContentList(APIView):
         try:
             sharer_content = SharerUpload.objects.filter(uploaded_by_id=sharer_id)
             
-            # Filter sharer_content based on visibility (only 'ALL' should be visible)
+ 
             sharer_content = sharer_content.filter(visibility='ALL')
+            
+  
+            sharer_content = sharer_content.order_by('-created_at')
             
             serializer = SharerUploadSerializer(sharer_content, many=True)
             return Response(serializer.data)
             
         except SharerUpload.DoesNotExist:
             return Response({"message": "No content found for this sharer"}, status=status.HTTP_404_NOT_FOUND)
+
 
 
     

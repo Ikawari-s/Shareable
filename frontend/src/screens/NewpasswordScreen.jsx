@@ -35,35 +35,42 @@ function NewPasswordScreen() {
   }, [navigate]);
 
   useEffect(() => {
-    if (newPasswordState && newPasswordState.success) {
-      navigate("/");
-    } else if (newPasswordState && newPasswordState.error) {
-      if (newPasswordState.error === 'Cannot use old password') {
-        setMessage('You cannot use your old password.');
-      } else {
-        setMessage('An error occurred. Please try again later.');
+    const resetPassword = async () => {
+      if (newPasswordState && newPasswordState.success) {
+        navigate("/"); // Redirect to homepage upon success
+      } else if (newPasswordState && newPasswordState.error) {
+        if (newPasswordState.error === 'Cannot use old password') {
+          setMessage('You cannot use your old password.');
+        } else {
+          setMessage('An error occurred. Please try again later.');
+        }
       }
-    }
+    };
+
+    resetPassword();
   }, [newPasswordState, navigate]);
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
-
+  
     if (!password || !uidb64 || !token) {
       setMessage('All fields are required for password reset.');
       return;
     }
-
+  
     if (password !== confirmPassword) {
       setMessage('Passwords do not match.');
       return;
     }
-
+  
     setLoading(true);
-
+  
     try {
-      await dispatch(userNewPasswordReducer(uidb64, token, password));
+      const success = await dispatch(userNewPasswordReducer(uidb64, token, password));
       setLoading(false);
+      if (success) {
+        navigate("/"); // Redirect to homepage upon success
+      }
     } catch (error) {
       setLoading(false);
       if (error.response && error.response.status === 401) {
@@ -73,6 +80,8 @@ function NewPasswordScreen() {
       }
     }
   };
+  
+
 
   return (
     <div>

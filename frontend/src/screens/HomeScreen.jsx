@@ -27,8 +27,7 @@ import photo5 from '../designs/images/photo5.png';
 function HomeScreen() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { userInfo, loading } = useSelector((state) => state.userLogin);
-  const [error, setError] = useState(null);
+  const { loading, error } = useSelector((state) => state.userLogin);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -42,14 +41,13 @@ function HomeScreen() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await dispatch(login(formData.email, formData.password));
-      if (response && response.data) {
-        navigate("/homepage");
-      } else {
-        console.error("Invalid login response:", response);
-      }
+      setIsLoading(true);
+      await dispatch(login(formData.email, formData.password));
+      setIsLoading(false);
+      navigate("/homepage");
     } catch (error) {
       console.error("Login error:", error);
+      setIsLoading(false);
     }
   };
   
@@ -59,14 +57,6 @@ function HomeScreen() {
       navigate("/homepage");
     }
   }, [navigate]);
-
-  
-    useEffect(() => {
-      if (userInfo) {
-        navigate("/homepage");
-      }
-    }, [userInfo, navigate]);
-
   return (
     <div id="FindSharer">
       <GuestHeader />
@@ -244,7 +234,7 @@ function HomeScreen() {
         </div>
 
         <div className="card-footer text-">
-          {/* Don't have an Account? <Link to="/signup">Sign Up</Link> */}
+           {error && <Alert variant="danger">{error}</Alert>}
           <Link id="da-link" to="/reset-password">Forgot Password? </Link>
         </div>
       </div>

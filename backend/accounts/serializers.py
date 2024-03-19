@@ -23,6 +23,11 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         )
         return user_obj
 
+    def validate_password(self, value):
+        if len(value) < 8:
+            raise serializers.ValidationError("Password must be at least 8 characters long.")
+        return value
+
 class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only = True)
@@ -85,8 +90,9 @@ class ResetPasswordEmailRequestSerializer(serializers.Serializer):
         fields = ['email']
 
 
+
 class SetNewPasswordSerializer(serializers.Serializer):
-    password = serializers.CharField(min_length=6, max_length=68, write_only=True)
+    password = serializers.CharField(min_length=8, max_length=68, write_only=True)
     token = serializers.CharField(min_length=1, write_only=True)
     uidb64 = serializers.CharField(min_length=1, write_only=True)
 
@@ -132,7 +138,6 @@ class SharerCheckerSerializer(serializers.Serializer):
 
 
 class ChangePasswordSerializer(serializers.Serializer):
-    old_password = serializers.CharField(required=True)
-    new_password = serializers.CharField(required=True)
-
+    old_password = serializers.CharField(min_length=8, required=True)
+    new_password = serializers.CharField(min_length=8, required=True)
 

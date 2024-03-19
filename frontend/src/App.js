@@ -20,6 +20,7 @@ import InvalidScreen from './screens/InvalidScreen';
 import VerifyotpScreen from './screens/VerifyotpScreen';
 import SharerPageScreen from './screens/SharerPageScreen';
 import SharerDashboard from './screens/SharerDashboard';
+import ChangePassword from './screens/ChangePassword';
 
 
 
@@ -49,6 +50,7 @@ function App() {
 
           <Route path="/dashboard" element={<ProtectedRoute ><SharerDashboard /></ProtectedRoute>} /> 
           <Route path="/homepage" element={<ProtectedRoute ><Homepage /></ProtectedRoute>} />
+          <Route path="/AccountSettings" element={<ProtectedRoute ><ChangePassword /></ProtectedRoute>} />
 
 
           <Route path="/sharer-page" element={<ProtectedRoute><SharerPageScreen/></ProtectedRoute>} />

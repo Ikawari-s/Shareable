@@ -67,10 +67,11 @@ export const login = (email, password) => async (dispatch) => {
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
-          : error.message,
+          : "An error occurred during login.",
     });
   }
 };
+
 
 export const logout = () => async (dispatch) => {
   try {
@@ -141,6 +142,7 @@ export const userNewPasswordReducer =
         config
       );
       dispatch({ type: USER_NEW_PASSWORD_SUCCESS, payload: data });
+      return data.success; // Return success indicator
     } catch (error) {
       dispatch({
         type: USER_NEW_PASSWORD_FAIL,
@@ -152,6 +154,7 @@ export const userNewPasswordReducer =
       throw error;
     }
   };
+
 
 export const likePost = (uploadId, token) => async (dispatch) => {
   dispatch({ type: USER_LIKE_REQUEST });
@@ -383,6 +386,11 @@ export const fetchUserProfile = () => async (dispatch) => {
 
 export const changePassword = (oldPassword, newPassword) => async (dispatch) => {
   try {
+    // Validate new password length
+    if (newPassword.length < 8) {
+      throw new Error('New password must be at least 8 characters long.');
+    }
+
     dispatch({ type: USER_CHANGE_PASSWORD_REQUEST });
 
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));

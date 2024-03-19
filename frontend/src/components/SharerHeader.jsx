@@ -33,6 +33,9 @@ function SharerHeader() {
               <Nav.Link as={Link} to="/dashboard">
                 <i className="fas fa-user"></i>Dashboard
               </Nav.Link>
+              <Nav.Link as={Link} to="/AccountSettings">
+                <i className="fas fa-user"></i>Account Settings
+              </Nav.Link>
               
               <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
             </Nav>
