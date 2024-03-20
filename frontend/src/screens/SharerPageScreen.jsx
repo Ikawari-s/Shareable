@@ -33,7 +33,7 @@ function SharerPageScreen() {
   const [newDescription, setNewDescription] = useState("");
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [deletePostId, setDeletePostId] = useState(null);
-  const [coverPhoto, setCoverPhoto] = useState(null); // State for cover photo
+  const [coverPhoto, setCoverPhoto] = useState(null);
   const [editedPosts, setEditedPosts] = useState({});
   const [editedPostsFormatted, setEditedPostsFormatted] = useState({});
 
@@ -73,7 +73,6 @@ function SharerPageScreen() {
   }, [dispatch]);
 
   useEffect(() => {
-    // Update component state with user profile data when userProfile changes
     if (userProfile) {
       setName(userProfile.name);
       setUsername(userProfile.username);
@@ -84,7 +83,6 @@ function SharerPageScreen() {
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-
     try {
       await dispatch(
         SharerUpdateProfile({
@@ -93,14 +91,14 @@ function SharerPageScreen() {
           username: newUsername,
           description: description,
           category: category,
-          coverPhoto: coverPhoto, // Include cover photo in update profile request
+          coverPhoto: coverPhoto,
         })
       );
       dispatch(profileSharers());
       setNewName("");
       setNewProfilePicture(null);
       setNewUsername("");
-      setCoverPhoto(null); // Reset cover photo state after updating
+      setCoverPhoto(null);
     } catch (error) {
       console.error("Error updating profile:", error);
     }
@@ -230,7 +228,7 @@ function SharerPageScreen() {
               onChange={(e) => setDescription(e.target.value)}
               className="form-control mb-2"
             />
-            <h3>Change Profile   Photo</h3>
+            <h3>Change Profile Photo</h3>
             <input
               type="file"
               accept="image/*"
@@ -271,18 +269,34 @@ function SharerPageScreen() {
           <p>{post.description}</p>
           <p>Time: {post.created_at_formatted}</p>
           {post.edited && <p>Edited At: {post.edited_at_formatted}</p>}
-          <p>Visibility: {post.visibility}</p> 
-          {/* ayusin mo nalang later  */}
-          {post.image && <img src={post.image} alt="Post Image" />}
-          {post.video && <video src={post.video} controls></video>}
-          {post.file && (
-            <a href={post.file} download>
-              Download File
-            </a>
+          <p>Visibility: {post.visibility}</p>
+          {post.images.length > 0 && (
+            <div>
+              {post.images.map((image, index) => (
+                <img key={index} src={image.image} alt={`Image ${index + 1}`} />
+              ))}
+            </div>
+          )}
+          {post.videos.length > 0 && (
+            <div>
+              {post.videos.map((video, index) => (
+                <video key={index} src={video.video} controls />
+              ))}
+            </div>
+          )}
+          {post.files.length > 0 && (
+            <div>
+              <h3>Files:</h3>
+              {post.files.map((file, index) => (
+                <a key={index} href={file.file} download>
+                  Download File {index + 1}
+                </a>
+              ))}
+            </div>
           )}
           <form onSubmit={() => handleUpdatePost(post.id)}>
-            <div>
-              <label>New Title:</label>
+            <div> 
+              <h9>New Title: </h9>
               <input
                 type="text"
                 value={newTitle}
@@ -290,7 +304,7 @@ function SharerPageScreen() {
               />
             </div>
             <div>
-              <label>New Description:</label>
+            <h9>New Description: </h9>
               <textarea
                 value={newDescription}
                 onChange={(e) => setNewDescription(e.target.value)}
@@ -311,3 +325,5 @@ function SharerPageScreen() {
 }
 
 export default SharerPageScreen;
+
+

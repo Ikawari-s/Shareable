@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { uploadSharer } from '../actions/sharerActions';
 
@@ -6,20 +6,33 @@ function SharerPost({ uploadSharer }) {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    image: null,
-    video: null,
-    file: null,
-    visibility: 'ALL', // Set default visibility
+    images: [],
+    videos: [],
+    files: [],
+    visibility: 'ALL',
   });
 
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      images: [],
+      videos: [],
+      files: []
+    });
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleFileChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.files[0] });
+    const files = Array.from(e.target.files);
+    setFormData(prevState => ({
+      ...prevState,
+      [e.target.name]: [...prevState[e.target.name], ...files]
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -28,9 +41,26 @@ function SharerPost({ uploadSharer }) {
 
     setLoading(true);
 
-    await uploadSharer(formData);
+    const formDataUpload = new FormData();
+    formDataUpload.append('title', formData.title);
+    formDataUpload.append('description', formData.description);
+    formDataUpload.append('visibility', formData.visibility);
+
+    formData.images.forEach((image) => {
+      formDataUpload.append('images', image);
+    });
+
+    formData.videos.forEach((video) => {
+      formDataUpload.append('videos', video);
+    });
+
+    formData.files.forEach((file) => {
+      formDataUpload.append('files', file);
+    });
+
+    await uploadSharer(formDataUpload);
     setLoading(false);
-    window.location.reload();
+     window.location.reload(); 
   };
 
   return (
@@ -47,15 +77,15 @@ function SharerPost({ uploadSharer }) {
         </div>
         <div>
           <label>Upload Image:</label>
-          <input type="file" name="image" onChange={handleFileChange} accept="image/*" />
+          <input type="file" name="images" onChange={handleFileChange} multiple accept="image/*" />
         </div>
         <div>
           <label>Upload Video:</label>
-          <input type="file" name="video" onChange={handleFileChange} accept="video/*" />
+          <input type="file" name="videos" onChange={handleFileChange} multiple accept="video/*" />
         </div>
         <div>
           <label>Upload File:</label>
-          <input type="file" name="file" onChange={handleFileChange} />
+          <input type="file" name="files" onChange={handleFileChange} multiple />
         </div>
         <div>
           <label>Visibility:</label>

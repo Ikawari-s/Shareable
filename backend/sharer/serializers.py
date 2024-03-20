@@ -27,31 +27,55 @@ class SharerSerializer(serializers.ModelSerializer):
         return 0  # Return 0 if no ratings exist for the sharer
 
 
+
 class SharerUploadListSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S')
     edited_at_formatted = serializers.SerializerMethodField()
     edited = serializers.SerializerMethodField()
-    visibility = serializers.CharField()  # Add visibility field
+    images = serializers.SerializerMethodField()
+    videos = serializers.SerializerMethodField()
+    files = serializers.SerializerMethodField()
+    visibility = serializers.CharField() 
 
     class Meta:
         model = SharerUpload
-        fields = ['id', 'title', 'description', 'image', 'video', 'file', 'created_at', 'edited_at_formatted', 'edited', 'visibility']  
+        fields = ['id', 'title', 'description', 'images', 'videos', 'files', 'created_at', 'edited_at_formatted', 'edited', 'visibility']
 
     def get_edited_at_formatted(self, instance):
         edited_at = instance.edited_at
         if edited_at:
             return timezone.localtime(edited_at).strftime('%Y-%m-%d %H:%M:%S')
         return None
- 
+
     def get_edited(self, instance):
         return instance.edited_at is not None
 
+    def get_images(self, instance):
+        images = instance.images.all()
+        if images:
+            return [{'image': image.image.url} for image in images]
+        return []
+
+    def get_videos(self, instance):
+        videos = instance.videos.all()
+        if videos:
+            return [{'video': video.video.url} for video in videos]
+        return []
+
+    def get_files(self, instance):
+        files = instance.files.all()
+        if files:
+            return [{'file': file.file.url} for file in files]
+        return []
 
 
 class SharerUploadSerializer(serializers.ModelSerializer):
     created_at_formatted = serializers.SerializerMethodField()
     edited_at_formatted = serializers.SerializerMethodField()
     edited = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
+    video = serializers.SerializerMethodField()
+    file = serializers.SerializerMethodField()
 
     class Meta:
         model = SharerUpload
@@ -66,30 +90,37 @@ class SharerUploadSerializer(serializers.ModelSerializer):
     def get_edited(self, obj):
         return obj.edited_at is not None
     
+    def get_image(self, obj):
+        image_urls = [image.image.url for image in obj.images.all()]
+        return image_urls if image_urls else None
+
+    def get_video(self, obj):
+        video_urls = [video.video.url for video in obj.videos.all()]
+        return video_urls if video_urls else None
+
+    def get_file(self, obj):
+        file_urls = [file.file.url for file in obj.files.all()]
+        return file_urls if file_urls else None
+
     def create(self, validated_data):
-        file_type = None
-        if 'image' in validated_data:
-            file_type = 'image'
-        elif 'video' in validated_data:
-            file_type = 'video'
-        elif 'file' in validated_data:
-            file_type = 'file'
+        image_data = self.context.get('request').FILES.getlist('images')
+        video_data = self.context.get('request').FILES.getlist('videos')
+        file_data = self.context.get('request').FILES.getlist('files')
 
-
-        visibility = validated_data.pop('visibility', 'ALL')
+        visibility = validated_data.pop('visibility', 'ALL')  # Added line for visibility
 
         sharer_upload = SharerUpload.objects.create(visibility=visibility, **validated_data)
 
-        if file_type == 'image':
-            sharer_upload.image = validated_data.pop('image')
-        elif file_type == 'video':
-            sharer_upload.video = validated_data.pop('video')
-        elif file_type == 'file':
-            sharer_upload.file = validated_data.pop('file')
+        for data in image_data:
+            SharerUploadImage.objects.create(upload=sharer_upload, image=data)
 
-        sharer_upload.save()
+        for data in video_data:
+            SharerUploadVideo.objects.create(upload=sharer_upload, video=data)
+
+        for data in file_data:
+            SharerUploadFile.objects.create(upload=sharer_upload, file=data)
+
         return sharer_upload
-
 
 
 class SharerProfileSerializer(serializers.ModelSerializer):

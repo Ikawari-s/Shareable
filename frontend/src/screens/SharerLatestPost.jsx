@@ -25,23 +25,31 @@ function SharerLatestPost({ id }) {
         <div>
           {Array.isArray(posts) && posts.length > 0 ? (
             <div>
-              {posts.slice().reverse().map(post => (
-                <div key={post.id} style={{   maxWidth: '60rem', margin: '0 auto',}}>
-                  <div style={{ background: 'black',marginBottom: '2rem', padding: '3rem'}}>
-                  <h2>{post.title} hello</h2>
-                  <p>Uploaded at: {post.created_at_formatted}</p>
-                  {post.edited && <p>Updated at: {post.edited_at_formatted} </p>}
-                  {post.image && <img src={post.image} style={{maxWidth: '30rem'}}alt="Post Image" />}
-                  {post.video && <video src={post.video} controls></video>}
-                  {post.file && (
-                    <a href={post.file} download>
-                      Download File
-                    </a>
-                  )}
-                  <LikeComponent uploadId={post.id} />
-                  <div style={{ justifyContent: 'center'}}>
-                  <Comment uploadId={post.id} postId={post.id}/>
-                  </div>
+              {posts.map(post => (
+                <div key={post.id} style={{ maxWidth: '60rem', margin: '0 auto' }}>
+                  <div style={{ background: 'black', marginBottom: '2rem', padding: '3rem' }}>
+                    <h2>{post.title}</h2>
+                    <p>Uploaded at: {post.created_at}</p>
+                    {post.edited && <p>Updated at: {post.edited_at_formatted}</p>}
+                    {post.image && post.image.map((image, index) => (
+                      <img key={index} src={image} style={{ maxWidth: '30rem' }} alt={`Post Image ${index}`} />
+                    ))}
+                    {post.video && post.video.map((video, index) => (
+                      <div key={index}>
+                        <video src={video} controls></video>
+                        <p>Video {index + 1}</p>
+                      </div>
+                    ))}
+                    {post.file && post.file.map((file, index) => (
+                      <div key={index}>
+                        <a href={file} download>Download File {index + 1}</a>
+                        <p>File {index + 1}</p>
+                      </div>
+                    ))}
+                    <LikeComponent uploadId={post.id} />
+                    <div style={{ justifyContent: 'center' }}>
+                      <Comment uploadId={post.id} postId={post.id} />
+                    </div>
                   </div>
                 </div>
               ))}

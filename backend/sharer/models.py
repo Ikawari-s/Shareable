@@ -85,10 +85,7 @@ class Sharer(models.Model):
 class SharerUpload(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=200, null=False, blank=False)
-    description = models.CharField(max_length=1000000, null=False, blank=False)
-    image = models.ImageField(upload_to=upload_image, null=True, blank=True)
-    video = models.FileField(upload_to=upload_video, null=True, blank=True)  
-    file = models.FileField(upload_to=upload_file, null=True, blank=True)  
+    description = models.CharField(max_length=1000000, null=False, blank=False) 
     uploaded_by = models.ForeignKey(Sharer, on_delete=models.CASCADE, related_name='uploads')
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(null=True, blank=True) 
@@ -108,6 +105,20 @@ class SharerUpload(models.Model):
     
     def count_comments(self):
         return self.comments.count()
+    
+class SharerUploadFile(models.Model):
+    upload = models.ForeignKey(SharerUpload, on_delete=models.CASCADE, related_name='files')
+    file = models.FileField(upload_to=upload_file, null=True, blank=True)
+
+class SharerUploadImage(models.Model):
+    upload = models.ForeignKey(SharerUpload, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to=upload_image, null=True, blank=True)
+
+class SharerUploadVideo(models.Model):
+    upload = models.ForeignKey(SharerUpload, on_delete=models.CASCADE, related_name='videos')
+    video = models.FileField(upload_to=upload_video, null=True, blank=True)
+
+
 
 class Like(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

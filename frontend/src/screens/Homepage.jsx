@@ -44,6 +44,9 @@ function Homepage({ sharerList, listSharers }) {
     );
   } else if (sortBy === "sharer_id") {
     sortedSharers = sortedSharers.sort((a, b) => b.id - a.id); // Sort by sharer ID (highest to lowest)
+  } else if (sortBy === "default") {
+    // Shuffle the array to implement random sorting
+    sortedSharers = sortedSharers.sort(() => Math.random() - 0.5);
   }
 
   if (loading) {
@@ -231,3 +234,4 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, { listSharers })(Homepage);
+

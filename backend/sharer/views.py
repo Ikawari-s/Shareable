@@ -35,11 +35,10 @@ def SharerlatestPost(request, sharer_id):
     except Sharer.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
-
-    uploads = SharerUpload.objects.filter(uploaded_by=sharer).order_by('created_at')
+    uploads = SharerUpload.objects.filter(uploaded_by=sharer).order_by('-created_at') 
     
     sharer_data = SharerProfileSerializer(sharer).data
-    upload_data = SharerUploadSerializer(uploads, many=True).data
+    upload_data = SharerUploadSerializer(uploads, many=True, context={'request': request}).data
     
     sharer_data['uploads'] = upload_data
     
@@ -97,6 +96,18 @@ class SharerUploadViews(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class SharerUploadViews(APIView):
+    permission_classes = [IsAuthenticated, IsSharerPermission]
+
+    def post(self, request):
+        sharer = request.user.sharer
+
+        serializer = SharerUploadSerializer(data=request.data, context={'request': request})
+        
+        if serializer.is_valid():
+            serializer.save(uploaded_by=sharer)  
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
 class PreviewContent(APIView):
@@ -475,6 +486,3 @@ class PostCount(APIView):
         post_count = SharerUpload.objects.filter(uploaded_by_id=sharer_id).count()
 
         return Response({"post_count": post_count}, status=status.HTTP_200_OK)
-
-
-

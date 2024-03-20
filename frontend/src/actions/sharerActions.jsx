@@ -177,16 +177,9 @@ export const uploadSharer = (formData) => async (dispatch) => {
         }
       : {};
 
-    const formDataUpload = new FormData();
-    Object.keys(formData).forEach((key) => {
-      if (formData[key] !== null) {
-        formDataUpload.append(key, formData[key]);
-      }
-    });
-
     const { data } = await instance.post(
       "api/sharer/sharer-upload",
-      formDataUpload,
+      formData,
       config
     );
 
@@ -201,7 +194,6 @@ export const uploadSharer = (formData) => async (dispatch) => {
     });
   }
 };
-
 
 
 const BASE_URL = "http://localhost:8000";
@@ -369,7 +361,7 @@ export const FetchSharerLatestPost = (id) => async (dispatch) => {
     dispatch({ type: SHARER_LATEST_POST_REQUEST });
     
     const response = await instance.get(
-      `api/sharer/sharer-lates-post/${id}/`, 
+      `api/sharer/sharer-latest-post/${id}/`, 
       config
     );
     
@@ -394,7 +386,6 @@ export const FetchSharerLatestPost = (id) => async (dispatch) => {
     });
   }
 };
-
 
   
 export const CheckerSharer = () => async (dispatch) => {

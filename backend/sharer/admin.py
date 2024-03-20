@@ -1,8 +1,20 @@
 from django.contrib import admin
-from .models import Sharer, SharerUpload, Like, Comment, Rating
+from .models import Sharer, SharerUpload, Like, Comment, Rating, SharerUploadFile, SharerUploadImage, SharerUploadVideo
 from django.db.models import Count, DecimalField, ExpressionWrapper, F, Avg
 from django.utils.html import format_html
 
+class SharerUploadFileInline(admin.TabularInline):
+    model = SharerUploadFile
+    extra = 1
+
+class SharerUploadImageInline(admin.TabularInline):
+    model = SharerUploadImage
+    extra = 1
+
+class SharerUploadVideoInline(admin.TabularInline):
+    model = SharerUploadVideo
+    extra = 1
+    
 @admin.register(Sharer)
 class SharerAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'username', 'email', 'category', 'is_sharer', 'average_rating', 'comment_count')  
@@ -23,6 +35,7 @@ class SharerUploadAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'uploaded_by', 'created_at', 'get_likes_count', 'get_unlikes_count', 'get_comments_count')  
     search_fields = ('id', 'title', 'uploaded_by__name') 
     list_filter = ('created_at', 'uploaded_by__category')
+    inlines = [SharerUploadFileInline, SharerUploadImageInline, SharerUploadVideoInline]
 
     def get_likes_count(self, obj):
         return obj.likes.filter(liked=True).count()
