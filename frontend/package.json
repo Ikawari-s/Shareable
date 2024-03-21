@@ -7,11 +7,11 @@
     "@emailjs/browser": "^3.12.1",
     "@fortawesome/fontawesome-free": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
-<<<<<<< HEAD
+
     "@paypal/react-paypal-js": "^8.2.0",
-=======
+
     "@fortawesome/react-fontawesome": "^0.2.0",
->>>>>>> ad658c8fe8e9e6d6ac0f3d2d0e374f3d3441d63e
+
     "@redux-devtools/extension": "^3.3.0",
     "@reduxjs/toolkit": "^2.2.2",
     "@testing-library/jest-dom": "^5.17.0",

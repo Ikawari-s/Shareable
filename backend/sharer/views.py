@@ -528,7 +528,7 @@ class TipBoxCreateView(generics.CreateAPIView):
             sharer = serializer.validated_data.get('sharer')
 
             dashboard, created = Dashboard.objects.get_or_create(sharer=sharer)
-            dashboard.total_earnings += Decimal(str(tip_amount))
+            dashboard.total_earnings += Decimal(str(tip_amount))  # Ensure tip_amount is converted to Decimal
             dashboard.save()
 
             serializer.save(user=self.request.user)
