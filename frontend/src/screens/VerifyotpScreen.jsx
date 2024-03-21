@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { verifyOTP, resendOTP } from '../actions/registerActions';
 import { useParams, useNavigate } from 'react-router-dom';
+import logotext from '../designs/images/logotext.png';  
 
 function VerifyotpScreen() {
   const { userId, otpId } = useParams(); // Get userId and otpId from URL params
@@ -68,17 +69,61 @@ function VerifyotpScreen() {
   };
 
   return (
-    <div>
-      <h2>Enter OTP</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="otpInput">OTP:</label>
-        <input id="otpInput" type="text" value={otp} onChange={(e) => setOtp(e.target.value)} required />
-        <button type="submit">Submit</button>
-      </form>
-      <button onClick={handleResendOTP} disabled={resendDisabled}>Re-send OTP</button>
-      {resendDisabled && <p>Resend OTP in: {countdown} seconds</p>}
-      {errorMessage && <p>{errorMessage}</p>}
+    <div id="OTP">
+      <div id="gab"> <img src={logotext} alt="Logo" /></div>
+    <div className="container" style={{ paddingTop: '8.5rem'}}>
+      <div className="card custom-card-background wrapper">
+        <div className="card-header">
+          <h1 className="text-center">Enter OTP</h1>
+        </div>
+
+        <div className="card-body">
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label htmlFor="otpInput" className="form-label">
+                OTP:
+              </label>
+              <input
+                placeholder="Enter your OTP"
+                className="form-control"
+                id="otpInput" 
+                type="text" 
+                value={otp} 
+                onChange={(e) => setOtp(e.target.value)} required 
+              />
+            </div>
+
+            <div className="d-grid gap-2 cum">
+              <button
+                className="btn btn-primary"
+                type="submit"
+                > Submit
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div className="card-footer text-">
+          <span 
+          id='da-link'
+          onClick={handleResendOTP} 
+          style={{ 
+          textDecoration: 'underline', 
+          cursor: 'pointer',
+          fontSize: '0.8rem',
+          marginLeft: '16rem',
+          paddingBottom: '10rem',
+          }} 
+          disabled={resendDisabled}
+          >
+          Re-send OTP
+          </span>
+          {resendDisabled && <p style={{marginLeft: '11.1rem', fontSize: '0.8rem', marginBottom: '0'}}>Resend OTP in: {countdown} seconds</p>}
+          {errorMessage && <p style={{marginLeft: '4.6rem', fontSize: '0.8rem', marginBottom: '0'}} >{errorMessage}</p>}
+        </div>
+      </div>
     </div>
+  </div>
   );
 }
 

@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../actions/userActions";
-import GuestHeader from "../components/GuestHeader";
-import logotext from '../designs/images/logotext.png';
-import logo from '../designs/images/logo.png';
+import logotext from '../designs/images/logotext.png';  
 
 function Login() {
   const dispatch = useDispatch();
