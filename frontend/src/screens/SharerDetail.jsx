@@ -9,6 +9,7 @@ import { followSharer, unfollowSharer } from '../actions/followActions';
 import { FetchSharerRatingsComponent, PostSharerRatingsComponent } from '../components/Rating';
 import PostCount from '../components/PostCount';
 import PreviewContent from '../components/PreviewContent';
+import TipBox from '../components/Tipbox';
 
 const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unfollowSharer, getSharerPostCount }) => {
   const { id } = useParams();
@@ -95,11 +96,11 @@ const SharerDetail = ({ sharer, loading, error, DetailSharers, followSharer, unf
                 <h6>FOLLOW NOW!</h6>
                 <h3>Preview Content</h3>
                 <PreviewContent sharerId={id} />
-                
               </div>
             )}
           </div>
 
+          <TipBox />
           <Link to={'/homepage'}>
             <Button variant="primary">Go Back</Button>
           </Link>
@@ -127,7 +128,7 @@ const mapDispatchToProps = {
   DetailSharers,
   followSharer,
   unfollowSharer,
-  getSharerPostCount, // Add the action to mapDispatchToProps
+  getSharerPostCount,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SharerDetail);

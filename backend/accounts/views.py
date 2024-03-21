@@ -430,7 +430,7 @@ class ProfileUpdateView(APIView):
     parser_classes = [MultiPartParser, FormParser]
 
     def patch(self, request, *args, **kwargs):
-        # Check if the user is authenticated
+
         if request.user.is_sharer:
             return Response({"detail": "You are not allowed to access this endpoint."}, status=status.HTTP_403_FORBIDDEN)
 
@@ -439,7 +439,6 @@ class ProfileUpdateView(APIView):
         if not username:
             return Response({"detail": "Provide a username for update."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Check if the provided username is already in use
         if User.objects.exclude(pk=request.user.pk).filter(username=username).exists():
             return Response({"detail": "The username is already in use."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -472,6 +471,3 @@ def change_password(request):
         user.save()
         return Response({"message": "Password changed successfully"}, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-

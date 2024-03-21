@@ -25,6 +25,7 @@ urlpatterns = [
     path('posts/count-posts/<int:sharer_id>/', views.PostCount.as_view(), name='count_posts'),
     path('preview-content/<int:post_id>/', views.PreviewContent.as_view(), name='preview_content'),
     path('preview-list-content/<int:sharer_id>/', PreviewContentList.as_view(), name='sharer_content_list'),
-
+    path('tipboxes/create/<int:sharer_id>/', TipBoxCreateView.as_view(), name='tipbox-create'),
+    path('dashboard/', DashboardRetrieveUpdateView.as_view(), name='dashboard-detail'),
 
 ]

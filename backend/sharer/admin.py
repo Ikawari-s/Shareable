@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Sharer, SharerUpload, Like, Comment, Rating, SharerUploadFile, SharerUploadImage, SharerUploadVideo
+from .models import Sharer, SharerUpload, Like, Comment, Rating, SharerUploadFile, SharerUploadImage, SharerUploadVideo, TipBox, Dashboard
 from django.db.models import Count, DecimalField, ExpressionWrapper, F, Avg
 from django.utils.html import format_html
 
@@ -90,5 +90,27 @@ class RatingAdmin(admin.ModelAdmin):
     list_display = ('user', 'rating', 'comment')
     search_fields = ('user__email', 'user__username')
     list_filter = ('rating',)
+
+
+
+# Register your models here.
+@admin.register(TipBox)
+class TipBoxAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'sharer', 'amount', 'timestamp', 'sender_username')
+    search_fields = ('user__username', 'sharer__name')
+    list_filter = ('timestamp',)
+
+    def sender_username(self, obj):
+        return obj.user.username
+
+    sender_username.short_description = 'Sender Username'
+    
+@admin.register(Dashboard)
+class DashboardAdmin(admin.ModelAdmin):
+    list_display = ('sharer', 'total_earnings')
+    search_fields = ('sharer__name',)
+
+
+
 
 admin.site.register(Rating, RatingAdmin)

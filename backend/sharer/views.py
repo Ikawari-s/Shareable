@@ -12,7 +12,10 @@ from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 from datetime import datetime
-
+from decimal import Decimal
+import logging
+from django.db import transaction
+logger = logging.getLogger(__name__)
 
 class IsSharerPermission(BasePermission):
     def has_permission(self, request, view):
@@ -486,3 +489,51 @@ class PostCount(APIView):
         post_count = SharerUpload.objects.filter(uploaded_by_id=sharer_id).count()
 
         return Response({"post_count": post_count}, status=status.HTTP_200_OK)
+    
+
+class DashboardRetrieveUpdateView(generics.RetrieveUpdateAPIView):
+    serializer_class = DashboardSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+
+        try:
+            return Dashboard.objects.get(sharer=self.request.user.sharer)
+        except Dashboard.DoesNotExist:
+
+            return Dashboard.objects.create(sharer=self.request.user.sharer)
+
+    def perform_update(self, serializer):
+
+        serializer.save(sharer=self.request.user.sharer)
+
+
+
+
+class TipBoxCreateView(generics.CreateAPIView):
+    queryset = TipBox.objects.all()
+    serializer_class = TipBoxCreateSerializer
+    permission_classes = [IsAuthenticated]
+
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        try:
+            mutable_data = request.data.copy()
+            mutable_data['sharer'] = kwargs.get('sharer_id')
+
+            serializer = self.get_serializer(data=mutable_data)
+            serializer.is_valid(raise_exception=True)
+
+            tip_amount = serializer.validated_data.get('amount')
+            sharer = serializer.validated_data.get('sharer')
+
+            dashboard, created = Dashboard.objects.get_or_create(sharer=sharer)
+            dashboard.total_earnings += Decimal(str(tip_amount))
+            dashboard.save()
+
+            serializer.save(user=self.request.user)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            logger.error(f"Error processing TipBox creation: {e}")
+            return Response({"error": "An error occurred while processing the request."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

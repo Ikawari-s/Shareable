@@ -267,22 +267,22 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 
-
-# EMAIL_USE_TLS = True
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = "shareable2024@gmail.com"
-# EMAIL_HOST_PASSWORD = "fmmgdwqbmpbckllq"
-# APP_SCHEME = 'https'
+EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend"
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "shareable2024@gmail.com"
+EMAIL_HOST_PASSWORD = "fmmgdwqbmpbckllq"
+APP_SCHEME = 'https'
 
 
 # Email Configuration
-EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'haugabster@gmail.com'
-EMAIL_HOST_PASSWORD = 'zrus ndax kuiy ysvv'
-EMAIL_USE_TLS = True
-APP_SCHEME = 'https'
+# EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'haugabster@gmail.com'
+# EMAIL_HOST_PASSWORD = 'zrus ndax kuiy ysvv'
+# EMAIL_USE_TLS = True
+# APP_SCHEME = 'https'
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024 

@@ -50,7 +50,13 @@ import {
   SHARER_PREVIEW_LIST_FAILURE,
   SHARER_PREVIEW_REQUEST,
   SHARER_PREVIEW_SUCCESS,
-  SHARER_PREVIEW_FAILURE
+  SHARER_PREVIEW_FAILURE,
+  TIP_BOX_SEND_REQUEST,
+  TIP_BOX_SEND_SUCCESS,
+  TIP_BOX_SEND_FAILURE,
+  GET_DASHBOARD_REQUEST,
+  GET_DASHBOARD_SUCCESS,
+  GET_DASHBOARD_FAILURE,
 } from "../constants/sharerConstants";
 
 export const SharerDetailReducer = (state = {}, action) => {
@@ -367,6 +373,35 @@ export const sharerPreviewReducer = (state = { preview: null, loading: false, er
     case SHARER_PREVIEW_SUCCESS:
       return { ...state, loading: false, preview: action.payload };
     case SHARER_PREVIEW_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const userTipBoxReducer = (state = {}, action) => {
+  switch (action.type) {
+    case TIP_BOX_SEND_REQUEST:
+      return { loading: true };
+
+    case TIP_BOX_SEND_SUCCESS:
+      return { loading: false, tipBoxInfo: action.payload };
+
+    case TIP_BOX_SEND_FAILURE:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const dashboardReducer = (state = { loading: false, error: null, dashboardData: null }, action) => {
+  switch (action.type) {
+    case GET_DASHBOARD_REQUEST:
+      return { ...state, loading: true, error: null };
+    case GET_DASHBOARD_SUCCESS:
+      return { ...state, loading: false, dashboardData: action.payload }; // Update state with fetched data
+    case GET_DASHBOARD_FAILURE:
       return { ...state, loading: false, error: action.payload };
     default:
       return state;

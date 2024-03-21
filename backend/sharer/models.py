@@ -4,6 +4,7 @@ from django.utils.text import slugify
 from django.core.validators import FileExtensionValidator
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.validators import MinLengthValidator
+from django.db.models import Count, Avg
 
 def upload_image(instance, filename):
     filename = slugify(filename)
@@ -151,3 +152,23 @@ class Rating(models.Model):
 
     def __str__(self):
         return f"Rating {self.rating} by {self.user.username} for {self.sharer.name}"
+
+
+class TipBox(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    sharer = models.ForeignKey(Sharer, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+class Dashboard(models.Model):
+    sharer = models.OneToOneField(Sharer, on_delete=models.CASCADE)
+    total_earnings = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+
+
+    def update_dashboard_statistics(self):
+        self.total_uploads = self.sharer.uploads.count()
+        self.total_likes = Like.objects.filter(post__uploaded_by=self.sharer, liked=True).count()
+        self.total_unlikes = Like.objects.filter(post__uploaded_by=self.sharer, unliked=True).count()
+        self.average_rating = Rating.objects.filter(sharer=self.sharer).aggregate(avg_rating=Avg('rating'))['avg_rating'] or 0.0
+        self.total_posts = self.sharer.uploads.count()
+        self.save()

@@ -34,7 +34,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomeScreen />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          {/* <Route path="/signup" element={<Signup />} /> */}
           <Route path="/reset-password" element={<ForgotpasswordScreen />} />
           <Route path="/new-password" element= {<NewpasswordScreen />} />
           <Route path="/contact" element={<ContactScreen />} />

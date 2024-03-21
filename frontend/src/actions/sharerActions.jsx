@@ -55,7 +55,13 @@ import {
   SHARER_PREVIEW_LIST_FAILURE,
   SHARER_PREVIEW_REQUEST,
   SHARER_PREVIEW_SUCCESS,
-  SHARER_PREVIEW_FAILURE
+  SHARER_PREVIEW_FAILURE,
+  TIP_BOX_SEND_REQUEST,
+  TIP_BOX_SEND_SUCCESS,
+  TIP_BOX_SEND_FAILURE,
+  GET_DASHBOARD_REQUEST,
+  GET_DASHBOARD_SUCCESS,
+  GET_DASHBOARD_FAILURE,
 } from "../constants/sharerConstants";
 
 const instance = axios.create({
@@ -714,6 +720,99 @@ export const getSharerPostCount = (sharerId) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: SHARER_POST_COUNT_FAILURE,
+      payload:
+        error.message && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+
+export const sendTipBox = (userId, sharerId, tipAmount) => async (dispatch) => {
+  try {
+    // Dispatch a request action to indicate the start of the request
+    dispatch({ type: TIP_BOX_SEND_REQUEST });
+
+    // Retrieve userInfo from localStorage
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    console.log("UserInfo:", userInfo);
+
+    // Check if userInfo and access token are available
+    const token = userInfo ? userInfo.access_token : null;
+    if (!token) {
+      throw new Error("Authorization token not found");
+    }
+
+    // Prepare request headers
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    // Prepare request data
+    const requestData = {
+      user: userId,
+      amount: parseFloat(tipAmount), // Convert tipAmount to a number if it's not already
+    };
+
+    // Send POST request to the API endpoint
+    const response = await instance.post(
+      `api/sharer/tipboxes/create/${sharerId}/`,
+      requestData,
+      config
+    );
+
+    // Dispatch success action with response data
+    dispatch({
+      type: TIP_BOX_SEND_SUCCESS,
+      payload: response.data,
+    });
+
+    // Return response data if needed in the component
+    return response;
+  } catch (error) {
+    // Dispatch failure action with error details
+    dispatch({
+      type: TIP_BOX_SEND_FAILURE,
+      payload: error.response
+        ? error.response.data.detail || error.response.data.message
+        : error.message,
+    });
+    // Rethrow the error to propagate it to the component
+    throw error;
+  }
+};
+
+
+export const getDashboard = () => async (dispatch) => {
+  try {
+    console.log('Fetching dashboard data...');
+    dispatch({ type: GET_DASHBOARD_REQUEST });
+
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
+
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
+
+    const { data } = await instance.get('api/sharer/dashboard/', config);
+    
+    console.log('Dashboard data:', data); // Log the fetched data
+    dispatch({ type: GET_DASHBOARD_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: GET_DASHBOARD_FAILURE,
       payload:
         error.message && error.response.data.message
           ? error.response.data.message

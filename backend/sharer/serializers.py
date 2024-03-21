@@ -3,18 +3,16 @@ from .models import *
 from accounts.models import AppUser
 from django.utils import timezone
 from django.contrib.auth import get_user_model
-
+from decimal import Decimal
 
 class SharerSerializer(serializers.ModelSerializer):
     total_followers = serializers.SerializerMethodField()
     average_rating = serializers.SerializerMethodField()
+
     class Meta:
         model = Sharer
         fields = '__all__'
 
-    def get_total_followers(self, obj):
-        return obj.total_followers
-    
     def get_total_followers(self, obj):
         return obj.total_followers
 
@@ -23,7 +21,9 @@ class SharerSerializer(serializers.ModelSerializer):
         if ratings.exists():
             total_ratings = ratings.count()
             sum_ratings = sum([rating.rating for rating in ratings])
-            return sum_ratings / total_ratings
+            average_rating = sum_ratings / total_ratings
+            # Format the average_rating to two decimal places
+            return round(average_rating, 2)
         return 0  # Return 0 if no ratings exist for the sharer
 
 
@@ -158,8 +158,8 @@ class CommentSerializer(serializers.ModelSerializer):
 class RatingSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
     profile_picture = serializers.SerializerMethodField()
-    user_rated = serializers.SerializerMethodField()  # New field
-    already_rated = serializers.BooleanField(read_only=True)  # New field
+    user_rated = serializers.SerializerMethodField()
+    already_rated = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Rating
@@ -173,7 +173,62 @@ class RatingSerializer(serializers.ModelSerializer):
         user_instance = get_user_model().objects.filter(id=user_id).first()
         return user_instance.profile_picture.url if user_instance and user_instance.profile_picture else None
 
-    def get_user_rated(self, obj):  # Method to determine if the user has rated the sharer
+    def get_user_rated(self, obj):  
         user = self.context['user']
         return Rating.objects.filter(user=user, sharer=obj.sharer).exists()
 
+    # Format the rating field to two decimal places
+    rating = serializers.DecimalField(max_digits=5, decimal_places=2)
+
+
+
+
+class TipBoxCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TipBox
+        fields = ['user', 'sharer', 'amount'] 
+
+class DashboardSerializer(serializers.ModelSerializer):
+    sharer = serializers.StringRelatedField()
+    total_post_count = serializers.SerializerMethodField()
+    average_rating = serializers.SerializerMethodField()
+    total_likes = serializers.SerializerMethodField()
+    total_unlikes = serializers.SerializerMethodField()
+    total_uploads = serializers.SerializerMethodField()
+    twenty_percent_less_earning_send = serializers.SerializerMethodField()
+    twenty_percent_cut = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Dashboard
+        fields = ['sharer', 'total_earnings', 'twenty_percent_less_earning_send', 'twenty_percent_cut', 'total_post_count', 'average_rating', 'total_likes', 'total_unlikes', 'total_uploads']
+
+    def get_twenty_percent_less_earning_send(self, obj):
+        twenty_percent = Decimal('0.20')
+        twenty_percent_earnings = obj.total_earnings * twenty_percent
+        return obj.total_earnings - twenty_percent_earnings
+
+    def get_twenty_percent_cut(self, obj):
+        twenty_percent = Decimal('0.20')
+        twenty_percent_earnings = obj.total_earnings * twenty_percent
+        return twenty_percent_earnings
+    
+    def get_total_post_count(self, obj):
+        return SharerUpload.objects.filter(uploaded_by=obj.sharer).count()
+
+    def get_average_rating(self, obj):
+        ratings = Rating.objects.filter(sharer=obj.sharer)
+        if ratings.exists():
+            total_ratings = ratings.count()
+            sum_ratings = sum([rating.rating for rating in ratings])
+            average_rating = sum_ratings / total_ratings
+            return round(average_rating, 2)  # Round the average rating to 2 decimal places
+        return None 
+
+    def get_total_likes(self, obj):
+        return Like.objects.filter(post__uploaded_by=obj.sharer, liked=True).count()
+
+    def get_total_unlikes(self, obj):
+        return Like.objects.filter(post__uploaded_by=obj.sharer, unliked=True).count()
+    
+    def get_total_uploads(self, obj):
+        return SharerUpload.objects.filter(uploaded_by=obj.sharer).count()
