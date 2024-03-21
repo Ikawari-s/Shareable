@@ -44,8 +44,7 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
   const handleDeleteRating = async (ratingId) => {
     try {
       console.log("Deleting rating with id:", ratingId);
-      await dispatch(deleteSharerRatings(ratingId));
-      dispatch(fetchSharerRatings(sharerId));
+      setDeletingRatingId(ratingId);
     } catch (error) {
       console.error('Error deleting rating:', error);
     }

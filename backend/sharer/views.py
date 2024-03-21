@@ -166,13 +166,12 @@ class SharerUploadEditView(APIView):
         if upload.uploaded_by != request.user.sharer:
             return Response({'error': 'You are not authorized to edit this post'}, status=status.HTTP_403_FORBIDDEN)
 
-        if 'title' in request.data or 'description' in request.data:
+        if 'title' in request.data or 'description' in request.data or 'visibility' in request.data:
             serializer = SharerUploadSerializer(upload, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.validated_data['edited_at'] = timezone.now()
                 serializer.validated_data['edited'] = True
                 serializer.save()
-
 
                 formatted_edited_at = format(upload.edited_at, 'Y-m-d H:i:s')
 
@@ -185,7 +184,8 @@ class SharerUploadEditView(APIView):
                 return Response({'message': 'Edited', 'data': response_data})
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({'error': 'At least one of title or description must be provided for editing'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'At least one of title, description, or visibility must be provided for editing'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class LikePost(APIView):
     permission_classes = [IsAuthenticated]

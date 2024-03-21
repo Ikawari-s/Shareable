@@ -31,6 +31,7 @@ function SharerPageScreen() {
   const [newUsername, setNewUsername] = useState("");
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
+  const [newVisibility, setNewVisibility] = useState("");
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [deletePostId, setDeletePostId] = useState(null);
   const [coverPhoto, setCoverPhoto] = useState(null);
@@ -110,11 +111,13 @@ function SharerPageScreen() {
         editSharerPost(postId, {
           title: newTitle || undefined,
           description: newDescription || undefined,
+          visibility: newVisibility || undefined,
         })
       );
       dispatch(listSharerPosts());
       setNewTitle("");
       setNewDescription("");
+      setNewVisibility("");
       setEditedPosts((prev) => ({ ...prev, [postId]: true }));
     } catch (error) {
       console.error("Error updating post:", error);
@@ -123,6 +126,10 @@ function SharerPageScreen() {
 
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
+  };
+
+  const handleVisibilityChange = (e) => {
+    setNewVisibility(e.target.value);
   };
 
   if (loading || !userProfile) {
@@ -299,16 +306,27 @@ function SharerPageScreen() {
               <h9>New Title: </h9>
               <input
                 type="text"
-                value={newTitle}
+                value={newTitle || post.title}
                 onChange={(e) => setNewTitle(e.target.value)}
               />
             </div>
             <div>
             <h9>New Description: </h9>
               <textarea
-                value={newDescription}
+                value={newDescription || post.description}
                 onChange={(e) => setNewDescription(e.target.value)}
               />
+            </div>
+            <div>
+              <label>New Visibility:</label>
+              <select
+                value={newVisibility || post.visibility}
+                onChange={handleVisibilityChange}
+              >
+                <option value="">Select visibility</option>
+                <option value="ALL">All (followers and non-followers)</option>
+                <option value="FOLLOWERS">Followers only</option>
+              </select>
             </div>
             <button type="submit" className="btn btn-primary mt-3">
               Update Post

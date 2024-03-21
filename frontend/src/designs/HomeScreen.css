@@ -41,6 +41,15 @@
     background-position: center
 }
 
+#OTP{
+    padding-top: .5rem;
+    padding-bottom: 3.7rem;
+    height: 100vh;
+    background-image: linear-gradient(to bottom, #0b1550, #014981);
+    background-size: cover;
+    background-position: center
+}
+
 #art3{
     position: absolute;
     object-fit: cover;
@@ -335,6 +344,7 @@
     border-color: white;
     color: white;
 }
+
 
 .cum button{
    border-radius: 6.25rem;

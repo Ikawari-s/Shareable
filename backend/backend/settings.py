@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework_simplejwt',
     'accounts',
+    'contact',
     'sharer',
 ]
 
@@ -286,3 +287,9 @@ APP_SCHEME = 'https'
 # APP_SCHEME = 'https'
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024 
+
+
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+MEDIA_URL = '/contact_media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'contact_media')
+

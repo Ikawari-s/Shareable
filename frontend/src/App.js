@@ -6,7 +6,9 @@ import Footer from './components/Footer';
 import Signup from './components/Signup';
 import Homepage from './screens/Homepage';  
 import HomeScreen from './screens/HomeScreen';
-import ContactScreen from './screens/ContactScreen';
+
+import ContactPageScreen from './screens/ContactPageScreen';
+
 import './bootstrap.min.css';
 import UserProfileScreen from './screens/UserProfileScreen';
 import UserProfileAccount from './screens/UserProfileAccount';
@@ -37,11 +39,10 @@ function App() {
           {/* <Route path="/signup" element={<Signup />} /> */}
           <Route path="/reset-password" element={<ForgotpasswordScreen />} />
           <Route path="/new-password" element= {<NewpasswordScreen />} />
-          <Route path="/contact" element={<ContactScreen />} />
+          <Route path="/contact" element={<ContactPageScreen />} />
           <Route path="/about" element={<AboutScreen />} />
           <Route path="/invalid" element={<InvalidScreen/>}/> 
           <Route path="/otp/:userId/:otpId" element={<VerifyotpScreen />} />
-          <Route path="/contact" element={<ContactScreen />}/>
 
           {/* USER LEVEL ALL PROTECTED  */}
 
