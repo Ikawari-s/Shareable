@@ -50,6 +50,41 @@
     background-position: center
 }
 
+#error{
+    height: 100vh;
+    background-color: white;
+    color: #333333 !important;
+    background-size: cover;
+    background-position: center;
+}
+
+#lol{
+    padding: 4rem;
+}
+
+#error h1{
+    font-size: 3.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#uhoh{
+    font-size: 1rem;
+    color: #0071bd;
+    text-decoration: none;
+    left: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#uhoh:hover {
+    background-color: transparent;
+    font-size: 1.01rem;
+    text-decoration: underline;
+    color: #014981;
+}
 #art3{
     position: absolute;
     object-fit: cover;
@@ -280,6 +315,31 @@
     height: 0rem !important;
     left: 2.5rem;
     top: 15.625rem;
+}
+
+#hab{
+    position: relative;
+    width: 45% !important;
+    height: 0rem !important;
+    left: 12.25rem;
+    top: -0.8rem;
+}
+
+#jab{
+    position: relative;
+    line-height: 1rem;
+    width: 40% !important;
+    height: 0 !important;
+    left: 53.25rem;
+    top: 5rem;
+}
+
+#jab h2{
+    font-size: 2.4rem;
+}
+
+#jab p{
+    font-size: 1.2rem;
 }
 
 .grabber{
