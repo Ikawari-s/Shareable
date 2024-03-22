@@ -108,7 +108,9 @@ const ContactPageScreen = () => {
         </div>
 
         <Button type="submit" variant="primary">Done</Button>
-        <Button type="button" variant="secondary" onClick={clearForm} style={{ marginLeft: '10px' }}>Clear Form</Button>
+        <Button type="button" variant="primary" onClick={clearForm} style={{ marginLeft: '10px' }}>Clear Form</Button>
+        <Button type="button" variant="secondary" href='/' style={{ marginLeft: '10px', width: '10rem' }}>Back to Page</Button>
+
 
       </form>
       {submitStatus === 'error' && <p style={{ color: 'red', marginTop: '10px' }}>Failed to submit request. Please try again.</p>}
