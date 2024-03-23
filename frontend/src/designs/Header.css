@@ -1,67 +1,65 @@
-
 nave {
-    z-index: 1;
+    z-index: 4;
     position: fixed;
-    top: 10px;
-    bottom: 10px;
-    height: 97%;
-    left: 10px;
-    background: rgb(27, 27, 27);
-    width: 55px;
+    height: 100%;
+    width: 5rem;
     overflow: hidden;
     transition: width 0.2s linear;
-    box-shadow: 0 20px 35px rgb(0,0,0,0.1);
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(0, 0, 0, 0.5));
+    box-shadow: 0 0.25rem .5rem 0 rgba(0, 0, 0, 0.2), 0 0.375rem 1.25rem 0 rgba(0, 0, 0, 0.19);
     list-style: none;
-    border-radius: 40PX;
     padding-top: 20px;
 }
-a{
-    font-size: 1.2rem;
-    position: relative;
-    color: white;
-    display: table;
-    width: 300px;
-    padding-left: 0.35rem;
-    padding-top: 0.6rem;
-    padding-bottom: 0.6rem;
-}
-.nav-icon{
-    position: relative;
-    padding-right: 1rem;
-    font-size: 1.7rem;
-    text-align: center;
+
+#logo{
+    width: 2.5rem !important;
+    height: auto;
+    margin-right: 1.2rem;
+    margin-left: -0.2rem;
 }
 
-.nav-item{
-    position: relative;
-    top: 50%;
-    margin-left: 10px;
-}
-
-.nav-search{
-    position: relative;
-    display: flex;
-    margin-left: 13px;
-    
+.nav-icon {
+    margin-right: 1.5rem;
 }
 
 .nav-text {
-    position: absolute;
-    top: 0;
-    left: 100%;
-    display: none;
+    font-size: 1.2rem;
 }
 
-.nav-item:hover .nav-text {
-    display: inline-block;
+#pluh{
+    font-size: 2rem;
+    position: relative;
+    margin: 0;
+    color: white;
+    display: table;
+    width: 20rem;
+    padding-left: 1.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
 }
-  
-a:hover{
-    background: rgb(168, 168, 168);
 
+#pluh:hover{
+    background-color: rgba(0, 0, 0, 0.5);
 }
+
+#logut{
+    font-size: 2rem;
+    position: relative;
+    margin-top: 21rem;
+    color: white;
+    display: table;
+    width: 20rem;
+    padding-left: 1.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+#logut:hover{
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
 nave:hover{
-    width: 270px;
+    width: 20rem;
     transition: all 0.5s ease;
 
 }

@@ -9,6 +9,14 @@
   z-index: 1000;
 }
 
+.yea{
+  padding-left: 6rem !important;
+  padding-right: 6rem !important;
+  /* margin-left: 1.2rem !important;
+  margin-right: 1.2rem !important; */
+  line-height: 1.2rem;
+}
+
 .yea:hover {
   background-color: #084d6e;
   color: white !important;
