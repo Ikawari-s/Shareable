@@ -233,6 +233,11 @@ STATIC_URL = 'static/'
 
 MEDIA_URL = '/media/'
 
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+# MEDIA_URL = '/contact_media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'contact_media')
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -289,7 +294,10 @@ APP_SCHEME = 'https'
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024 
 
 
+<<<<<<< HEAD
+=======
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 MEDIA_URL = '/contact_media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'contact_media')
+>>>>>>> de5c6d1316f94aa8713cac79b8af8c160dbd95f4
 

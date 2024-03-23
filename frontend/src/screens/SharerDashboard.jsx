@@ -22,7 +22,7 @@ function SharerDashboard() {
         <div>
           <p>Total Earnings: ${dashboardData.twenty_percent_less_earning_send}</p>
           <p>Total Post Count: {dashboardData.total_post_count}</p>
-          <p>Averag Rating: {dashboardData.average_rating}</p>
+          <p>Total Rating: {dashboardData.average_rating}/5</p>
           <p>Total Likes: {dashboardData.total_likes}</p>
           <p>Total Unlikes: {dashboardData.total_unlikes}</p>
           <p>Total Uploads: {dashboardData.total_uploads}</p>

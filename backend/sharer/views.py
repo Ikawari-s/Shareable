@@ -13,6 +13,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 from datetime import datetime
 from decimal import Decimal
+from django.db.models import Sum, DecimalField
+from django.db.models.functions import Coalesce
 import logging
 from django.db import transaction
 logger = logging.getLogger(__name__)
@@ -537,3 +539,38 @@ class TipBoxCreateView(generics.CreateAPIView):
         except Exception as e:
             logger.error(f"Error processing TipBox creation: {e}")
             return Response({"error": "An error occurred while processing the request."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+class TopDonorView(APIView):
+    def get(self, request, sharer_id):
+        top_donor = get_top_donors(sharer_id)
+        if top_donor:
+            return Response(top_donor, status=200)
+        else:
+            return Response({'error': 'Sharer not found or no donations exist for this sharer.'}, status=404)
+        
+def get_top_donors(sharer_id):
+    try:
+        sharer = Sharer.objects.get(id=sharer_id)
+        top_donors = TipBox.objects.filter(sharer=sharer).values('user').annotate(
+            total_amount=Coalesce(Sum('amount'), 0, output_field=DecimalField())
+        ).order_by('-total_amount')[:3] 
+        
+        top_donors_list = []
+        
+        for donor in top_donors:
+            user_id = donor['user']
+            total_amount = donor['total_amount']
+            user = User.objects.get(id=user_id)  # Fetch the user object
+            username = user.username  # Get the username associated with the user ID
+            profile_picture = user.profile_picture.url if user.profile_picture else None
+            top_donors_list.append({
+                'user_id': user_id,
+                'username': username,
+                'profile_picture': profile_picture,  
+                'total_amount': total_amount
+            })
+        
+        return top_donors_list
+    except Sharer.DoesNotExist:
+        return None

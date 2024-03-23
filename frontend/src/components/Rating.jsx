@@ -84,7 +84,7 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
   return (
     <div className="scroll-box overflow-auto" style={{ background: 'black', maxWidth: '60rem', margin: '0 auto'}}>
       <h2>Sharer Ratings</h2>
-      <div>Average Rating: {averageRating !== null ? averageRating.toFixed(1) : "No ratings available"}</div>
+      <div>Total Rating: {averageRating !== null ? ((averageRating / 5).toFixed(1) + "/5") : "No ratings available"}</div>
       <ul>
         {ratings.map((rating) => (
           <li key={rating.id}>
