@@ -4,21 +4,22 @@ import { sendTipBox } from "../actions/sharerActions";
 import { useParams } from "react-router-dom";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
-function TipBox() {
+function TipBox({ sharerId }) {
   const [tipAmount, setTipAmount] = useState("");
+  const [paypalLoaded, setPaypalLoaded] = useState(false); 
   const dispatch = useDispatch();
   const { loading, error, tipBoxInfo } = useSelector(
     (state) => state.userTipBoxes
   );
-  const { id } = useParams();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const userId = userInfo ? userInfo.user_id : null;
 
   useEffect(() => {
     const script = document.createElement("script");
     script.src =
-      "https://www.paypal.com/sdk/js?client-id=AT4h80m0QqFujyrFNSEoY_ol8p4ylScOPhYKE9ZLbUOSH6_Ty2Scf6ZLobmAt8Y_IJFuiI4BziZFv6jC&currency=USD";
+      "https://www.paypal.com/sdk/js?client-id=ATyV_k4Cl0uXb3m5rslF-APNEeMSqlO2xp42GOJoMOb7mzeguFi2028uPwa5UOTSbN8U7rjnKpOYFQT8&currency=USD";
     script.async = true;
+    script.onload = () => setPaypalLoaded(true); 
     document.body.appendChild(script);
   
     return () => {
@@ -27,12 +28,10 @@ function TipBox() {
       }
     };
   }, []);
-  
 
   const createOrder = (data, actions) => {
     const amountInput = document.getElementById("tipAmountInput");
     const tipAmount = parseFloat(amountInput.value);
-    console.log("Tip amount:", tipAmount); 
     if (isNaN(tipAmount) || tipAmount <= 0) {
       console.error("Invalid tip amount:", tipAmount);
       return Promise.reject("Invalid tip amount");
@@ -41,7 +40,7 @@ function TipBox() {
       purchase_units: [
         {
           amount: {
-            value: tipAmount.toFixed(2),
+            value: tipAmount,
             currency_code: "USD",
           },
         },
@@ -57,18 +56,17 @@ function TipBox() {
     return actions.order.capture().then(function (details) {
       const amountInput = document.getElementById("tipAmountInput");
       const tipAmount = parseFloat(amountInput.value);
-      console.log("Captured order details:", details);
-      console.log("Sending tip box with amount:", tipAmount);
-  
+
       if (isNaN(tipAmount) || tipAmount <= 0) {
         console.error("Invalid tip amount:", tipAmount);
         return Promise.reject("Invalid tip amount");
       }
-  
-      dispatch(sendTipBox(userId, id, tipAmount))
+
+      dispatch(sendTipBox(userId, sharerId, tipAmount))
         .then((response) => {
           console.log("Tip box sent successfully:", response);
           setTipAmount("");
+          window.location.reload();
         })
         .catch((error) => {
           console.error("Error sending tip box:", error);
@@ -76,11 +74,10 @@ function TipBox() {
     });
   };
   
-  
-
   const onError = (err) => {
     console.error("createOrder_error:", err);
   };
+  
 
   return (
     <div>
@@ -89,26 +86,26 @@ function TipBox() {
         id="tipAmountInput"
         type="number"
         value={tipAmount}
-        onChange={(e) => {
-          console.log("Input value:", e.target.value);
-          setTipAmount(parseFloat(e.target.value)); 
-        }}
+        onChange={(e) => setTipAmount(parseFloat(e.target.value))}
         placeholder="Enter tip amount"
       />
 
-      <PayPalScriptProvider
-        options={{
-          "client-id":
-            "ASijs-TlfcMyxHCbpKvS8oVhv1EBtBUu5tp1MPgKRINvJrcy1SIv3Yv9jnAo-Uy3wUKAgRNRNvDbUe6t",
-          currency: "USD",
-        }}
-      >
-        <PayPalButtons
-          createOrder={handleCreateOrder}
-          onApprove={onApprove}
-          onError={onError}
-        />
-      </PayPalScriptProvider>
+      {paypalLoaded && ( 
+        <PayPalScriptProvider
+          options={{
+            "client-id":
+              "ATyV_k4Cl0uXb3m5rslF-APNEeMSqlO2xp42GOJoMOb7mzeguFi2028uPwa5UOTSbN8U7rjnKpOYFQT8",
+            currency: "USD",
+          }}
+        >
+          <PayPalButtons
+            createOrder={handleCreateOrder}
+            onApprove={onApprove}
+            onError={onError}
+          />
+        </PayPalScriptProvider>
+      )}
+
       {error && <div>Error: {error}</div>}
       {tipBoxInfo && <div>Tip box sent successfully!</div>}
     </div>

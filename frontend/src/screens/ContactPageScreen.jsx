@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 
@@ -9,6 +8,20 @@ const ContactPageScreen = () => {
   const [description, setDescription] = useState('');
   const [attachment, setAttachment] = useState(null);
   const [submitStatus, setSubmitStatus] = useState(null);
+
+  const clearForm = () => {
+    setRequestType('');
+    setEmail('');
+    setSubject('');
+    setDescription('');
+    setAttachment(null);
+    setSubmitStatus(null);
+
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -94,8 +107,11 @@ const ContactPageScreen = () => {
           <label>Supported file types are: .pdf, .jpeg, .jpg, .png, .doc, .docx. Filesize must not exceed 1 MB.</label>
         </div>
 
-
         <Button type="submit" variant="primary">Done</Button>
+        <Button type="button" variant="primary" onClick={clearForm} style={{ marginLeft: '10px' }}>Clear Form</Button>
+        <Button type="button" variant="secondary" href='/' style={{ marginLeft: '10px', width: '10rem' }}>Back to Page</Button>
+
+
       </form>
       {submitStatus === 'error' && <p style={{ color: 'red', marginTop: '10px' }}>Failed to submit request. Please try again.</p>}
       {submitStatus === 'success' && <p style={{ color: 'green', marginTop: '10px' }}>Request submitted successfully! Check your email notification to view the copy of your response.</p>}
@@ -106,7 +122,3 @@ const ContactPageScreen = () => {
 };
 
 export default ContactPageScreen;
-
-
-
-

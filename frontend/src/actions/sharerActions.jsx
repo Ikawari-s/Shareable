@@ -62,6 +62,9 @@ import {
   GET_DASHBOARD_REQUEST,
   GET_DASHBOARD_SUCCESS,
   GET_DASHBOARD_FAILURE,
+  GET_TOP_DONOR_REQUEST,
+  GET_TOP_DONOR_SUCCESS,
+  GET_TOP_DONOR_FAILURE
 } from "../constants/sharerConstants";
 
 const instance = axios.create({
@@ -744,6 +747,9 @@ export const sendTipBox = (userId, sharerId, tipAmount) => async (dispatch) => {
       throw new Error("Authorization token not found");
     }
 
+    // Log the tip amount being sent to PayPal
+    console.log("Tip Amount (to be sent to PayPal):", tipAmount);
+
     // Prepare request headers
     const config = {
       headers: {
@@ -813,6 +819,41 @@ export const getDashboard = () => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: GET_DASHBOARD_FAILURE,
+      payload:
+        error.message && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+
+export const getTopDonor = (sharerId) => async (dispatch) => {
+  try {
+    console.log('Fetching top donor data...');
+    dispatch({ type: GET_TOP_DONOR_REQUEST });
+
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
+
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
+
+    const response = await instance.get(`api/sharer/top-donor/${sharerId}/`, config);
+    const data = response.data;
+
+    console.log('Top donor data:', data); // Log the fetched data
+    dispatch({ type: GET_TOP_DONOR_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: GET_TOP_DONOR_FAILURE,
       payload:
         error.message && error.response.data.message
           ? error.response.data.message

@@ -57,6 +57,9 @@ import {
   GET_DASHBOARD_REQUEST,
   GET_DASHBOARD_SUCCESS,
   GET_DASHBOARD_FAILURE,
+  GET_TOP_DONOR_REQUEST,
+  GET_TOP_DONOR_SUCCESS,
+  GET_TOP_DONOR_FAILURE 
 } from "../constants/sharerConstants";
 
 export const SharerDetailReducer = (state = {}, action) => {
@@ -403,6 +406,20 @@ export const dashboardReducer = (state = { loading: false, error: null, dashboar
       return { ...state, loading: false, dashboardData: action.payload }; // Update state with fetched data
     case GET_DASHBOARD_FAILURE:
       return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+
+export const topDonorReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case GET_TOP_DONOR_REQUEST:
+      return { ...state, loading: true, error: null }; 
+    case GET_TOP_DONOR_SUCCESS:
+      return { ...state, loading: false, topDonorData: action.payload }; 
+    case GET_TOP_DONOR_FAILURE:
+      return { ...state, loading: false, error: action.payload }; 
     default:
       return state;
   }

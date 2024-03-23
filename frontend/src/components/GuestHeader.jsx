@@ -55,11 +55,11 @@ function GuestHeader({ scrollToSpecificHeight }) {
       <header id="bodhi" className={isScrolled ? 'bodhi circular' : 'bodhi'}>
           <nav className="d-flex justify-content-center">
               <img src={logotext} alt="Logo" id='logotext' />
-            <Nav.Link className="d-flex justify-content-center yea" style={{ color: 'gray', fontWeight: '', paddingTop: '1rem', fontWeight: '600'}} onClick={scrollToFindSharer}>FIND A SHARER</Nav.Link>
-            <Nav.Link className="d-flex justify-content-center yea" style={{ color: 'gray', fontWeight: '', paddingTop: '1rem', fontWeight: '600'}} onClick={scrollToSignUpPage}>SIGN UP</Nav.Link>
-            <Nav.Link className="d-flex justify-content-center yea" style={{ color: 'gray', fontWeight: '', paddingTop: '1rem', fontWeight: '600'}} onClick={scrollToLogInPage}>LOG IN</Nav.Link>
-            {/* <Nav.Link className="d-flex justify-content-center" style={{ color: 'gray', fontWeight: '', paddingTop: '1rem', fontWeight: '600'}} as={Link} to="/login">LOG IN</Nav.Link> */}
-            {/* <Nav.Link className="d-flex justify-content-center" style={{ color: 'gray', fontWeight: '', paddingTop: '1rem', fontWeight: '600'}} as={Link} to="/signup">SIGN UP</Nav.Link> */}
+            <Nav.Link className="d-flex justify-content-center yea" style={{ color: 'gray', fontWeight: '', paddingTop: '0.95rem', fontWeight: '600'}} onClick={scrollToFindSharer}>FIND A SHARER</Nav.Link>
+            <Nav.Link className="d-flex justify-content-center yea" style={{ color: 'gray', fontWeight: '', paddingTop: '0.95rem', fontWeight: '600'}} onClick={scrollToSignUpPage}>SIGN UP</Nav.Link>
+            <Nav.Link className="d-flex justify-content-center yea" style={{ color: 'gray', fontWeight: '', paddingTop: '0.95rem', fontWeight: '600'}} onClick={scrollToLogInPage}>LOG IN</Nav.Link>
+            <Nav.Link className="d-flex justify-content-center yea" style={{ color: 'gray', fontWeight: '', paddingTop: '0.95rem', fontWeight: '600'}} href='/contact'>CONTACT</Nav.Link>
+    
           </nav>
 
       </header>

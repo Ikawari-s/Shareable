@@ -133,7 +133,7 @@ function Homepage({ sharerList, listSharers }) {
                 setLastClickedSort("rating");
               }}
             >
-              Sort by Average Rating (High to Low)
+              Sort by Total Rating (High to Low)
             </Button>
             <Button
               variant="outline-primary"
@@ -209,7 +209,12 @@ function Homepage({ sharerList, listSharers }) {
                         followers : {sharer.total_followers}
                       </Card.Text>
                       <Card.Text>
-                        average rating : {sharer.average_rating}
+                        Total rating:
+                        {sharer.average_rating !== null
+                          ? sharer.average_rating > 0
+                            ? `${sharer.average_rating}/5`
+                            : " No ratings yet"
+                          : "No ratings yet"}
                       </Card.Text>
                     </div>
                     <Link to={`/homepage/sharers/${sharer.id}`}>
@@ -234,4 +239,3 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, { listSharers })(Homepage);
-

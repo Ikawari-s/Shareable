@@ -1,14 +1,13 @@
 .bodhi {
   position: fixed;
-  top: 0; 
-  left: 0;
+  padding-left: 4rem;
+  padding-right: 2rem;
   width: 100%;
   backdrop-filter: blur(.313rem);
   color: #232323;
   transition: border-radius 0.3s ease, margin 0.3s ease, width 0.3s ease, background-color 0.3s ease;
   z-index: 1000;
 }
-
 
 .yea:hover {
   background-color: #084d6e;
@@ -22,7 +21,6 @@
 
 .circular {
   background-color: rgba(255, 255, 255, 1);
-  color: red;
   border-radius: 2.5rem;
   margin-top: 1rem;
   margin-left: 5%;

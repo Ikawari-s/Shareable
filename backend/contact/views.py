@@ -44,7 +44,7 @@ class SubmitContactRequestView(viewsets.ModelViewSet):
         The Shareable Team
         """
 
-        from_email = 'haugabster@gmail.com'
+        from_email = 'shareable2024@gmail.com'
         to_email = [contact_data['email']] 
 
         email_message = EmailMessage(subject, message, from_email, to_email)

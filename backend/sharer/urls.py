@@ -27,5 +27,6 @@ urlpatterns = [
     path('preview-list-content/<int:sharer_id>/', PreviewContentList.as_view(), name='sharer_content_list'),
     path('tipboxes/create/<int:sharer_id>/', TipBoxCreateView.as_view(), name='tipbox-create'),
     path('dashboard/', DashboardRetrieveUpdateView.as_view(), name='dashboard-detail'),
+    path('top-donor/<int:sharer_id>/', TopDonorView.as_view(), name='top-donor'),
 
 ]
