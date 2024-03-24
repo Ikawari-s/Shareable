@@ -3,6 +3,7 @@ import { Navbar, Container, Nav } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../actions/userActions";
+import '../designs/Header.css';
 function SharerHeader() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -41,6 +42,13 @@ function SharerHeader() {
             </Nav>
           </Container>
         </Navbar>
+              {/* <nave>
+      <li><a><Nav.Link as={Link} to="/homepage"><span class="nav-item"><span className="nav-icon"><FaHome/></span>Shareable</span></Nav.Link></a></li>
+      <li><a><Nav.Link as={Link} to="/dashboard"><span class="nav-item"><span className="nav-icon"><FaHome/></span>Dashboard</span></Nav.Link></a></li>
+      <li><a><Nav.Link as={Link} to="/AccountSettings"><span class="nav-item"><span className="nav-icon"><FaUser/></span>User</span></Nav.Link></a></li>   
+      <li><a><Nav.Link as={Link} to="/sharer-"><span class="nav-item"><span className="nav-icon"><FaUserCheck/></span>Sharer Page</span></Nav.Link></a></li>  
+      <li><a><Nav.Link onClick={handleLogout}><span class="nav-item"><span className="nav-icon"><FaExchangeAlt/></span>Log Out</span></Nav.Link></a></li>
+    </nave> */}
       </>
     );
   }
