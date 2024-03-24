@@ -147,7 +147,7 @@ class Comment(models.Model):
 class Rating(models.Model):
     sharer = models.ForeignKey(Sharer, on_delete=models.CASCADE, related_name='ratings')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    rating = models.DecimalField(max_digits=3, decimal_places=1, validators=[MinValueValidator(0), MaxValueValidator(5)])
+    rating = models.DecimalField(max_digits=3, decimal_places=1, validators=[MinValueValidator(0.1), MaxValueValidator(5)])
     comment = models.TextField(blank=True)
 
     def __str__(self):
@@ -157,7 +157,7 @@ class Rating(models.Model):
 class TipBox(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     sharer = models.ForeignKey(Sharer, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0.1)])
     timestamp = models.DateTimeField(auto_now_add=True)
 
 class Dashboard(models.Model):

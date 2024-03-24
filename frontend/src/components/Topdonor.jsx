@@ -8,8 +8,9 @@ function TopDonor({ sharerId }) {
   const { loading, error, topDonorData } = useSelector(state => state.topDonor); 
 
   useEffect(() => {
+    console.log("Current sharerId in TopDonor component:", sharerId); // Log current sharerId
     dispatch(getTopDonor(sharerId));
-  }, [dispatch, sharerId]);
+  }, [dispatch, sharerId]); // Update the effect dependency to include sharerId
 
   return (
     <div className="top-donor-container text-center">

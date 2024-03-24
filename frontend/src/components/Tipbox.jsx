@@ -88,6 +88,8 @@ function TipBox({ sharerId }) {
         value={tipAmount}
         onChange={(e) => setTipAmount(parseFloat(e.target.value))}
         placeholder="Enter tip amount"
+        min="0.1" 
+        step="0.1"
       />
 
       {paypalLoaded && ( 

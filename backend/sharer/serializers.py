@@ -160,10 +160,11 @@ class RatingSerializer(serializers.ModelSerializer):
     profile_picture = serializers.SerializerMethodField()
     user_rated = serializers.SerializerMethodField()
     already_rated = serializers.BooleanField(read_only=True)
+    average_rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Rating
-        fields = ['id', 'sharer', 'user', 'rating', 'comment', 'username', 'profile_picture', 'user_rated', 'already_rated']
+        fields = ['id', 'sharer', 'user', 'rating', 'comment', 'username', 'profile_picture', 'user_rated', 'already_rated', 'average_rating']
 
     def get_username(self, obj):
         return obj.user.username if obj.user else None
@@ -177,7 +178,12 @@ class RatingSerializer(serializers.ModelSerializer):
         user = self.context['user']
         return Rating.objects.filter(user=user, sharer=obj.sharer).exists()
 
-    # Format the rating field to two decimal places
+    def get_average_rating(self, obj):
+        sharer_id = obj.sharer_id
+        average_rating = Rating.objects.filter(sharer=sharer_id).aggregate(avg_rating=Avg('rating'))['avg_rating']
+        return round(average_rating, 2) if average_rating is not None else None
+
+
     rating = serializers.DecimalField(max_digits=5, decimal_places=2)
 
 
@@ -232,3 +238,5 @@ class DashboardSerializer(serializers.ModelSerializer):
     
     def get_total_uploads(self, obj):
         return SharerUpload.objects.filter(uploaded_by=obj.sharer).count()
+    
+

@@ -19,11 +19,30 @@ import logging
 from django.db import transaction
 logger = logging.getLogger(__name__)
 
+User = get_user_model()
+
+#PERMISSION CODES
+def is_follow(user, sharer_id):
+    """
+    Check if the user follows the specified sharer.
+    """
+    try:
+        sharer = Sharer.objects.get(pk=sharer_id)
+    except Sharer.DoesNotExist:
+        return False
+    return sharer in user.follows.all()
+
+class IsSharer(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.is_sharer
+
+
 class IsSharerPermission(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.is_sharer
 
 
+# ISAUTH
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def SharerView(request):
@@ -31,7 +50,7 @@ def SharerView(request):
     serializer = SharerSerializer(queryset, many=True)
     return Response(serializer.data)
 
-
+#IS FOLLOW // okay
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def SharerlatestPost(request, sharer_id):  
@@ -39,6 +58,10 @@ def SharerlatestPost(request, sharer_id):
         sharer = Sharer.objects.get(pk=sharer_id)
     except Sharer.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    user = request.user
+    if not is_follow(user, sharer_id):
+        return Response({"detail": "You are not following this sharer."}, status=status.HTTP_403_FORBIDDEN)
     
     uploads = SharerUpload.objects.filter(uploaded_by=sharer).order_by('-created_at') 
     
@@ -50,7 +73,7 @@ def SharerlatestPost(request, sharer_id):
     return Response(sharer_data)
 
 
-
+# isAuth, para to sa detail view which can be access basta login ka lang
 class SharerProfileDetail(generics.RetrieveAPIView):
     queryset = Sharer.objects.all()
     serializer_class = SharerSerializer
@@ -70,24 +93,25 @@ class SharerProfileDetail(generics.RetrieveAPIView):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
-
+#IS SHARER // okay
 class UserSharerProfile(APIView):
     authentication_classes = (JWTAuthentication,)
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated, IsSharerPermission)
 
     def get(self, request):
         user = request.user
         serializer = SharerSerializer(user.sharer, many=False, context={'request': request})  
         return Response(serializer.data)
 
+#IS SHARER // okay
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsSharerPermission]) 
 def SharerUploadListView(request):
-    queryset = SharerUpload.objects.filter(uploaded_by=request.user.sharer).order_by('-created_at')  
+    queryset = SharerUpload.objects.filter(uploaded_by=request.user.sharer).order_by('-created_at')
     serializer = SharerUploadListSerializer(queryset, many=True)
     return Response(serializer.data)
 
-
+#IS SHARER // okay
 class SharerUploadViews(APIView):
     permission_classes = [IsAuthenticated, IsSharerPermission]
 
@@ -101,39 +125,28 @@ class SharerUploadViews(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class SharerUploadViews(APIView):
-    permission_classes = [IsAuthenticated, IsSharerPermission]
-
-    def post(self, request):
-        sharer = request.user.sharer
-
-        serializer = SharerUploadSerializer(data=request.data, context={'request': request})
-        
-        if serializer.is_valid():
-            serializer.save(uploaded_by=sharer)  
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#NOT NEEDED BUT DO NOT REMOVE
+# class PreviewContent(APIView):
+#     permission_classes = [IsAuthenticated]
     
-
-class PreviewContent(APIView):
-    permission_classes = [IsAuthenticated]
-    
-    def get(self, request, post_id):
-        try:
-            post = SharerUpload.objects.get(pk=post_id)
-            sharer = post.uploaded_by
-            current_user = request.user
-            is_follower = current_user in sharer.followers.all()
+#     def post(self, request, post_id):
+#         try:
+#             post = SharerUpload.objects.get(pk=post_id)
+#             sharer = post.uploaded_by
+#             current_user = request.user
+#             is_follower = current_user in sharer.followers.all()
             
-            if is_follower or post.visibility == 'ALL':
-                serializer = SharerUploadSerializer(post)
-                return Response(serializer.data)
-            else:
-                return Response({"message": "No Preview Content"})
+#             if is_follower or post.visibility == 'ALL':
+#                 serializer = SharerUploadSerializer(post)
+#                 return Response(serializer.data)
+#             else:
+#                 return Response({"message": "No Preview Content"})
             
-        except SharerUpload.DoesNotExist:
-            return Response({"message": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+#         except SharerUpload.DoesNotExist:
+#             return Response({"message": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
         
+
+#IS AUTH 
 class PreviewContentList(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -155,9 +168,9 @@ class PreviewContentList(APIView):
 
 
 
-    
+#IS SHARER // okay
 class SharerUploadEditView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsSharerPermission]
 
     def patch(self, request, upload_id):
         try:
@@ -189,113 +202,8 @@ class SharerUploadEditView(APIView):
             return Response({'error': 'At least one of title, description, or visibility must be provided for editing'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class LikePost(APIView):
-    permission_classes = [IsAuthenticated]
 
-    def post(self, request, upload_id):
-        user = request.user
-        upload = get_object_or_404(SharerUpload, id=upload_id)
-        
-        try:
-            like = Like.objects.get(user=user, post=upload)
-            if like.liked:
-                like.delete()
-                return Response({"message": "Post like removed successfully"}, status=status.HTTP_200_OK)
-            else:
-                like.liked = True
-                like.unliked = False
-                like.save()
-                return Response({"message": "Post liked successfully"}, status=status.HTTP_200_OK)
-        except Like.DoesNotExist:
-            Like.objects.create(user=user, post=upload, liked=True)
-            return Response({"message": "Post liked successfully"}, status=status.HTTP_201_CREATED)
-
-
-class UnlikePost(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, upload_id):
-        user = request.user
-        upload = get_object_or_404(SharerUpload, id=upload_id)
-
-        try:
-            like = Like.objects.get(user=user, post=upload)
-            if like.unliked:
-                like.delete()
-                return Response({"message": "Post unlike removed successfully"}, status=status.HTTP_200_OK)
-            else:
-                like.unliked = True
-                like.liked = False
-                like.save()
-                return Response({"message": "Post unliked successfully"}, status=status.HTTP_200_OK)
-        except Like.DoesNotExist:
-            Like.objects.create(user=user, post=upload, liked=False, unliked=True)
-            return Response({"message": "Post unliked successfully"}, status=status.HTTP_201_CREATED)
-
-
-
-class CountOfLikes(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, upload_id):
-        upload = get_object_or_404(SharerUpload, id=upload_id)
-        likes_count = Like.objects.filter(post=upload, liked=True).count()
-        unlikes_count = Like.objects.filter(post=upload, unliked=True).count()
-        return Response({"likes_count": likes_count, "unlikes_count": unlikes_count}, status=status.HTTP_200_OK)
-
-
-class CommentPost(APIView):
-    permission_classes = [IsAuthenticated]  
-
-    def post(self, request, upload_id):
-        user = request.user
-        try:
-            upload = SharerUpload.objects.get(id=upload_id)
-        except SharerUpload.DoesNotExist:
-            return Response({"message": "Post does not exist"}, status=status.HTTP_404_NOT_FOUND)
-        
-        serializer = CommentSerializer(data=request.data, context={'request': request, 'user': user, 'post': upload})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    
-
-class CommentDeleteView(generics.DestroyAPIView):
-    permission_classes = [IsAuthenticated]
-
-    def delete(self, request, *args, **kwargs):
-        try:
-            comment = Comment.objects.get(id=kwargs['comment_id'])
-        except Comment.DoesNotExist:
-            return Response({"message": "Comment does not exist"}, status=status.HTTP_404_NOT_FOUND)
-
-        if comment.user.id != request.user.id: 
-            return Response({"message": "You are not the owner of this comment"}, status=status.HTTP_403_FORBIDDEN)
-
-        comment.delete()
-        return Response({"message": "Comment deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
-
-    
-    
-    
-class CommentListView(generics.ListAPIView):
-    serializer_class = CommentSerializer  
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        upload_id = self.kwargs.get('upload_id')
-        queryset = Comment.objects.filter(post_id=upload_id).select_related('user') 
-        return queryset
-
-
-class IsSharer(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.is_sharer
-
-
-User = get_user_model()
+#IS SHARER // okay
 class SharerUpdateProfile(APIView):
     permission_classes = [IsAuthenticated, IsSharer]
 
@@ -328,8 +236,9 @@ class SharerUpdateProfile(APIView):
 
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 
-
+#IS SHARER // okay
 class SharerDeletePostView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated, IsSharerPermission]
 
@@ -348,18 +257,141 @@ class SharerDeletePostView(generics.DestroyAPIView):
         return Response({"message": "Post deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
     
 
-def is_follow(user, sharer_id):
-    """
-    Check if the user follows the specified sharer.
-    """
+#IS AUTH 
+class PostCount(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, sharer_id):
+ 
+        try:
+            sharer_id = int(sharer_id)
+        except ValueError:
+            return Response({"error": "Invalid Sharer ID"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        post_count = SharerUpload.objects.filter(uploaded_by_id=sharer_id).count()
+
+        return Response({"post_count": post_count}, status=status.HTTP_200_OK)
+    
+#IS SHARER // okay
+class DashboardRetrieveUpdateView(generics.RetrieveUpdateAPIView):
+    serializer_class = DashboardSerializer
+    permission_classes = [IsAuthenticated, IsSharerPermission]
+
+    def get_object(self):
+        try:
+            return Dashboard.objects.get(sharer=self.request.user.sharer)
+        except Dashboard.DoesNotExist:
+            return Dashboard.objects.create(sharer=self.request.user.sharer)
+
+    def perform_update(self, serializer):
+        serializer.save(sharer=self.request.user.sharer)
+
+
+
+#IS AUTH ONLY
+class TipBoxCreateView(generics.CreateAPIView):
+    queryset = TipBox.objects.all()
+    serializer_class = TipBoxCreateSerializer
+    permission_classes = [IsAuthenticated]
+
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        try:
+            mutable_data = request.data.copy()
+            mutable_data['sharer'] = kwargs.get('sharer_id')
+
+            serializer = self.get_serializer(data=mutable_data)
+            serializer.is_valid(raise_exception=True)
+
+            tip_amount = serializer.validated_data.get('amount')
+            sharer = serializer.validated_data.get('sharer')
+
+            dashboard, created = Dashboard.objects.get_or_create(sharer=sharer)
+            dashboard.total_earnings += Decimal(str(tip_amount))  # Convert tip_amount to Decimal
+            dashboard.save()
+
+            serializer.save(user=self.request.user)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            logger.error(f"Error processing TipBox creation: {e}")
+            return Response({"error": "An error occurred while processing the request."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+class TopDonorView(APIView):
+    def get(self, request, sharer_id):
+        top_donor = get_top_donors(sharer_id)
+        if top_donor:
+            return Response(top_donor, status=200)
+        else:
+            return Response({'error': 'Sharer not found or no donations exist for this sharer.'}, status=404)
+        
+def get_top_donors(sharer_id):
     try:
-        sharer = Sharer.objects.get(pk=sharer_id)
+        sharer = Sharer.objects.get(id=sharer_id)
+        top_donors = TipBox.objects.filter(sharer=sharer).values('user').annotate(
+            total_amount=Coalesce(Sum('amount'), 0, output_field=DecimalField())
+        ).order_by('-total_amount')[:3] 
+        
+        top_donors_list = []
+        
+        for donor in top_donors:
+            user_id = donor['user']
+            total_amount = donor['total_amount']
+            user = User.objects.get(id=user_id) 
+            username = user.username  
+            profile_picture = user.profile_picture.url if user.profile_picture else None
+            top_donors_list.append({
+                'user_id': user_id,
+                'username': username,
+                'profile_picture': profile_picture,  
+                'total_amount': total_amount
+            })
+        
+        return top_donors_list
     except Sharer.DoesNotExist:
-        return False
-    return sharer in user.follows.all()
+        return None
+    
+    
+def get_top_donors(sharer_id):
+    try:
+        sharer = Sharer.objects.get(id=sharer_id)
+        top_donors = TipBox.objects.filter(sharer=sharer).values('user').annotate(
+            total_amount=Coalesce(Sum('amount'), 0, output_field=DecimalField())
+        ).order_by('-total_amount')[:3] 
+        
+        top_donors_list = []
+        
+        for donor in top_donors:
+            user_id = donor['user']
+            total_amount = donor['total_amount']
+            user = User.objects.get(id=user_id) 
+            username = user.username  
+            profile_picture = user.profile_picture.url if user.profile_picture else None
+            top_donors_list.append({
+                'user_id': user_id,
+                'username': username,
+                'profile_picture': profile_picture,  
+                'total_amount': total_amount
+            })
+        
+        if not top_donors_list:  # If no top donors found, return sharer information with an empty list
+            return [{
+                'sharer_id': sharer_id,
+                'sharer_name': sharer.name,
+                'sharer_profile_picture': sharer.profile_picture.url if sharer.profile_picture else None,
+                'top_donors': []
+            }]
+        
+        return top_donors_list
+    except Sharer.DoesNotExist:
+        return None
 
 
 
+#IS FOLLOW
+    
 class RatingViews(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -417,6 +449,9 @@ class RatingViews(APIView):
         if rating <= 0:
             return Response({"error": "Rating must be greater than zero"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Ensure the rating is capped at 5 if it exceeds 5
+        rating = min(rating, 5.0)
+
         data_copy = data.copy()
         data_copy['rating'] = round(rating, 1)  
         serializer = RatingSerializer(data=data_copy, context={'user': user})
@@ -424,7 +459,9 @@ class RatingViews(APIView):
             serializer.save(user=user, sharer_id=sharer_id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 
+#IS FOLLOW // okay
 class DeleteRating(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -434,7 +471,6 @@ class DeleteRating(APIView):
         except Rating.DoesNotExist:
             return Response({"error": "Rating not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Check if the authenticated user is the owner of the rating
         if request.user == rating.user:
             if not is_follow(request.user, rating.sharer_id):
                 return Response({"error": "You can only delete ratings for sharers you follow"}, status=status.HTTP_403_FORBIDDEN)
@@ -443,16 +479,25 @@ class DeleteRating(APIView):
         else:
             return Response({"error": "You are not authorized to delete this rating"}, status=status.HTTP_403_FORBIDDEN)
         
-
+#IS FOLLOW // okay
 class RatingUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def patch(self, request, rating_id):
         user = request.user
+
         try:
             rating_id = int(rating_id)
         except ValueError:
             return Response({"error": "Invalid Rating ID"}, status=status.HTTP_400_BAD_REQUEST)
 
-        existing_rating = get_object_or_404(Rating, id=rating_id, user=user)
+        existing_rating = get_object_or_404(Rating, id=rating_id)
+
+        if not is_follow(user, existing_rating.sharer_id):
+            return Response({"error": "You can only update ratings for sharers you follow"}, status=status.HTTP_403_FORBIDDEN)
+
+        if existing_rating.user != user:
+            return Response({"error": "You can only update your own ratings"}, status=status.HTTP_403_FORBIDDEN)
 
         try:
             rating = float(request.data.get('rating'))
@@ -461,116 +506,145 @@ class RatingUpdateView(APIView):
 
         if rating <= 0:
             return Response({"error": "Rating must be greater than zero"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if rating > 5:  
+            return Response({"error": "Rating must not be greater than 5"}, status=status.HTTP_400_BAD_REQUEST)
 
         comment = request.data.get('comment', existing_rating.comment)
 
         data = {'rating': round(rating, 1), 'comment': comment}
 
-        if not is_follow(request.user, existing_rating.sharer_id):
-            return Response({"error": "You can only update ratings for sharers you follow"}, status=status.HTTP_403_FORBIDDEN)
-
-        serializer = RatingSerializer(existing_rating, data=data, partial=True)
+        serializer = RatingSerializer(existing_rating, data=data, partial=True, context={'user': user})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-class PostCount(APIView):
+#IS FOLLOW // okay
+class LikePost(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, sharer_id):
- 
+    def post(self, request, upload_id):
+        user = request.user
+        upload = get_object_or_404(SharerUpload, id=upload_id)
+
+
+        if upload.uploaded_by not in user.follows.all():
+            return Response({"error": "You can only like posts from sharers you follow"}, status=status.HTTP_403_FORBIDDEN)
+
         try:
-            sharer_id = int(sharer_id)
-        except ValueError:
-            return Response({"error": "Invalid Sharer ID"}, status=status.HTTP_400_BAD_REQUEST)
+            like = Like.objects.get(user=user, post=upload)
+            if like.liked:
+                like.delete()
+                return Response({"message": "Post like removed successfully"}, status=status.HTTP_200_OK)
+            else:
+                like.liked = True
+                like.unliked = False
+                like.save()
+                return Response({"message": "Post liked successfully"}, status=status.HTTP_200_OK)
+        except Like.DoesNotExist:
+            Like.objects.create(user=user, post=upload, liked=True)
+            return Response({"message": "Post liked successfully"}, status=status.HTTP_201_CREATED)
+
+#IS FOLLOW // okay
+class UnlikePost(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, upload_id):
+        user = request.user
+        upload = get_object_or_404(SharerUpload, id=upload_id)
+
+        if upload.uploaded_by not in user.follows.all():
+            return Response({"error": "You can only unlike posts from sharers you follow"}, status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            like = Like.objects.get(user=user, post=upload)
+            if like.unliked:
+                like.delete()
+                return Response({"message": "Post unlike removed successfully"}, status=status.HTTP_200_OK)
+            else:
+                like.unliked = True
+                like.liked = False
+                like.save()
+                return Response({"message": "Post unliked successfully"}, status=status.HTTP_200_OK)
+        except Like.DoesNotExist:
+            Like.objects.create(user=user, post=upload, liked=False, unliked=True)
+            return Response({"message": "Post unliked successfully"}, status=status.HTTP_201_CREATED)
 
 
-        post_count = SharerUpload.objects.filter(uploaded_by_id=sharer_id).count()
 
-        return Response({"post_count": post_count}, status=status.HTTP_200_OK)
+class CountOfLikes(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, upload_id):
+        upload = get_object_or_404(SharerUpload, id=upload_id)
+        likes_count = Like.objects.filter(post=upload, liked=True).count()
+        unlikes_count = Like.objects.filter(post=upload, unliked=True).count()
+        return Response({"likes_count": likes_count, "unlikes_count": unlikes_count}, status=status.HTTP_200_OK)
+
+
+class CommentPost(APIView):
+    permission_classes = [IsAuthenticated]  
+
+    def post(self, request, upload_id):
+        user = request.user
+
+        try:
+            upload = SharerUpload.objects.get(id=upload_id)
+        except SharerUpload.DoesNotExist:
+            return Response({"message": "Post does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        
+
+        if not is_follow(user, upload.uploaded_by_id):
+            return Response({"error": "You can only comment on posts from sharers you follow"}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = CommentSerializer(data=request.data, context={'request': request, 'user': user, 'post': upload})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
     
 
-class DashboardRetrieveUpdateView(generics.RetrieveUpdateAPIView):
-    serializer_class = DashboardSerializer
+class CommentDeleteView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
 
-    def get_object(self):
+    def delete(self, request, *args, **kwargs):
+        user = request.user
 
         try:
-            return Dashboard.objects.get(sharer=self.request.user.sharer)
-        except Dashboard.DoesNotExist:
+            comment = Comment.objects.get(id=kwargs['comment_id'])
+        except Comment.DoesNotExist:
+            return Response({"message": "Comment does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
-            return Dashboard.objects.create(sharer=self.request.user.sharer)
+        if not is_follow(user, comment.post.uploaded_by_id):
+            return Response({"error": "You can only delete comments on posts from sharers you follow"}, status=status.HTTP_403_FORBIDDEN)
 
-    def perform_update(self, serializer):
+        if comment.user.id != user.id: 
+            return Response({"message": "You are not the owner of this comment"}, status=status.HTTP_403_FORBIDDEN)
 
-        serializer.save(sharer=self.request.user.sharer)
+        comment.delete()
+        return Response({"message": "Comment deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
 
-
-
-class TipBoxCreateView(generics.CreateAPIView):
-    queryset = TipBox.objects.all()
-    serializer_class = TipBoxCreateSerializer
+    
+class CommentListView(generics.ListAPIView):
+    serializer_class = CommentSerializer  
     permission_classes = [IsAuthenticated]
 
-    @transaction.atomic
-    def post(self, request, *args, **kwargs):
+    def get_queryset(self):
+        upload_id = self.kwargs.get('upload_id')
+        
         try:
-            mutable_data = request.data.copy()
-            mutable_data['sharer'] = kwargs.get('sharer_id')
+            upload = SharerUpload.objects.get(id=upload_id)
+        except SharerUpload.DoesNotExist:
+            return Comment.objects.none()
 
-            serializer = self.get_serializer(data=mutable_data)
-            serializer.is_valid(raise_exception=True)
+        if not is_follow(self.request.user, upload.uploaded_by_id):
+            print("NOT FOLLOWED")
+            return Comment.objects.none()
 
-            tip_amount = serializer.validated_data.get('amount')
-            sharer = serializer.validated_data.get('sharer')
+        queryset = Comment.objects.filter(post_id=upload_id).select_related('user')
+        return queryset
 
-            dashboard, created = Dashboard.objects.get_or_create(sharer=sharer)
-            dashboard.total_earnings += Decimal(str(tip_amount))  # Ensure tip_amount is converted to Decimal
-            dashboard.save()
-
-            serializer.save(user=self.request.user)
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        except Exception as e:
-            logger.error(f"Error processing TipBox creation: {e}")
-            return Response({"error": "An error occurred while processing the request."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-
-class TopDonorView(APIView):
-    def get(self, request, sharer_id):
-        top_donor = get_top_donors(sharer_id)
-        if top_donor:
-            return Response(top_donor, status=200)
-        else:
-            return Response({'error': 'Sharer not found or no donations exist for this sharer.'}, status=404)
-        
-def get_top_donors(sharer_id):
-    try:
-        sharer = Sharer.objects.get(id=sharer_id)
-        top_donors = TipBox.objects.filter(sharer=sharer).values('user').annotate(
-            total_amount=Coalesce(Sum('amount'), 0, output_field=DecimalField())
-        ).order_by('-total_amount')[:3] 
-        
-        top_donors_list = []
-        
-        for donor in top_donors:
-            user_id = donor['user']
-            total_amount = donor['total_amount']
-            user = User.objects.get(id=user_id)  # Fetch the user object
-            username = user.username  # Get the username associated with the user ID
-            profile_picture = user.profile_picture.url if user.profile_picture else None
-            top_donors_list.append({
-                'user_id': user_id,
-                'username': username,
-                'profile_picture': profile_picture,  
-                'total_amount': total_amount
-            })
-        
-        return top_donors_list
-    except Sharer.DoesNotExist:
-        return None

@@ -287,34 +287,34 @@ export const FetchSharerPreviewList = (sharerId) => async (dispatch) => {
   }
 };
 
+// NOT NEEDE BUT DO NOT REMOVE
 
+// export const FetchSharerPreview = (postId) => async (dispatch) => {
+//   try {
+//     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+//     const token = userInfo ? userInfo.access_token : null;
 
-export const FetchSharerPreview = (postId) => async (dispatch) => {
-  try {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    const token = userInfo ? userInfo.access_token : null;
-
-    const config = token
-      ? {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      : {};
+//     const config = token
+//       ? {
+//           headers: {
+//             "Content-Type": "multipart/form-data",
+//             Authorization: `Bearer ${token}`,
+//           },
+//         }
+//       : {};
       
-    dispatch({ type: SHARER_PREVIEW_REQUEST });
-    const response = await instance.get(`api/sharer/preview-content/${postId}/`, config);
-    dispatch({ type: SHARER_PREVIEW_SUCCESS, payload: response.data });
-  } catch (error) {
-    dispatch({
-      type: SHARER_PREVIEW_FAILURE,
-      payload: error.response && error.response.data.detail
-        ? error.response.data.detail
-        : error.message,
-    });
-  }
-};
+//     dispatch({ type: SHARER_PREVIEW_REQUEST });
+//     const response = await instance.get(`api/sharer/preview-content/${postId}/`, config);
+//     dispatch({ type: SHARER_PREVIEW_SUCCESS, payload: response.data });
+//   } catch (error) {
+//     dispatch({
+//       type: SHARER_PREVIEW_FAILURE,
+//       payload: error.response && error.response.data.detail
+//         ? error.response.data.detail
+//         : error.message,
+//     });
+//   }
+// };
 
 
 export const profileSharers = (userEmail) => async (dispatch) => { 
@@ -734,23 +734,20 @@ export const getSharerPostCount = (sharerId) => async (dispatch) => {
 
 export const sendTipBox = (userId, sharerId, tipAmount) => async (dispatch) => {
   try {
-    // Dispatch a request action to indicate the start of the request
+
     dispatch({ type: TIP_BOX_SEND_REQUEST });
 
-    // Retrieve userInfo from localStorage
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     console.log("UserInfo:", userInfo);
 
-    // Check if userInfo and access token are available
     const token = userInfo ? userInfo.access_token : null;
     if (!token) {
       throw new Error("Authorization token not found");
     }
 
-    // Log the tip amount being sent to PayPal
     console.log("Tip Amount (to be sent to PayPal):", tipAmount);
 
-    // Prepare request headers
+
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -759,36 +756,36 @@ export const sendTipBox = (userId, sharerId, tipAmount) => async (dispatch) => {
       },
     };
 
-    // Prepare request data
+
     const requestData = {
       user: userId,
-      amount: parseFloat(tipAmount), // Convert tipAmount to a number if it's not already
+      amount: parseFloat(tipAmount),
     };
 
-    // Send POST request to the API endpoint
+
     const response = await instance.post(
       `api/sharer/tipboxes/create/${sharerId}/`,
       requestData,
       config
     );
 
-    // Dispatch success action with response data
+
     dispatch({
       type: TIP_BOX_SEND_SUCCESS,
       payload: response.data,
     });
 
-    // Return response data if needed in the component
+
     return response;
   } catch (error) {
-    // Dispatch failure action with error details
+
     dispatch({
       type: TIP_BOX_SEND_FAILURE,
       payload: error.response
         ? error.response.data.detail || error.response.data.message
         : error.message,
     });
-    // Rethrow the error to propagate it to the component
+
     throw error;
   }
 };

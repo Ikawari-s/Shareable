@@ -1,17 +1,21 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDashboard } from '../actions/sharerActions';
+import { useNavigate } from 'react-router-dom';
 
 function SharerDashboard() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { loading, error, dashboardData } = useSelector(state => state.dashboard);
 
   useEffect(() => {
-    console.log('Dispatching getDashboard action...');
-    dispatch(getDashboard());
-  }, [dispatch]);
-
-  console.log('Dashboard data in component:', dashboardData); // Log the dashboard data in the component
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    if (userInfo && !userInfo.is_sharer) {
+      navigate("/homepage");
+    } else {
+      dispatch(getDashboard());
+    }
+  }, [dispatch, navigate]);
 
   return (
     <div>
@@ -26,7 +30,6 @@ function SharerDashboard() {
           <p>Total Likes: {dashboardData.total_likes}</p>
           <p>Total Unlikes: {dashboardData.total_unlikes}</p>
           <p>Total Uploads: {dashboardData.total_uploads}</p>
-
         </div>
       )}
     </div>
