@@ -22,6 +22,18 @@ nave {
     margin-right: 1.5rem;
 }
 
+.special-icon {
+    font-size: 2.5rem;
+    margin-left: .1240rem;
+    margin-right: .85rem;
+}
+/* 
+.settings-icon {
+    font-size: 2.5rem;
+    margin-left: -.2rem;
+    margin-right: 1.2rem;
+} */
+
 .nav-text {
     font-size: 1.2rem;
 }
@@ -45,7 +57,7 @@ nave {
 #logut{
     font-size: 2rem;
     position: relative;
-    margin-top: 21rem;
+    margin-top: 20rem;
     color: white;
     display: table;
     width: 20rem;
@@ -55,6 +67,22 @@ nave {
 }
 
 #logut:hover{
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#logot{
+    font-size: 2rem;
+    position: relative;
+    margin-top: 14.25rem;
+    color: white;
+    display: table;
+    width: 20rem;
+    padding-left: 1.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+#logot:hover{
     background-color: rgba(0, 0, 0, 0.5);
 }
 
