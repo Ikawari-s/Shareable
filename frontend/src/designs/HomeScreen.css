@@ -35,13 +35,22 @@
 
 #LogInPage{
     padding-top: .5rem;
-    padding-bottom: 3.7rem;
+    padding-bottom: 4.7rem;
     background-image: linear-gradient(to bottom, #0b1550, #014981);
     background-size: cover;
     background-position: center
 }
 
 #OTP{
+    padding-top: .5rem;
+    padding-bottom: 3.7rem;
+    height: 100vh;
+    background-image: linear-gradient(to bottom, #0b1550, #014981);
+    background-size: cover;
+    background-position: center
+}
+
+#NewPassword{
     padding-top: .5rem;
     padding-bottom: 3.7rem;
     height: 100vh;
