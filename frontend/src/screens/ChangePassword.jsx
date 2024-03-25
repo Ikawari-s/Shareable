@@ -50,7 +50,7 @@ function ChangePassword() {
   };
 
   return (
-    <div>
+    <div className="container brap">
       <h1>Change Password</h1>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="currentPassword">

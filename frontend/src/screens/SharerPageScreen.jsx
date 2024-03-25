@@ -161,7 +161,7 @@ function SharerPageScreen() {
   };
 
   return (
-    <div className="row">
+    <div className="container brap">
       <div className="col-md-3">
         <div className="mb-4">
           <h1>COVER PHOTO PAAYOS</h1>

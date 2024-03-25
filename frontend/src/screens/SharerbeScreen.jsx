@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, Form } from "react-bootstrap";
 import Header from "../components/Header";
 import { beSharer } from "../actions/sharerActions";
+import '../designs/HomePage.css';
 
 function SharerbeScreen() {
   const dispatch = useDispatch();
@@ -53,7 +54,7 @@ function SharerbeScreen() {
 
   return (
     <div>
-      <div className="container" style={{ marginTop: "3rem" }}>
+      <div className="container brap">
         <div
           className="card custom-card-background text-white"
           style={{ backgroundColor: "black", width: "40rem", margin: "auto" }}
