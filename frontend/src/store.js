@@ -6,7 +6,7 @@ import {sharerListReducer, myProfileReducer, CheckSharerReducer, SharerDetailRed
 import { sharerPostListReducer } from './reducers/sharerReducer';
 import { followReducer, unfollowReducer, followedSharerListReducer } from './reducers/followReducer';
 import { SharerUpdateProfile, deleteSharerRatings, fetchSharerRatings, patchSharerRatings, sharerDeletePost } from './actions/sharerActions';
-import {contactReducers} from './reducers/contactReducers'; // Correct import statement for reducers
+import {contactReducers} from './reducers/contactReducers'; 
 
 
 const reducer = combineReducers({
