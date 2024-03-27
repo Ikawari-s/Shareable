@@ -16,8 +16,8 @@ const FollowedSharersList = () => {
 
   return (
     <div>
-      <div className='bg-white'>
-      <h2>Followed Sharers List</h2>
+      <div>
+      <h1 style={{ borderBottom: '2px solid white', paddingBottom: '1rem', paddingTop: '2rem'}}>Followed Sharers List</h1>
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
@@ -25,7 +25,14 @@ const FollowedSharersList = () => {
       ) : (
         <ul>
           {followedSharers.map((sharer) => (
-            <Link to={`/homepage/sharers/${sharer.id}`}><li key={sharer.id}>{sharer.name}</li></Link>
+            <Link style={{lineHeight: '3rem', textDecorationLine: 'none', listStyle: 'none'}} to={`/homepage/sharers/${sharer.id}`}>{sharer.image && (
+              <img
+                variant="top"
+                src={sharer.image}
+                style={{borderRadius: '50%', width: '2rem', height: '2rem', marginTop: '0.55rem', position: 'absolute'}}
+              />
+            )}<li key={sharer.id} style={{ paddingLeft: '2.5rem', fontSize: '1.2em'}}>{sharer.name}</li>
+            </Link>
           ))}
         </ul>
       )}

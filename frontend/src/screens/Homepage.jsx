@@ -90,12 +90,11 @@ function Homepage({ sharerList, listSharers }) {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="form-control"
-              style={{ marginTop: "2rem" }}
             />
           </div>
         </div>
         <div className="row">
-          <div className="col-md-12 mb-2">
+          <div className="col-md-12 mb-2 d-flex justify-content-between">
             <Button
               variant="outline-primary"
               id="buttones"
@@ -142,7 +141,7 @@ function Homepage({ sharerList, listSharers }) {
             </Button>
             <Button
                 variant="outline-primary"
-                id="buttones"
+                id="buttones" 
                 style={buttonStyle("sharer_id")}
                 onClick={() => {
                   setSortBy("sharer_id");
@@ -196,7 +195,15 @@ function Homepage({ sharerList, listSharers }) {
           {!groupedSharers &&
             sortedSharers.map((sharer) => (
               <div className="col-md-3 mb-3" key={sharer.id}>
+                <a href={`/homepage/sharers/${sharer.id}`} style={{ textDecoration: 'none', color: 'inherit', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '10ch', whiteSpace: 'nowrap' }}>
                 <Card id="kard">
+                  <div id="rates">
+                  {sharer.average_rating !== null
+                          ? sharer.average_rating > 0
+                            ? `${sharer.average_rating}/5`
+                            : " N/A"
+                          : "N/A"}
+                  </div>
                   {sharer.image && (
                     <Card.Img
                       variant="top"
@@ -205,33 +212,34 @@ function Homepage({ sharerList, listSharers }) {
                     />
                   )}
                   <Card.Body className="p-3 d-flex flex-column justify-content-between">
-                    <div>
-                      <Card.Title>{sharer.name}</Card.Title>
+                    <div id="da-text">
+                      <Card.Title style={{ textTransform: 'uppercase' }}>{sharer.name}</Card.Title>
                       <Card.Text>{sharer.description}</Card.Text>
-                      <Card.Text>
+                      <Card.Text style={{ lineHeight: '0.4rem' }}>
                         <small className="text-muted">{sharer.category}</small>
                       </Card.Text>
-                      <Card.Text>
-                        followers : {sharer.total_followers}
+                      <Card.Text style={{ lineHeight: '0.4rem' }}>
+                      <small className="text-muted">Followers : {sharer.total_followers}</small>
                       </Card.Text>
-                      <Card.Text>
+                      {/* <Card.Text>
                         Total rating:
                         {sharer.average_rating !== null
                           ? sharer.average_rating > 0
                             ? `${sharer.average_rating}/5`
-                            : " No ratings yet"
-                          : "No ratings yet"}
-                      </Card.Text>
+                            : " N/A"
+                          : "N/A"}
+                      </Card.Text> */}
                     </div>
-                    <Link to={`/homepage/sharers/${sharer.id}`}>
+                    {/* <Link to={`/homepage/sharers/${sharer.id}`}>
                       <Button variant="primary">See More</Button>
-                    </Link>
+                    </Link> */}
                   </Card.Body>
                 </Card>
+              </a>  
               </div>
             ))}
         </div>
-      <Col xl={2}>
+      <Col xl={12} id="fol">
         <FollowedSharersList />
       </Col>
     </div>

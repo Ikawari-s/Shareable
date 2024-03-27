@@ -1,7 +1,9 @@
 .waw{
-    background-color: #7288a4;
+    background-image: linear-gradient(to bottom, #0b1550, #014981);
+    /* background-color: #3a6481; */
     margin-bottom: -1rem;
     min-height: 100vh;
+    padding: 2rem 0rem 2rem 0;
 }
 
 .brap{
@@ -17,46 +19,43 @@
 
 #kard{
     max-height: 30rem !important;
-    /* background-color: red !important; */
+    border-radius: 0.3rem;
+    box-shadow: 0 2px 5px #00000080;
+    background-image: none !important;
     overflow: hidden;
+    transition: box-shadow 0.15s ease-in-out;
+}
+
+#kard:hover{
+    box-shadow: 0 2px 10px #00000080;
 }
 
 #buttones{
-
-    margin: 0 1.6rem 0 1.6rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
     border: none;
-    box-shadow: inset 1px 1px rgba(255,255,255,.2), inset -1px -1px rgba(255,255,255,.1), 1px 3px 24px -1px rgba(0,0,0,.15);
-    background-color: transparent;
-    background-image: linear-gradient(125deg, rgba(255, 255, 255, .3), rgba(255, 255, 255, .2) 70%);
-    -webkit-backdrop-filter: blur(5px);
-    backdrop-filter: blur(5px);
-    --bs-secondary-rgb: transparent;
-    --bs-card-spacer-y: 1.75rem;
-    --bs-card-spacer-x: 2rem;
-    --bs-card-title-spacer-y: 1rem;
-    --bs-card-title-color: ;
-    --bs-card-subtitle-color: ;
-    --bs-card-border-width: var(--bs-border-width);
-    --bs-card-border-color: rgba(255, 255, 255, 0.2);
-    --bs-card-border-radius: var(--bs-border-radius);
-    --bs-card-box-shadow: ;
-    --bs-card-inner-border-radius: calc(var(--bs-border-radius) -(var(--bs-border-width)));
-    --bs-card-cap-padding-y: 0.875rem;
-    --bs-card-cap-padding-x: 2rem;
-    --bs-card-cap-bg: transparent;
-    --bs-card-cap-color: #fff;
-    --bs-card-height: ;
-    --bs-card-color: #fff;
-    --bs-card-bg: transparent;
-    --bs-card-img-overlay-padding: 2rem;
-    --bs-card-group-margin: 0.75rem;
-    position: relative;
-    min-width: 0;
-    height: var(--bs-card-height);
-    color: var(--bs-body-color);
-    word-wrap: break-word;
-    background-color: var(--bs-card-bg);
-    background-clip: border-box;
-    border: var(--bs-card-border-width) solid var(--bs-card-border-color);
-    border-radius: var(--bs-card-border-radius);
+    color: white;
+    max-height: 30rem !important;
+    border-radius: 0.3rem;
+    box-shadow: 0 2px 5px #00000080;
+    background-image: none !important;
+}
+
+#buttones:hover{
+    box-shadow: 0 2px 10px #00000080;
+}
+
+#rates{
+    background-color: #014981;
+    padding: 0.2rem 0.5rem 0.2rem 0.5rem;
+    position: absolute;
+    margin: .4rem;
+    border-radius: 1rem;
+}
+
+#da-text{
+    line-height: .8rem;
+    padding: 0 0 1rem 0 !important;
+    margin: -.5rem;
+    margin-top: -1rem;
 }
