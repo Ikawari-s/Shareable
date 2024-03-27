@@ -327,6 +327,7 @@ class TopDonorView(APIView):
         else:
             return Response({'error': 'Sharer not found or no donations exist for this sharer.'}, status=404)
         
+        
 def get_top_donors(sharer_id):
     try:
         sharer = Sharer.objects.get(id=sharer_id)
@@ -354,39 +355,7 @@ def get_top_donors(sharer_id):
         return None
     
     
-def get_top_donors(sharer_id):
-    try:
-        sharer = Sharer.objects.get(id=sharer_id)
-        top_donors = TipBox.objects.filter(sharer=sharer).values('user').annotate(
-            total_amount=Coalesce(Sum('amount'), 0, output_field=DecimalField())
-        ).order_by('-total_amount')[:3] 
-        
-        top_donors_list = []
-        
-        for donor in top_donors:
-            user_id = donor['user']
-            total_amount = donor['total_amount']
-            user = User.objects.get(id=user_id) 
-            username = user.username  
-            profile_picture = user.profile_picture.url if user.profile_picture else None
-            top_donors_list.append({
-                'user_id': user_id,
-                'username': username,
-                'profile_picture': profile_picture,  
-                'total_amount': total_amount
-            })
-        
-        if not top_donors_list:  # If no top donors found, return sharer information with an empty list
-            return [{
-                'sharer_id': sharer_id,
-                'sharer_name': sharer.name,
-                'sharer_profile_picture': sharer.profile_picture.url if sharer.profile_picture else None,
-                'top_donors': []
-            }]
-        
-        return top_donors_list
-    except Sharer.DoesNotExist:
-        return None
+
 
 
 

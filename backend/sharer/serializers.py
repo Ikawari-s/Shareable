@@ -4,6 +4,9 @@ from accounts.models import AppUser
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from decimal import Decimal
+from django.db.models.functions import Coalesce
+from django.db.models import Sum, DecimalField
+from sharer.models import TipBox
 
 class SharerSerializer(serializers.ModelSerializer):
     total_followers = serializers.SerializerMethodField()
@@ -141,10 +144,11 @@ class LikeSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
     profile_picture = serializers.ImageField(source='user.profile_picture', read_only=True)
+    badge = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
-        fields = ['id', 'user', 'username', 'post', 'comments', 'created_at', 'profile_picture']
+        fields = ['id', 'user', 'username', 'post', 'comments', 'created_at', 'profile_picture', 'badge']
 
     def get_username(self, obj):
         return obj.user.username
@@ -152,6 +156,26 @@ class CommentSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         post = validated_data.pop('post')
         return Comment.objects.create(post=post, **validated_data)
+    
+    def get_badge(self, obj):
+        try:
+            top_donor = TipBox.objects.filter(user=obj.user).order_by('-amount').first()
+            if top_donor:
+                top_donors = TipBox.objects.filter(sharer=top_donor.sharer).values('user').annotate(
+                    total_amount=Coalesce(Sum('amount'), 0, output_field=DecimalField())
+                ).order_by('-total_amount')[:3]
+
+                top_donor_ids = [donor['user'] for donor in top_donors]
+
+                if obj.user.id == top_donor_ids[0]:
+                    return 'Gold'
+                elif obj.user.id == top_donor_ids[1]:
+                    return 'Silver'
+                elif obj.user.id == top_donor_ids[2]:
+                    return 'Bronze'
+            return 'None'
+        except:
+            return 'None'
 
 
 
@@ -161,10 +185,12 @@ class RatingSerializer(serializers.ModelSerializer):
     user_rated = serializers.SerializerMethodField()
     already_rated = serializers.BooleanField(read_only=True)
     average_rating = serializers.SerializerMethodField()
+    badge = serializers.SerializerMethodField()
+
 
     class Meta:
         model = Rating
-        fields = ['id', 'sharer', 'user', 'rating', 'comment', 'username', 'profile_picture', 'user_rated', 'already_rated', 'average_rating']
+        fields = ['id', 'sharer', 'user', 'rating', 'comment', 'username', 'profile_picture', 'user_rated', 'already_rated', 'average_rating', 'badge']
 
     def get_username(self, obj):
         return obj.user.username if obj.user else None
@@ -185,6 +211,26 @@ class RatingSerializer(serializers.ModelSerializer):
 
 
     rating = serializers.DecimalField(max_digits=5, decimal_places=2)
+
+    def get_badge(self, obj):
+        try:
+            top_donor = TipBox.objects.filter(user=obj.user).order_by('-amount').first()
+            if top_donor:
+                top_donors = TipBox.objects.filter(sharer=top_donor.sharer).values('user').annotate(
+                    total_amount=Coalesce(Sum('amount'), 0, output_field=DecimalField())
+                ).order_by('-total_amount')[:3]
+
+                top_donor_ids = [donor['user'] for donor in top_donors]
+
+                if obj.user.id == top_donor_ids[0]:
+                    return 'Gold'
+                elif obj.user.id == top_donor_ids[1]:
+                    return 'Silver'
+                elif obj.user.id == top_donor_ids[2]:
+                    return 'Bronze'
+            return 'None'
+        except:
+            return 'None'
 
 
 

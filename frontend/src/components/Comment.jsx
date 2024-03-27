@@ -92,7 +92,12 @@ function Comment({ uploadId }) {
                   {comment.profile_picture && (
                     <img src={comment.profile_picture} alt="Profile" style={{ width: 50, height: 50, borderRadius: "50%" }} />
                   )}
-                  <strong style={{color: "black", fontSize: '2rem'}}>{comment.username}:</strong> 
+                  <strong style={{color: "black", fontSize: '2rem'}}>{comment.username}
+                  </strong> 
+                  {comment.badge === 'Gold' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/252.png" style={{maxWidth: '3rem'}} />}
+                  {comment.badge === 'Silver' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/2544.png" style={{maxWidth: '3rem'}} />}
+                  {comment.badge === 'Bronze' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/201939.png" style={{maxWidth: '3rem'}} />}
+                  {comment.badge === 'None' && null}
                   <div style={{ marginTop: '0.1rem', color: 'black'}}>{comment.comments}</div>
                   {userInfo.user_id === comment.user && (
                     <>
