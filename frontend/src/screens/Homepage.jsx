@@ -8,6 +8,7 @@ import Button from "react-bootstrap/Button";
 import FollowedSharersList from "../components/FollowedSharersList";
 import { Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import '../designs/HomePage.css';
 
 function Homepage({ sharerList, listSharers }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -79,6 +80,7 @@ function Homepage({ sharerList, listSharers }) {
   });
 
   return (
+  <div className="waw">
     <div className="container">
         <div className="row">
           <div className="col-md-12 mb-2">
@@ -88,7 +90,7 @@ function Homepage({ sharerList, listSharers }) {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="form-control"
-              style={{ marginTop: "10px" }}
+              style={{ marginTop: "2rem" }}
             />
           </div>
         </div>
@@ -96,6 +98,7 @@ function Homepage({ sharerList, listSharers }) {
           <div className="col-md-12 mb-2">
             <Button
               variant="outline-primary"
+              id="buttones"
               style={buttonStyle("default")}
               onClick={() => {
                 setSortBy("default");
@@ -106,6 +109,7 @@ function Homepage({ sharerList, listSharers }) {
             </Button>
             <Button
               variant="outline-primary"
+              id="buttones"
               style={buttonStyle("category")}
               onClick={() => {
                 setSortBy("category");
@@ -116,6 +120,7 @@ function Homepage({ sharerList, listSharers }) {
             </Button>
             <Button
               variant="outline-primary"
+              id="buttones"
               style={buttonStyle("followers")}
               onClick={() => {
                 setSortBy("followers");
@@ -126,6 +131,7 @@ function Homepage({ sharerList, listSharers }) {
             </Button>
             <Button
               variant="outline-primary"
+              id="buttones"
               style={buttonStyle("rating")}
               onClick={() => {
                 setSortBy("rating");
@@ -135,49 +141,50 @@ function Homepage({ sharerList, listSharers }) {
               Sort by Total Rating (High to Low)
             </Button>
             <Button
-              variant="outline-primary"
-              style={buttonStyle("sharer_id")}
-              onClick={() => {
-                setSortBy("sharer_id");
-                setLastClickedSort("sharer_id");
-              }}
-            >
-              Sort by sharer created (Recent to Old)
-            </Button>
+                variant="outline-primary"
+                id="buttones"
+                style={buttonStyle("sharer_id")}
+                onClick={() => {
+                  setSortBy("sharer_id");
+                  setLastClickedSort("sharer_id");
+                }}
+              >
+                Sort by sharer created (Recent to Old)
+              </Button>
+            </div>
           </div>
-        </div>
-        <div className="row">
-          {groupedSharers &&
-            Object.keys(groupedSharers).map((category) => (
-              <React.Fragment key={category}>
-                <h3>{category}</h3>
-                {groupedSharers[category].map((sharer) => (
-                  <div className="col-md-4 mb-3" key={sharer.id}>
-                    <Card style={{ width: "18rem" }}>
-                      {sharer.image && (
-                        <Card.Img
-                          variant="top"
-                          src={sharer.image}
-                          style={{ width: "100%", height: "auto" }}
-                        />
-                      )}
-                      <Card.Body className="p-3 d-flex flex-column justify-content-between">
-                        <div>
-                          <Card.Title>{sharer.name}</Card.Title>
-                          <Card.Text>{sharer.description}</Card.Text>
-                          <Card.Text>
-                            <small className="text-muted">
-                              {sharer.category}
-                            </small>
-                          </Card.Text>
-                          <Card.Text>
-                            followers : {sharer.total_followers}
-                          </Card.Text>
-                          <Card.Text>
-                            average rating : {sharer.average_rating}
-                          </Card.Text>
-                        </div>
-                        <Link to={`/homepage/sharers/${sharer.id}`}>
+          <div className="row">
+            {/* {groupedSharers &&
+              Object.keys(groupedSharers).map((category) => (
+                <React.Fragment key={category}>
+                  <h3>{category}</h3>
+                  {groupedSharers[category].map((sharer) => (
+                    <div className="col-md-4 mb-3" key={sharer.id}>
+                      <Card style={{ width: "18rem" }}>
+                        {sharer.image && (
+                          <Card.Img
+                            variant="top"
+                            src={sharer.image}
+                            style={{ width: "100%", height: "auto" }}
+                          />
+                        )}
+                        <Card.Body className="p-3 d-flex flex-column justify-content-between">
+                          <div>
+                            <Card.Title>{sharer.name}</Card.Title>
+                            <Card.Text>{sharer.description}</Card.Text>
+                            <Card.Text>
+                              <small className="text-muted">
+                                {sharer.category}
+                              </small>
+                            </Card.Text>
+                            <Card.Text>
+                              followers : {sharer.total_followers}
+                            </Card.Text>
+                            <Card.Text>
+                              average rating : {sharer.average_rating}
+                            </Card.Text>
+                          </div>
+                          <Link to={`/homepage/sharers/${sharer.id}`}>
                           <Button variant="primary">See More</Button>
                         </Link>
                       </Card.Body>
@@ -185,16 +192,16 @@ function Homepage({ sharerList, listSharers }) {
                   </div>
                 ))}
               </React.Fragment>
-            ))}
+            ))} */}
           {!groupedSharers &&
             sortedSharers.map((sharer) => (
-              <div className="col-md-4 mb-3" key={sharer.id}>
-                <Card style={{ width: "18rem" }}>
+              <div className="col-md-3 mb-3" key={sharer.id}>
+                <Card id="kard">
                   {sharer.image && (
                     <Card.Img
                       variant="top"
                       src={sharer.image}
-                      style={{ width: "100%", height: "auto" }}
+                      id="da-pics"
                     />
                   )}
                   <Card.Body className="p-3 d-flex flex-column justify-content-between">
@@ -228,6 +235,7 @@ function Homepage({ sharerList, listSharers }) {
         <FollowedSharersList />
       </Col>
     </div>
+  </div>    
   );
 }
 

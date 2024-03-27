@@ -1,3 +1,7 @@
+*{
+    scrollbar-width: none;
+}
+
 .creator1{
     position: relative;
     width: 100%;
