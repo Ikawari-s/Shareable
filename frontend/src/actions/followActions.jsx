@@ -5,7 +5,7 @@ const instance = axios.create({
   baseURL: "http://127.0.0.1:8000/",
 });
 
-export const followSharer = (sharerId) => async (dispatch) => {
+export const followSharer = (sharerId, tier) => async (dispatch) => {
   try {
     dispatch({ type: SHARER_FOLLOW_REQUEST });
 
@@ -22,8 +22,7 @@ export const followSharer = (sharerId) => async (dispatch) => {
         }
       : {};
 
-
-    const response = await instance.post(`/api/follow-sharer/${sharerId}`, null, config);
+    const response = await instance.post(`/api/follow-sharer/${sharerId}`, { tier }, config); // Pass tier in the request body
 
     if (response.status === 200) { // Adjust the status code according to your API
       dispatch({
@@ -45,7 +44,7 @@ export const followSharer = (sharerId) => async (dispatch) => {
   }
 };
 
-export const unfollowSharer = (sharerId) => async (dispatch) => {
+export const unfollowSharer = (sharerId, tier) => async (dispatch) => {
   try {
     dispatch({ type: SHARER_UNFOLLOW_REQUEST });
 
@@ -55,13 +54,13 @@ export const unfollowSharer = (sharerId) => async (dispatch) => {
     const config = {
       headers: {
         "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
       },
     };
 
     // Perform API call to unfollow the sharer using DELETE method
-    const response = await instance.delete(`/api/unfollow-sharer/${sharerId}/`, config);
+    const response = await axios.delete(`/api/unfollow-sharer/${sharerId}/`, { ...config, data: { tier } }); // Pass tier in the request body
 
     if (response.status === 200) { // Adjust the status code according to your API
       dispatch({

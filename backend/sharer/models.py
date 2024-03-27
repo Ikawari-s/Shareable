@@ -31,6 +31,7 @@ class Sharer(models.Model):
     name = models.CharField(max_length=30, null=False, blank=False)
     description = models.CharField(max_length=150, null=False, blank=False)
     cover_photo = models.ImageField(upload_to='cover_photos', default='uploads/default/default_cover.jpg', null=True, blank=True)
+    total_followers = models.IntegerField(default=0)
 
     CATEGORY_CHOICES = [
         ('', 'Not specified'),
@@ -59,7 +60,7 @@ class Sharer(models.Model):
     category = models.CharField(max_length=30, choices=CATEGORY_CHOICES, null=False, blank=False)
     username = models.CharField(max_length=50, unique=True, validators=[MinLengthValidator(4)])
     id = models.AutoField(primary_key=True)
-
+    
     def __str__(self):
         return self.name
 
@@ -69,17 +70,15 @@ class Sharer(models.Model):
     
     @property
     def total_followers(self):
-        return self.follower.count() 
+        return self.follower_tier1.count() + self.follower_tier2.count() + self.follower_tier3.count()
 
     def save(self, *args, **kwargs):
         if self.pk is not None:  # Check if it's an update
             original_instance = Sharer.objects.get(pk=self.pk)
-            if original_instance.image != self.image:  # Check if image has changed
-                self.user.profile_picture = self.image
-                self.user.save()
+            if original_instance.total_followers != self.total_followers:
+                self.total_followers = self.appuser_set.count()  
 
         super().save(*args, **kwargs)
-
 
 
 
@@ -90,22 +89,27 @@ class SharerUpload(models.Model):
     uploaded_by = models.ForeignKey(Sharer, on_delete=models.CASCADE, related_name='uploads')
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(null=True, blank=True) 
-    
+
+    # Define visibility options
     VISIBILITY_CHOICES = [
-        ('ALL', 'All (followers and non-followers)'),
-        ('FOLLOWERS', 'Followers only'),
+        ('NON_FOLLOWER', 'Preview Content'),
+        ('FOLLOWERS_TIER1', 'BRONZE - Tier'),
+        ('FOLLOWERS_TIER2', 'SILVER - Tier'),
+        ('FOLLOWERS_TIER3', 'GOLD - Tier'),
     ]
     
-    visibility = models.CharField(max_length=20, choices=VISIBILITY_CHOICES, default='ALL')
+    # Change visibility field to a CharField
+    visibility = models.CharField(max_length=255, blank=True)  # Allow blank values for multiple choices
 
     def __str__(self):
         return f"{self.uploaded_by.email}'s Title: {self.title}"
-    
+
     def count_likes(self):
         return self.likes.count()
     
     def count_comments(self):
         return self.comments.count()
+    
     
 class SharerUploadFile(models.Model):
     upload = models.ForeignKey(SharerUpload, on_delete=models.CASCADE, related_name='files')
@@ -172,3 +176,4 @@ class Dashboard(models.Model):
         self.average_rating = Rating.objects.filter(sharer=self.sharer).aggregate(avg_rating=Avg('rating'))['avg_rating'] or 0.0
         self.total_posts = self.sharer.uploads.count()
         self.save()
+

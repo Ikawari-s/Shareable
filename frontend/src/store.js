@@ -6,7 +6,9 @@ import {sharerListReducer, myProfileReducer, CheckSharerReducer, SharerDetailRed
 import { sharerPostListReducer } from './reducers/sharerReducer';
 import { followReducer, unfollowReducer, followedSharerListReducer } from './reducers/followReducer';
 import { SharerUpdateProfile, deleteSharerRatings, fetchSharerRatings, patchSharerRatings, sharerDeletePost } from './actions/sharerActions';
+import { tier1FollowedSharersReducer, tier2FollowedSharersReducer, tier3FollowedSharersReducer } from './reducers/subscriptionReducer';
 import {contactReducers} from './reducers/contactReducers'; 
+
 
 
 const reducer = combineReducers({
@@ -50,10 +52,9 @@ const reducer = combineReducers({
   userTipBoxes : userTipBoxReducer,
   dashboard : dashboardReducer,
   topDonor : topDonorReducer,
-  contact: contactReducers,
-
-
- 
+  tier1List : tier1FollowedSharersReducer,
+  tier2List : tier2FollowedSharersReducer,
+  tier3List : tier3FollowedSharersReducer
   
   
 

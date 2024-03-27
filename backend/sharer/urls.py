@@ -28,5 +28,8 @@ urlpatterns = [
     path('tipboxes/create/<int:sharer_id>/', TipBoxCreateView.as_view(), name='tipbox-create'),
     path('dashboard/', DashboardRetrieveUpdateView.as_view(), name='dashboard-detail'),
     path('top-donor/<int:sharer_id>/', TopDonorView.as_view(), name='top-donor'),
+    path('tier1-followed-sharers/<int:sharer_id>/', Tier1FollowedSharers.as_view(), name='tier1-followed-sharers'),
+    path('tier2-followed-sharers/<int:sharer_id>/', Tier2FollowedSharers.as_view(), name='tier2-followed-sharers'),
+    path('tier3-followed-sharers/<int:sharer_id>/', Tier3FollowedSharers.as_view(), name='tier3-followed-sharers'),
 
 ]

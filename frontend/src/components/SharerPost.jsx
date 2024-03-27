@@ -9,23 +9,41 @@ function SharerPost({ uploadSharer }) {
     images: [],
     videos: [],
     files: [],
-    visibility: 'ALL',
+    visibility: [], 
   });
+  
+  
 
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    setFormData({
-      ...formData,
-      images: [],
-      videos: [],
-      files: []
-    });
-  }, []);
+  const VISIBILITY_CHOICES = [
+    ['NON_FOLLOWER', 'Preview Content'],
+    ['FOLLOWERS_TIER1', 'BRONZE - Tier'],
+    ['FOLLOWERS_TIER2', 'SILVER - Tier'],
+    ['FOLLOWERS_TIER3', 'GOLD - Tier'],
+  ];
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, checked } = e.target;
+  
+    if (name === 'visibility') {
+      if (checked) {
+        setFormData(prevState => ({
+          ...prevState,
+          [name]: [...prevState[name], value], // Append value to array
+        }));
+      } else {
+        setFormData(prevState => ({
+          ...prevState,
+          [name]: prevState[name].filter(item => item !== value), // Remove value from array
+        }));
+      }
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
+  
+  
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
@@ -38,30 +56,32 @@ function SharerPost({ uploadSharer }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
-
+  
     setLoading(true);
-
+  
     const formDataUpload = new FormData();
     formDataUpload.append('title', formData.title);
     formDataUpload.append('description', formData.description);
-    formDataUpload.append('visibility', formData.visibility);
-
+  
     formData.images.forEach((image) => {
       formDataUpload.append('images', image);
     });
-
+  
     formData.videos.forEach((video) => {
       formDataUpload.append('videos', video);
     });
-
+  
     formData.files.forEach((file) => {
       formDataUpload.append('files', file);
     });
-
+  
+    formDataUpload.append('visibility', JSON.stringify(formData.visibility));
+  
     await uploadSharer(formDataUpload);
     setLoading(false);
-     window.location.reload(); 
+    window.location.reload(); 
   };
+  
 
   return (
     <div>
@@ -89,10 +109,20 @@ function SharerPost({ uploadSharer }) {
         </div>
         <div>
           <label>Visibility:</label>
-          <select name="visibility" value={formData.visibility} onChange={handleChange}>
-            <option value="ALL">All (followers and non-followers)</option>
-            <option value="FOLLOWERS">Followers only</option>
-          </select>
+          <div>
+            {VISIBILITY_CHOICES.map(choice => (
+              <div key={choice[0]}>
+                <input
+                  type="checkbox"
+                  name="visibility"
+                  value={choice[0]}
+                  onChange={handleChange}
+                  checked={formData.visibility.includes(choice[0])}
+                />
+                <label>{choice[1]}</label>
+              </div>
+            ))}
+          </div>
         </div>
         <button type="submit" disabled={loading}>Upload</button>
       </form>

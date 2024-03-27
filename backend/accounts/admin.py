@@ -10,17 +10,18 @@ class AppUserAdmin(UserAdmin):
 
     fieldsets = (
         (None, {'fields': ('email', 'username', 'password')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_sharer', 'follows')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_sharer', 'follows_tier1', 'follows_tier2', 'follows_tier3')}),  # Include tier lists here
         ('Profile Picture', {'fields': ('profile_picture',)}), 
     )
 
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'username', 'password1', 'password2', 'is_active', 'is_staff', 'is_sharer', 'profile_picture')},  # Include profile_picture field here
+            'fields': ('email', 'username', 'password1', 'password2', 'is_active', 'is_staff', 'is_sharer', 'profile_picture', 'follows_tier1', 'follows_tier2', 'follows_tier3')},  # Include tier lists here
         ),
     )
 
     list_filter = ('is_active', 'is_staff', 'is_sharer')
 
 admin.site.register(AppUser, AppUserAdmin)
+
