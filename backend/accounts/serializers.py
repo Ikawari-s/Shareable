@@ -7,6 +7,9 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework.exceptions import AuthenticationFailed
 from .models import *
+from django.db.models import Sum, DecimalField
+from sharer.models import TipBox
+from django.db.models.functions import Coalesce
 
 UserModel = get_user_model()
 
@@ -40,15 +43,36 @@ class UserLoginSerializer(serializers.Serializer):
 
 class UserSerializer(serializers.ModelSerializer):
     profile_picture_url = serializers.SerializerMethodField()
+    badge = serializers.SerializerMethodField()
 
     class Meta:
         model = UserModel
-        fields = ['id', 'email', 'username', 'is_active', 'is_staff', 'profile_picture', 'profile_picture_url']
+        fields = ['id', 'email', 'username', 'is_active', 'is_staff', 'profile_picture', 'profile_picture_url', 'badge']
 
     def get_profile_picture_url(self, obj):
         if obj.profile_picture:
             return obj.profile_picture.url
         return None
+    
+    def get_badge(self, obj):
+        try:
+            top_donor = TipBox.objects.filter(user=obj).order_by('-amount').first()
+            if top_donor:
+                top_donors = TipBox.objects.filter(sharer=top_donor.sharer).values('user').annotate(
+                    total_amount=Coalesce(Sum('amount'), 0, output_field=DecimalField())
+                ).order_by('-total_amount')[:3]
+
+                top_donor_ids = [donor['user'] for donor in top_donors]
+
+                if obj.id == top_donor_ids[0]:
+                    return 'Gold'
+                elif obj.id == top_donor_ids[1]:
+                    return 'Silver'
+                elif obj.id == top_donor_ids[2]:
+                    return 'Bronze'
+            return 'None'
+        except:
+            return 'None'
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=False)

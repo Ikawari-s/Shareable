@@ -79,8 +79,7 @@ function Homepage({ sharerList, listSharers }) {
   });
 
   return (
-    <div>
-      <div className="container">
+    <div className="container">
         <div className="row">
           <div className="col-md-12 mb-2">
             <input
@@ -225,7 +224,6 @@ function Homepage({ sharerList, listSharers }) {
               </div>
             ))}
         </div>
-      </div>
       <Col xl={2}>
         <FollowedSharersList />
       </Col>

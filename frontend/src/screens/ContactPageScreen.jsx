@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import Button from 'react-bootstrap/Button';
+import { submitContactRequest } from '../actions/contactActions'; 
 
-const ContactPageScreen = () => {
+const ContactPageScreen = ({ submitContactRequest }) => {
   const [requestType, setRequestType] = useState('');
   const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');
@@ -25,49 +27,41 @@ const ContactPageScreen = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
+  
+    const supportedTypes = ['pdf', 'jpeg', 'jpg', 'png', 'doc', 'docx'];
+    if (attachment) {
+      const fileExtension = attachment.name.split('.').pop().toLowerCase();
+      if (!supportedTypes.includes(fileExtension)) {
+        setSubmitStatus('unsupported');
+        return; 
+      }
+    }
+  
+    if (attachment && attachment.size > 1024 * 1024) {
+      setSubmitStatus('fileTooLarge');
+      return; 
+    }
+  
+    const formData = new FormData();
+    formData.append('request_type', requestType);
+    formData.append('email', email);
+    formData.append('subject', subject);
+    formData.append('description', description);
+  
+    if (attachment) {
+      formData.append('attachment', attachment);
+    }
+  
     try {
-      if (attachment) {
-        const allowedFileTypes = ['pdf', 'jpeg', 'jpg', 'png', 'doc', 'docx'];
-        const fileType = attachment.name.split('.').pop().toLowerCase();
-        if (!allowedFileTypes.includes(fileType)) {
-          setSubmitStatus('unsupported');
-          return;
-        }
-
-        // Check file size
-        const maxFileSize = 1024 * 1024; // 1 MB in bytes
-        if (attachment.size > maxFileSize) {
-          setSubmitStatus('fileTooLarge');
-          return;
-        }
-      }
-
-      const formData = new FormData();
-      formData.append('request_type', requestType);
-      formData.append('email', email);
-      formData.append('subject', subject);
-      formData.append('description', description);
-      if (attachment) {
-        formData.append('attachment', attachment);
-      }
-
-      const response = await fetch('http://127.0.0.1:8000/api/contacts/', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (response.ok) {
-        setSubmitStatus('success');
-      } else {
-        setSubmitStatus('error');
-      }
+      await submitContactRequest(formData);
+      setSubmitStatus('success');
     } catch (error) {
       console.error('Error:', error);
       setSubmitStatus('error');
     }
   };
-
+  
+  
   return (
     <div className="container">
       <h2>Submit a Request</h2>
@@ -108,9 +102,7 @@ const ContactPageScreen = () => {
         </div>
 
         <Button type="submit" variant="primary">Done</Button>
-        <Button type="button" variant="primary" onClick={clearForm} style={{ marginLeft: '10px' }}>Clear Form</Button>
-        <Button type="button" variant="secondary" href='/' style={{ marginLeft: '10px', width: '10rem' }}>Back to Page</Button>
-
+        <Button type="button" variant="secondary" onClick={clearForm} style={{ marginLeft: '10px' }}>Clear Form</Button>
 
       </form>
       {submitStatus === 'error' && <p style={{ color: 'red', marginTop: '10px' }}>Failed to submit request. Please try again.</p>}
@@ -121,4 +113,6 @@ const ContactPageScreen = () => {
   );
 };
 
-export default ContactPageScreen;
+
+export default connect(null, { submitContactRequest })(ContactPageScreen);
+

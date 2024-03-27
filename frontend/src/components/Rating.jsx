@@ -93,7 +93,10 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
               {rating.profile_picture && (
                 <img src={rating.profile_picture} alt="Profile" style={{ width: 50, height: 50, borderRadius: "50%" }} />
               )}
-              User: {rating.username}, Rating: {rating.rating}, Comment: {rating.comment}
+              User: {rating.username} {rating.badge === 'Gold' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/252.png" style={{maxWidth: '3rem'}} />}
+                  {rating.badge === 'Silver' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/2544.png" style={{maxWidth: '3rem'}} />}
+                  {rating.badge === 'Bronze' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/201939.png" style={{maxWidth: '3rem'}} />}
+                  {rating.badge === 'None' && null}, Rating: {rating.rating}, Comment: {rating.comment}
               {(followedSharers.includes(rating.sharer) && rating.user === userId) && (
                 <>
                   <button onClick={() => handleDeleteRating(rating.id)}>Delete</button>
