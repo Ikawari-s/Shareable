@@ -56,3 +56,24 @@ class IsSharer(permissions.BasePermission):
 class IsSharerPermission(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.is_sharer
+    
+
+
+# for comment list
+def is_following(user, uploader_id, visibility):
+    try:
+        user_instance = AppUser.objects.get(pk=user.pk)
+        uploader = Sharer.objects.get(pk=uploader_id)
+    except AppUser.DoesNotExist:
+        return False
+    except Sharer.DoesNotExist:
+        return False
+
+    if visibility == 'FOLLOWERS_TIER1':
+        return user_instance.follows_tier1.filter(pk=uploader_id).exists()
+    elif visibility == 'FOLLOWERS_TIER2':
+        return user_instance.follows_tier2.filter(pk=uploader_id).exists()
+    elif visibility == 'FOLLOWERS_TIER3':
+        return user_instance.follows_tier3.filter(pk=uploader_id).exists()
+    else:
+        return False

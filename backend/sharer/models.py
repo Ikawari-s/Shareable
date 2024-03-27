@@ -92,7 +92,6 @@ class SharerUpload(models.Model):
 
     # Define visibility options
     VISIBILITY_CHOICES = [
-        ('ALL', 'All (followers and non-followers)'),
         ('NON_FOLLOWER', 'Preview Content'),
         ('FOLLOWERS_TIER1', 'BRONZE - Tier'),
         ('FOLLOWERS_TIER2', 'SILVER - Tier'),

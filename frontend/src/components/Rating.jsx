@@ -7,8 +7,7 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
   const { ratings, loading, error } = useSelector((state) => state.sharerRating);
   const userInfo = JSON.parse(localStorage.getItem('userInfo'));
   const userId = userInfo ? userInfo.user_id : null;
-  const followedSharers = Array.isArray(userInfo?.followed_sharers) ? userInfo.followed_sharers : [];
-
+  const followedSharers = userInfo ? userInfo.followed_sharers : { tier1: [], tier2: [], tier3: [] };
 
   // Define userHasRated state
   const [userHasRated, setUserHasRated] = useState(false);
@@ -64,7 +63,7 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
 
   const calculateAverageRating = () => {
     if (!ratings || ratings.length === 0) {
-      return null; 
+      return null;
     }
 
     const totalRatings = ratings.length;
@@ -93,11 +92,12 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
               {rating.profile_picture && (
                 <img src={rating.profile_picture} alt="Profile" style={{ width: 50, height: 50, borderRadius: "50%" }} />
               )}
-              User: {rating.username} {rating.badge === 'Gold' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/252.png" style={{maxWidth: '3rem'}} />}
-                  {rating.badge === 'Silver' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/2544.png" style={{maxWidth: '3rem'}} />}
-                  {rating.badge === 'Bronze' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/201939.png" style={{maxWidth: '3rem'}} />}
-                  {rating.badge === 'None' && null}, Rating: {rating.rating}, Comment: {rating.comment}
-              {(followedSharers.includes(rating.sharer) && rating.user === userId) && (
+              User: {rating.username} 
+              {rating.badge === 'Gold' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/252.png" style={{maxWidth: '3rem'}} />}
+              {rating.badge === 'Silver' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/2544.png" style={{maxWidth: '3rem'}} />}
+              {rating.badge === 'Bronze' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/201939.png" style={{maxWidth: '3rem'}} />}
+              {rating.badge === 'None' && null}, Rating: {rating.rating}, Comment: {rating.comment}
+              {(followedSharers.tier1.includes(rating.sharer) || followedSharers.tier2.includes(rating.sharer) || followedSharers.tier3.includes(rating.sharer)) && rating.user === userId && (
                 <>
                   <button onClick={() => handleDeleteRating(rating.id)}>Delete</button>
                   <button onClick={() => setUpdateRatingId(rating.id)}>Update</button>

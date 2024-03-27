@@ -9,7 +9,7 @@ function SharerPost({ uploadSharer }) {
     images: [],
     videos: [],
     files: [],
-    visibility: ['ALL'], // <-- Set initial visibility to 'ALL'
+    visibility: [], 
   });
   
   
@@ -17,7 +17,6 @@ function SharerPost({ uploadSharer }) {
   const [loading, setLoading] = useState(false);
 
   const VISIBILITY_CHOICES = [
-    ['ALL', 'All (followers and non-followers)'],
     ['NON_FOLLOWER', 'Preview Content'],
     ['FOLLOWERS_TIER1', 'BRONZE - Tier'],
     ['FOLLOWERS_TIER2', 'SILVER - Tier'],

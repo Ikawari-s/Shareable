@@ -1,10 +1,13 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { listTier1FollowedSharers } from '../actions/subscriptionAction';
+import LikeComponent from '../components/LikeComponents'; 
+import Comment from '../components/Comment'; 
+
 
 function TierOneLatest({ sharerId }) {
   const dispatch = useDispatch();
-  const { loading, posts, error } = useSelector(state => state.tier1List); // Assuming this is the correct slice of state
+  const { loading, posts, error } = useSelector(state => state.tier1List);
 
   useEffect(() => {
     dispatch(listTier1FollowedSharers(sharerId));
@@ -42,6 +45,9 @@ function TierOneLatest({ sharerId }) {
                       <p>File {index + 1}</p>
                     </div>
                   ))}
+                  {/* Add LikeComponent and Comment here */}
+                  <LikeComponent uploadId={post.id} />
+                  <Comment uploadId={post.id} />
                 </div>
               </div>
             ))
