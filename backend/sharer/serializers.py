@@ -25,8 +25,9 @@ class SharerSerializer(serializers.ModelSerializer):
             # Format the average_rating to two decimal places
             return round(average_rating, 2)
         return 0  # Return 0 if no ratings exist for the sharer
+    
 
-
+    
 
 class SharerUploadListSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S')
@@ -67,7 +68,7 @@ class SharerUploadListSerializer(serializers.ModelSerializer):
         if files:
             return [{'file': file.file.url} for file in files]
         return []
-
+    
 
 class SharerUploadSerializer(serializers.ModelSerializer):
     created_at_formatted = serializers.SerializerMethodField()
@@ -76,6 +77,17 @@ class SharerUploadSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
     video = serializers.SerializerMethodField()
     file = serializers.SerializerMethodField()
+    
+
+    VISIBILITY_CHOICES = [
+        ('ALL', 'All (followers and non-followers)'),
+        ('NON_FOLLOWER', 'Preview Content'),
+        ('FOLLOWERS_TIER1', 'BRONZE - Tier'),
+        ('FOLLOWERS_TIER2', 'SILVER - Tier'),
+        ('FOLLOWERS_TIER3', 'GOLD - Tier'),
+    ]
+    
+    visibility = serializers.CharField(max_length=255, allow_blank=True)
 
     class Meta:
         model = SharerUpload
@@ -107,9 +119,14 @@ class SharerUploadSerializer(serializers.ModelSerializer):
         video_data = self.context.get('request').FILES.getlist('videos')
         file_data = self.context.get('request').FILES.getlist('files')
 
-        visibility = validated_data.pop('visibility', 'ALL')  # Added line for visibility
+        visibilities = validated_data.pop('visibility', '').split(',')
 
-        sharer_upload = SharerUpload.objects.create(visibility=visibility, **validated_data)
+
+        visibility_string = ','.join(visibilities)
+
+
+        sharer_upload = SharerUpload.objects.create(**validated_data, visibility=visibility_string)
+
 
         for data in image_data:
             SharerUploadImage.objects.create(upload=sharer_upload, image=data)
@@ -121,6 +138,7 @@ class SharerUploadSerializer(serializers.ModelSerializer):
             SharerUploadFile.objects.create(upload=sharer_upload, file=data)
 
         return sharer_upload
+
 
 
 class SharerProfileSerializer(serializers.ModelSerializer):

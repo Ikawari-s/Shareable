@@ -35,10 +35,12 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_sharer = models.BooleanField(default=False)
-    follows = models.ManyToManyField(Sharer, related_name="follower", symmetrical=False, blank=True)
+    follows_tier1 = models.ManyToManyField(Sharer, related_name="follower_tier1", blank=True)
+    follows_tier2 = models.ManyToManyField(Sharer, related_name="follower_tier2", blank=True)
+    follows_tier3 = models.ManyToManyField(Sharer, related_name="follower_tier3", blank=True)
     profile_picture = models.ImageField(upload_to='uploads/images', default='uploads/default/default.png', null=True, blank=True)
 
-    otp_id = models.CharField(max_length=50, blank=True, null=True)  # Add otp_id field
+    otp_id = models.CharField(max_length=50, blank=True, null=True) 
 
     otp_code = models.CharField(max_length=6, blank=True, null=True)
     otp_created_at = models.DateTimeField(blank=True, null=True)

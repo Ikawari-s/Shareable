@@ -174,6 +174,12 @@ export const beSharer = (page_name) => async (dispatch) => {
 
 export const uploadSharer = (formData) => async (dispatch) => {
   try {
+    // Log the formData to see its content before sending
+    console.log("FormData:", formData);
+    
+    // Log the visibility
+    console.log("Visibility in action:", formData.get('visibility'));
+
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const token = userInfo ? userInfo.access_token : null;
 
@@ -192,6 +198,9 @@ export const uploadSharer = (formData) => async (dispatch) => {
       config
     );
 
+    // Log the response data from the API
+    console.log("Response Data:", data);
+
     dispatch({ type: SHARER_POST_LIST_SUCCESS, payload: data });
   } catch (error) {
     dispatch({
@@ -203,6 +212,7 @@ export const uploadSharer = (formData) => async (dispatch) => {
     });
   }
 };
+
 
 
 const BASE_URL = "http://localhost:8000";

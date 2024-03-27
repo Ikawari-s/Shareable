@@ -1,5 +1,9 @@
 from rest_framework.permissions import BasePermission
-from .models import SharerUpload
+from rest_framework import permissions
+from .models import *
+from accounts.models import AppUser
+
+
 
 class IsFollow(BasePermission):
     """
@@ -19,3 +23,36 @@ class IsFollow(BasePermission):
             return user in upload.uploaded_by.followers.all()
         
         return False
+
+
+def is_follow(user, sharer_id, tier):
+    """
+    Check if the user follows the specified sharer in the given tier.
+    """
+    try:
+        user_instance = AppUser.objects.get(pk=user.pk)
+        sharer = Sharer.objects.get(pk=sharer_id)
+    except AppUser.DoesNotExist:
+        return False
+    except Sharer.DoesNotExist:
+        return False
+
+    if tier == 'tier1':
+        return user_instance.follows_tier1.filter(pk=sharer_id).exists()
+    elif tier == 'tier2':
+        return user_instance.follows_tier2.filter(pk=sharer_id).exists()
+    elif tier == 'tier3':
+        return user_instance.follows_tier3.filter(pk=sharer_id).exists()
+    else:
+        return False  # Invalid tier provided
+
+
+
+class IsSharer(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.is_sharer
+
+
+class IsSharerPermission(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.is_sharer

@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Sharer, SharerUpload, Like, Comment, Rating, SharerUploadFile, SharerUploadImage, SharerUploadVideo, TipBox, Dashboard
 from django.db.models import Count, DecimalField, ExpressionWrapper, F, Avg
 from django.utils.html import format_html
-
+from .forms import SharerUploadForm
 class SharerUploadFileInline(admin.TabularInline):
     model = SharerUploadFile
     extra = 1
@@ -32,6 +32,7 @@ class SharerAdmin(admin.ModelAdmin):
 
 @admin.register(SharerUpload)
 class SharerUploadAdmin(admin.ModelAdmin):
+    # form = SharerUploadForm
     list_display = ('id', 'title', 'uploaded_by', 'created_at', 'get_likes_count', 'get_unlikes_count', 'get_comments_count')  
     search_fields = ('id', 'title', 'uploaded_by__name') 
     list_filter = ('created_at', 'uploaded_by__category')

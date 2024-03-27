@@ -131,7 +131,6 @@ class VerifyOTP(APIView):
             else:
                 return Response({"error": "Invalid OTP, OTP expired, or OTP ID mismatch"}, status=status.HTTP_400_BAD_REQUEST)
 
-
 class UserLogin(APIView):
     permission_classes = (AllowAny,)
     authentication_classes = (JWTAuthentication,)
@@ -169,7 +168,12 @@ class UserLogin(APIView):
                     profile_picture = user.profile_picture.url if user.profile_picture else None
                     name = user.username
 
-                followed_sharers = user.follows.values_list('id', flat=True)
+                followed_sharers = {
+                    'tier1': list(user.follows_tier1.values_list('id', flat=True)),
+                    'tier2': list(user.follows_tier2.values_list('id', flat=True)),
+                    'tier3': list(user.follows_tier3.values_list('id', flat=True))
+                }
+
                 comments = Comment.objects.filter(user=user).values_list('id', flat=True)
 
                 try:
@@ -186,7 +190,7 @@ class UserLogin(APIView):
                     'sharer_id': sharer_id,
                     'sharer_category': sharer.category if is_sharer else None,
                     'name': name,
-                    'followed_sharers': list(followed_sharers),
+                    'followed_sharers': followed_sharers,
                     'user_info': {
                         'email': user.email,
                         'username': user.username
@@ -200,6 +204,7 @@ class UserLogin(APIView):
                 return Response({'detail': 'Authentication failed'}, status=status.HTTP_401_UNAUTHORIZED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class UserLogout(APIView):
@@ -351,33 +356,65 @@ class SharerChecker(APIView):
             return Response({'error': 'User is not authenticated.'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-
 class FollowSharer(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         sharer_id = self.kwargs.get('sharer_id')
+        tier = request.data.get('tier') 
         try:
             sharer = Sharer.objects.get(pk=sharer_id)
-            request.user.follows.add(sharer)
-            request.user.save()
+            user = request.user
+
+
+            if tier == 'tier1':
+                user.follows_tier2.remove(sharer)
+                user.follows_tier3.remove(sharer)
+            elif tier == 'tier2':
+                user.follows_tier1.remove(sharer)
+                user.follows_tier3.remove(sharer)
+            elif tier == 'tier3':
+                user.follows_tier1.remove(sharer)
+                user.follows_tier2.remove(sharer)
+
+
+            if tier == 'tier1':
+                user.follows_tier1.add(sharer)
+            elif tier == 'tier2':
+                user.follows_tier2.add(sharer)
+            elif tier == 'tier3':
+                user.follows_tier3.add(sharer)
+            else:
+                return Response({'detail': 'Invalid tier provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+            user.save()
 
             serializer = SharerSerializer(sharer)
 
-            return Response({'detail': 'Successfully followed sharer', 'sharer': serializer.data}, status=status.HTTP_200_OK)
+            return Response({'detail': f'Successfully followed sharer in {tier}', 'sharer': serializer.data}, status=status.HTTP_200_OK)
         except Sharer.DoesNotExist:
             return Response({'detail': 'Sharer not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-# Gawa ni Roque For UnFollow
 class UnfollowSharer(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, *args, **kwargs):
         sharer_id = self.kwargs.get('sharer_id')
+        tier = request.data.get('tier')  
         try:
             sharer = Sharer.objects.get(pk=sharer_id)
-            request.user.follows.remove(sharer)
+            
+
+            if tier == 'tier1':
+                request.user.follows_tier1.remove(sharer)
+            elif tier == 'tier2':
+                request.user.follows_tier2.remove(sharer)
+            elif tier == 'tier3':
+                request.user.follows_tier3.remove(sharer)
+            else:
+                return Response({'detail': 'Invalid tier provided'}, status=status.HTTP_400_BAD_REQUEST)
+
             request.user.save()
 
             serializer = SharerSerializer(sharer)
@@ -392,7 +429,18 @@ class FollowedSharerList(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return self.request.user.follows.all()
+        tier = self.request.query_params.get('tier')  
+        user = self.request.user
+        
+        if tier == 'tier1':
+            return user.follows_tier1.all()
+        elif tier == 'tier2':
+            return user.follows_tier2.all()
+        elif tier == 'tier3':
+            return user.follows_tier3.all()
+        else:
+            return user.follows_tier1.all() | user.follows_tier2.all() | user.follows_tier3.all()
+
     
 
 #PANG GET LAHAT NG USER

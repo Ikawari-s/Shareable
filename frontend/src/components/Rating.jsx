@@ -7,7 +7,8 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
   const { ratings, loading, error } = useSelector((state) => state.sharerRating);
   const userInfo = JSON.parse(localStorage.getItem('userInfo'));
   const userId = userInfo ? userInfo.user_id : null;
-  const followedSharers = userInfo ? userInfo.followed_sharers : [];
+  const followedSharers = Array.isArray(userInfo?.followed_sharers) ? userInfo.followed_sharers : [];
+
 
   // Define userHasRated state
   const [userHasRated, setUserHasRated] = useState(false);

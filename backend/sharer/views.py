@@ -15,31 +15,12 @@ from datetime import datetime
 from decimal import Decimal
 from django.db.models import Sum, DecimalField
 from django.db.models.functions import Coalesce
+from .permission import *
 import logging
 from django.db import transaction
 logger = logging.getLogger(__name__)
 
 User = get_user_model()
-
-#PERMISSION CODES
-def is_follow(user, sharer_id):
-    """
-    Check if the user follows the specified sharer.
-    """
-    try:
-        sharer = Sharer.objects.get(pk=sharer_id)
-    except Sharer.DoesNotExist:
-        return False
-    return sharer in user.follows.all()
-
-class IsSharer(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.is_sharer
-
-
-class IsSharerPermission(BasePermission):
-    def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.is_sharer
 
 
 # ISAUTH
@@ -71,6 +52,125 @@ def SharerlatestPost(request, sharer_id):
     sharer_data['uploads'] = upload_data
     
     return Response(sharer_data)
+
+class Tier1FollowedSharers(generics.ListAPIView):
+    serializer_class = SharerUploadListSerializer
+    permission_classes = [IsAuthenticated]
+    tier = 'tier1'
+
+    def get_queryset(self):
+        user = self.request.user
+        sharer_id = self.kwargs.get('sharer_id')
+        tier = self.tier
+        visibility_tier = f'FOLLOWERS_{tier.upper()}'
+
+        queryset = SharerUpload.objects.filter(visibility__contains=visibility_tier)
+
+        if sharer_id:
+            if is_follow(user, sharer_id, tier):
+                queryset = queryset.filter(uploaded_by_id=sharer_id)
+            else:
+                queryset = SharerUpload.objects.none()
+        else:
+            user_follows = getattr(user, f'follows_{tier}').all()
+            queryset = queryset.filter(uploaded_by__in=user_follows)
+
+        queryset = queryset.order_by('-created_at')
+
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        
+        if not queryset.exists():
+            if is_follow(request.user, kwargs.get('sharer_id'), self.tier):
+                message = f"No posts yet from this sharer in {self.tier.capitalize()} tier."
+                return Response({"message": message}, status=status.HTTP_404_NOT_FOUND)
+            else:
+                return Response({"detail": "You are not followed in this tier."}, status=status.HTTP_403_FORBIDDEN)
+        
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class Tier2FollowedSharers(generics.ListAPIView):
+    serializer_class = SharerUploadListSerializer
+    permission_classes = [IsAuthenticated]
+    tier = 'tier2'
+
+    def get_queryset(self):
+        user = self.request.user
+        sharer_id = self.kwargs.get('sharer_id')
+        tier = self.tier
+        visibility_tier = f'FOLLOWERS_{tier.upper()}'
+
+        queryset = SharerUpload.objects.filter(visibility__contains=visibility_tier)
+
+        if sharer_id:
+            if is_follow(user, sharer_id, tier):
+                queryset = queryset.filter(uploaded_by_id=sharer_id)
+            else:
+                queryset = SharerUpload.objects.none()
+        else:
+            user_follows = getattr(user, f'follows_{tier}').all()
+            queryset = queryset.filter(uploaded_by__in=user_follows)
+
+        queryset = queryset.order_by('-created_at')
+
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        
+        if not queryset.exists():
+            if is_follow(request.user, kwargs.get('sharer_id'), self.tier):
+                message = f"No posts yet from this sharer in {self.tier.capitalize()} tier."
+                return Response({"message": message}, status=status.HTTP_404_NOT_FOUND)
+            else:
+                return Response({"detail": "You are not followed in this tier."}, status=status.HTTP_403_FORBIDDEN)
+        
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class Tier3FollowedSharers(generics.ListAPIView):
+    serializer_class = SharerUploadListSerializer
+    permission_classes = [IsAuthenticated]
+    tier = 'tier3'
+
+    def get_queryset(self):
+        user = self.request.user
+        sharer_id = self.kwargs.get('sharer_id')
+        tier = self.tier
+        visibility_tier = f'FOLLOWERS_{tier.upper()}'
+
+        queryset = SharerUpload.objects.filter(visibility__contains=visibility_tier)
+
+        if sharer_id:
+            if is_follow(user, sharer_id, tier):
+                queryset = queryset.filter(uploaded_by_id=sharer_id)
+            else:
+                queryset = SharerUpload.objects.none()
+        else:
+            user_follows = getattr(user, f'follows_{tier}').all()
+            queryset = queryset.filter(uploaded_by__in=user_follows)
+
+        queryset = queryset.order_by('-created_at')
+
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        
+        if not queryset.exists():
+            if is_follow(request.user, kwargs.get('sharer_id'), self.tier):
+                message = f"No posts yet from this sharer in {self.tier.capitalize()} tier."
+                return Response({"message": message}, status=status.HTTP_404_NOT_FOUND)
+            else:
+                return Response({"detail": "You are not followed in this tier."}, status=status.HTTP_403_FORBIDDEN)
+        
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 # isAuth, para to sa detail view which can be access basta login ka lang
@@ -124,6 +224,9 @@ class SharerUploadViews(APIView):
             serializer.save(uploaded_by=sharer)  
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 #NOT NEEDED BUT DO NOT REMOVE
 # class PreviewContent(APIView):
@@ -288,7 +391,6 @@ class DashboardRetrieveUpdateView(generics.RetrieveUpdateAPIView):
         serializer.save(sharer=self.request.user.sharer)
 
 
-
 #IS AUTH ONLY
 class TipBoxCreateView(generics.CreateAPIView):
     queryset = TipBox.objects.all()
@@ -391,11 +493,10 @@ def get_top_donors(sharer_id):
 
 
 #IS FOLLOW
-    
 class RatingViews(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, sharer_id=None):  
+    def get(self, request, sharer_id=None):
         user = request.user
 
         if sharer_id is not None:
@@ -404,11 +505,13 @@ class RatingViews(APIView):
             except ValueError:
                 return Response({"error": "Invalid Sharer ID"}, status=status.HTTP_400_BAD_REQUEST)
 
-        followed_sharers = user.follows.all()
+        followed_sharers = []
+        if user.is_sharer:
+            followed_sharers = user.follows_tier1.all() | user.follows_tier2.all() | user.follows_tier3.all()
         if sharer_id is not None:
-            ratings = Rating.objects.filter(sharer=sharer_id, rating__in=[i * 0.1 for i in range(1, 51)])  
+            ratings = Rating.objects.filter(sharer=sharer_id, rating__in=[i * 0.1 for i in range(1, 51)])
         else:
-            ratings = Rating.objects.filter(sharer__in=followed_sharers, rating__in=[i * 0.1 for i in range(1, 51)])  
+            ratings = Rating.objects.filter(sharer__in=followed_sharers, rating__in=[i * 0.1 for i in range(1, 51)])
 
         serialized_data = []
         for rating in ratings:
