@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 import { submitContactRequest } from '../actions/contactActions'; 
+import '../designs/Contact.css';
+import GuestHeader from '../components/GuestHeader';
 
 const ContactPageScreen = ({ submitContactRequest }) => {
   const [requestType, setRequestType] = useState('');
@@ -63,13 +65,18 @@ const ContactPageScreen = ({ submitContactRequest }) => {
   
   
   return (
-    <div className="container">
+
+
+    <div className="bg">
+
+      <GuestHeader />
+      <div className="image-container"></div>
+      <form style={{ marginTop: '5rem' }} onSubmit={handleSubmit}>
       <h2>Submit a Request</h2>
-      <p>Providing as much information as possible in your request will allow us to help you faster.</p>
-      <form onSubmit={handleSubmit}>
+      <label>Providing as much information as possible in your request will allow us to help you faster.</label>
         <div className="form-group">
           <h6>Request type: *</h6>
-          <select className="form-control" value={requestType} onChange={(e) => setRequestType(e.target.value)} required>
+          <select className="box custom-select option" value={requestType} onChange={(e) => setRequestType(e.target.value)} required>
             <option value="">-- Please choose a request type --</option>
             <option value="payment">Payment issues</option>
             <option value="membership">Membership issues</option>
@@ -79,22 +86,22 @@ const ContactPageScreen = ({ submitContactRequest }) => {
         </div>
         <div className="form-group">
           <h6>Your email address: *</h6>
-          <input type="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input type="email" className="box" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </div>
         <div className="form-group">
           <h6>Subject: *</h6>
-          <input type="text" className="form-control" value={subject} onChange={(e) => setSubject(e.target.value)} required />
-          <label>Please use a few words to summarize your question</label>
+          <input type="text" className="box" value={subject} onChange={(e) => setSubject(e.target.value)} required />
         </div>
         <div className="form-group">
           <h6>Description: *</h6>
-          <textarea className="form-control" value={description} onChange={(e) => setDescription(e.target.value)} required />
-          <label>Please enter the details of your request. A member of our team will reach out with a response.</label>
+          <input className="box" value={description} onChange={(e) => setDescription(e.target.value)} required />
         </div>
+        <label>Please enter the details of your request. A member of our team will reach out with a response.</label>
+
         <div className="form-group">
           <h6>Attachment (Optional):</h6>
         </div>
-        <div className="form-control">
+        <div className="box">
           <input type="file" className="form-control-file" onChange={(e) => setAttachment(e.target.files[0])} />
         </div>
         <div className="form-group">
@@ -105,14 +112,18 @@ const ContactPageScreen = ({ submitContactRequest }) => {
         <Button type="button" variant="secondary" onClick={clearForm} style={{ marginLeft: '10px' }}>Clear Form</Button>
 
       </form>
-      {submitStatus === 'error' && <p style={{ color: 'red', marginTop: '10px' }}>Failed to submit request. Please try again.</p>}
-      {submitStatus === 'success' && <p style={{ color: 'green', marginTop: '10px' }}>Request submitted successfully! Check your email notification to view the copy of your response.</p>}
-      {submitStatus === 'unsupported' && <p style={{ color: 'red', marginTop: '10px' }}>Unsupported file type. Please upload a file with one of the following extensions: .pdf, .jpeg, .jpg, .png, .doc, .docx</p>}
-      {submitStatus === 'fileTooLarge' && <p style={{ color: 'red', marginTop: '10px' }}>The file you are trying to upload is too large. Please make sure the file size does not exceed 1 MB.</p>}
+      <div className="submit-status-container">
+    {submitStatus === 'error' && <p className="error-message">Failed to submit request. Please try again.</p>}
+    {submitStatus === 'success' && <p className="success-message">Request submitted successfully! Check your email notification to view the copy of your response.</p>}
+    {submitStatus === 'unsupported' && <p className="error-message">Unsupported file type. Please upload a file with one of the following extensions: .pdf, .jpeg, .jpg, .png, .doc, .docx</p>}
+    {submitStatus === 'fileTooLarge' && <p className="error-message">The file you are trying to upload is too large. Please make sure the file size does not exceed 1 MB.</p>}
+  </div>
+    
+  <div className="logo-contact"></div>
+
     </div>
   );
 };
 
 
 export default connect(null, { submitContactRequest })(ContactPageScreen);
-
