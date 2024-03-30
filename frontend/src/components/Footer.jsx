@@ -31,8 +31,12 @@ function Footer() {
           <Col l={3}>
             <p className="wa">Menu</p>
             <p>Cookies</p>
-            <p>Contact</p>
-            <p>Privacy Policy</p>
+            <Link to="/contact" style={{ textDecoration: "none" }}>
+              <p>Contact</p>
+            </Link>
+            <Link to="/privacy-policy" style={{ textDecoration: "none" }}>
+              <p>Privacy Policy</p>
+            </Link>
             <p>Terms of use</p>
           </Col>
         </Row>

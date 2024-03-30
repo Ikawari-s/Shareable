@@ -23,6 +23,7 @@ import VerifyotpScreen from './screens/VerifyotpScreen';
 import SharerPageScreen from './screens/SharerPageScreen';
 import SharerDashboard from './screens/SharerDashboard';
 import ChangePassword from './screens/ChangePassword';
+import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
 
 
 
@@ -40,6 +41,8 @@ function App() {
           <Route path="/reset-password" element={<ForgotpasswordScreen />} />
           <Route path="/new-password" element= {<NewpasswordScreen />} />
           <Route path="/contact" element={<ContactPageScreen />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyScreen />} />
+
           <Route path="/about" element={<AboutScreen />} />
           <Route path="/invalid" element={<InvalidScreen/>}/> 
           <Route path="/otp/:userId/:otpId" element={<VerifyotpScreen />} />
