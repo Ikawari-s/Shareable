@@ -63,7 +63,7 @@ function UserProfileAccount() {
                     <input
                       className="bar"
                       type="password"
-                      placeholder="Current password"
+                      placeholder="Enter current password"
                       value={currentPassword}
                       style={{ fontSize: '1rem', fontWeight: 400, lineHeight: 1.5, letterSpacing: '.02rem', padding: '.6rem 1rem' }}
                       onChange={(e) => setCurrentPassword(e.target.value)}
@@ -71,7 +71,7 @@ function UserProfileAccount() {
                   </Form.Group>
                 </div>
                 <div>
-                  <label>New password</label>
+                  <label>Enter new password</label>
                   <Form.Group className="mb-3" controlId="formBasicEmail">
                     <input
                       className="bar"
@@ -84,7 +84,7 @@ function UserProfileAccount() {
                   </Form.Group>
                 </div>
                 <div>
-                  <label>Confirm password</label>
+                  <label>Confirm new password</label>
                   <Form.Group className="mb-3" controlId="formBasicEmail">
                     <input
                       className="bar"
