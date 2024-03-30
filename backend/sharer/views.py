@@ -616,7 +616,7 @@ class LikePost(APIView):
         sharer_instance = app_user.sharer
         
         if sharer_instance == upload.uploaded_by:
-            print("User is the uploader. Skipping visibility check.")
+            print("User is the uploader. Allowing like.")
             return self.handle_like(app_user, upload)
         
         user_tiers = self.get_user_tiers(app_user)
@@ -685,7 +685,7 @@ class UnlikePost(APIView):
         sharer_instance = user.sharer
         
         if sharer_instance == upload.uploaded_by:
-            print("User is the uploader. Skipping visibility check.")
+            print("User is the uploader. Allowing unlike.")
             return self.handle_unlike(user, upload)
         
         user_tiers = self.get_user_tiers(user)
@@ -767,13 +767,13 @@ class CommentPost(APIView):
         sharer_instance = app_user.sharer
         
         if sharer_instance == upload.uploaded_by:
-            print("User is the uploader. Skipping visibility check.")
+            print("User is the uploader. Allowing comment.")
             return self.handle_comment(app_user, upload, request)
         
         user_tiers = self.get_user_tiers(app_user)
         post_visibility = self.get_post_visibility(upload)
 
-        if self.check_visibility_match(post_visibility, user_tiers):
+        if self.check_visibility_match(post_visibility, user_tiers) or app_user == upload.uploaded_by:
             return self.handle_comment(app_user, upload, request)
         else:
             print("Visibility check failed. User cannot comment on the post.")
@@ -829,9 +829,7 @@ class CommentPost(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     
-
 class CommentDeleteView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
 
@@ -844,19 +842,44 @@ class CommentDeleteView(generics.DestroyAPIView):
             return Response({"message": "Comment does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
         if not self.can_delete_comment(user, comment):
+            print("User is not allowed to delete this comment.")
             return Response({"error": "You are not allowed to delete this comment"}, status=status.HTTP_403_FORBIDDEN)
 
         comment.delete()
         return Response({"message": "Comment deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
     def can_delete_comment(self, user, comment):
-        if user == comment.user:
-            return True  # Allow the owner of the comment to delete it
-
-        # Check if the user follows the owner of the post
+        print("Checking if user can delete comment...")
         post_owner = comment.post.uploaded_by
-        return is_following(user, post_owner.id)
-    
+        sharer_instance = user.sharer  # Assuming user.sharer gives the sharer instance
+        upload = comment.post  # Assuming comment.post gives the upload instance
+
+        # Allow deletion if the user is the uploader
+        if sharer_instance == upload.uploaded_by:
+            print("User is the uploader. Allowing comment.")
+            return True
+
+        # Allow deletion if the user is the owner of the post
+        if user == post_owner:
+            print("User is the owner of the post. Allowing deletion.")
+            return True
+
+        # If user is not following the owner of the post, disallow deletion
+        if not self.is_following(user, post_owner):
+            print("User is not following the owner of the post. Not allowed to delete the comment.")
+            return False
+        
+        user_tiers = self.get_user_tiers(user)
+        post_visibility = self.get_post_visibility(comment.post)
+        if not self.check_visibility_match(post_visibility, user_tiers):
+            print(post_visibility, user_tiers )
+            print("User's tier does not match post visibility criteria. Not allowed to delete the comment.")
+            return False
+        
+
+        print("User is allowed to delete this comment.")
+        return True
+
     def get_user_tiers(self, user):
         user_tiers = []
         if user.follows_tier1.exists():
@@ -867,26 +890,17 @@ class CommentDeleteView(generics.DestroyAPIView):
             user_tiers.append("FOLLOWERS_TIER3")
         return user_tiers
 
-    def get_post_visibility(self, upload):
-        visibility = upload.visibility
-        try:
-            visibility_list = json.loads(visibility)
-            if isinstance(visibility_list, list):
-                return visibility_list
-        except (json.JSONDecodeError, TypeError):
-            if ',' in visibility:
-                visibility_list = [tier.strip() for tier in visibility.split(',')]
-            else:
-                visibility_list = [visibility.strip()]
-            return visibility_list
-        return []
+    def get_post_visibility(self, post):
+        return post.visibility
 
     def check_visibility_match(self, post_visibility, user_tiers):
-        if post_visibility:
-            for tier in post_visibility:
-                if tier in user_tiers:
-                    return True
-        return False
+        return any(tier in post_visibility for tier in user_tiers)
+
+    def is_following(self, user, post_owner):
+        return (user.follows_tier1.filter(id=post_owner.id).exists() or
+                user.follows_tier2.filter(id=post_owner.id).exists() or
+                user.follows_tier3.filter(id=post_owner.id).exists())
+
 
 
 class CommentListView(generics.ListCreateAPIView):
