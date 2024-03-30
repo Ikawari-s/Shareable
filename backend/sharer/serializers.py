@@ -273,14 +273,15 @@ class DashboardSerializer(serializers.ModelSerializer):
 
     def get_twenty_percent_less_earning_send(self, obj):
         twenty_percent = Decimal('0.20')
-        twenty_percent_earnings = obj.total_earnings * twenty_percent
+        total_earnings_decimal = Decimal(str(obj.total_earnings))  # Convert to Decimal
+        twenty_percent_earnings = total_earnings_decimal * twenty_percent
         return obj.total_earnings - twenty_percent_earnings
 
     def get_twenty_percent_cut(self, obj):
-        twenty_percent = Decimal('0.20')
+        twenty_percent = Decimal('0.20')    
         twenty_percent_earnings = obj.total_earnings * twenty_percent
         return twenty_percent_earnings
-    
+        
     def get_total_post_count(self, obj):
         return SharerUpload.objects.filter(uploaded_by=obj.sharer).count()
 
@@ -301,5 +302,3 @@ class DashboardSerializer(serializers.ModelSerializer):
     
     def get_total_uploads(self, obj):
         return SharerUpload.objects.filter(uploaded_by=obj.sharer).count()
-    
-

@@ -8,15 +8,15 @@ function TopDonor({ sharerId }) {
   const { loading, error, topDonorData } = useSelector(state => state.topDonor); 
 
   useEffect(() => {
-    console.log("Current sharerId in TopDonor component:", sharerId); // Log current sharerId
+    console.log("Current sharerId in TopDonor component:", sharerId); 
     dispatch(getTopDonor(sharerId));
-  }, [dispatch, sharerId]); // Update the effect dependency to include sharerId
+  }, [dispatch, sharerId]); 
 
   return (
     <div className="top-donor-container text-center">
       <h1 className="top-donor-title">Top Donors</h1>
       {loading && <Spinner animation="border" role="status" />}
-      {error && <p>Error: {error}</p>}
+      {error && <p>No Donors yet.</p>}
       {topDonorData && topDonorData.length > 0 && (
         <div className="row justify-content-center">
           {topDonorData.slice(0, 3).map((donor, index) => (
@@ -25,7 +25,7 @@ function TopDonor({ sharerId }) {
                 <img src={donor.profile_picture} alt="Profile Picture" className="w-100 h-auto" />
               </div>
               <p className="username">{donor.username}</p>
-              <p className="total-amount">Total Amount: {donor.total_amount}</p>
+              <p className="total-amount">Total Amount: ${donor.total_amount}</p>
             </div>
           ))}
         </div>

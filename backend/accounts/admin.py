@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import AppUser
+from .models import AppUser, FollowExpiration, FollowActivity
 
 
 class AppUserAdmin(UserAdmin):
@@ -25,3 +25,5 @@ class AppUserAdmin(UserAdmin):
 
 admin.site.register(AppUser, AppUserAdmin)
 
+admin.site.register(FollowExpiration)
+admin.site.register(FollowActivity)

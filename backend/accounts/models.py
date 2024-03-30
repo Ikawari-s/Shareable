@@ -88,3 +88,20 @@ class beSharer(models.Model):
 
     def __str__(self):
         return self.title
+
+class FollowExpiration(models.Model):
+    user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
+    sharer = models.ForeignKey('sharer.Sharer', on_delete=models.CASCADE)
+    expiration_date = models.DateTimeField()
+
+    def is_expired(self):
+        return self.expiration_date <= timezone.now()
+    
+
+class FollowActivity(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    sharer = models.ForeignKey('sharer.Sharer', on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def is_expired(self):
+        return self.timestamp + timezone.timedelta(seconds=10) <= timezone.now()

@@ -18,7 +18,7 @@ function TierOneLatest({ sharerId }) {
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
-        <p>{error}</p>
+        <p>No Post yet.</p>
       ) : (
         <div>
           {Array.isArray(posts) && posts.length > 0 ? (

@@ -3,6 +3,7 @@ from .models import Sharer, SharerUpload, Like, Comment, Rating, SharerUploadFil
 from django.db.models import Count, DecimalField, ExpressionWrapper, F, Avg
 from django.utils.html import format_html
 from .forms import SharerUploadForm
+
 class SharerUploadFileInline(admin.TabularInline):
     model = SharerUploadFile
     extra = 1
@@ -106,11 +107,11 @@ class TipBoxAdmin(admin.ModelAdmin):
 
     sender_username.short_description = 'Sender Username'
     
+
 @admin.register(Dashboard)
 class DashboardAdmin(admin.ModelAdmin):
-    list_display = ('sharer', 'total_earnings')
+    list_display = ('sharer', 'total_earnings')  
     search_fields = ('sharer__name',)
-
 
 
 

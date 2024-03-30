@@ -73,14 +73,15 @@ class Sharer(models.Model):
         return self.follower_tier1.count() + self.follower_tier2.count() + self.follower_tier3.count()
 
     def save(self, *args, **kwargs):
-        if self.pk is not None:  # Check if it's an update
+        if self.pk is None:  # Check if it's a new instance
+            super().save(*args, **kwargs)  # Save the new instance first
+            # Create a dashboard for the newly created sharer
+            Dashboard.objects.create(sharer=self)
+        else:  # Update existing instance
             original_instance = Sharer.objects.get(pk=self.pk)
             if original_instance.total_followers != self.total_followers:
                 self.total_followers = self.appuser_set.count()  
-
-        super().save(*args, **kwargs)
-
-
+            super().save(*args, **kwargs)
 
 class SharerUpload(models.Model):
     id = models.AutoField(primary_key=True)
@@ -168,12 +169,11 @@ class Dashboard(models.Model):
     sharer = models.OneToOneField(Sharer, on_delete=models.CASCADE)
     total_earnings = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
 
-
     def update_dashboard_statistics(self):
-        self.total_uploads = self.sharer.uploads.count()
-        self.total_likes = Like.objects.filter(post__uploaded_by=self.sharer, liked=True).count()
-        self.total_unlikes = Like.objects.filter(post__uploaded_by=self.sharer, unliked=True).count()
-        self.average_rating = Rating.objects.filter(sharer=self.sharer).aggregate(avg_rating=Avg('rating'))['avg_rating'] or 0.0
-        self.total_posts = self.sharer.uploads.count()
+        sharer_id = self.sharer_id  
+        self.total_uploads = SharerUpload.objects.filter(uploaded_by_id=sharer_id).count()
+        self.total_likes = Like.objects.filter(post__uploaded_by_id=sharer_id, liked=True).count()
+        self.total_unlikes = Like.objects.filter(post__uploaded_by_id=sharer_id, unliked=True).count()
+        self.average_rating = Rating.objects.filter(sharer_id=sharer_id).aggregate(avg_rating=Avg('rating'))['avg_rating'] or 0.0
+        self.total_posts = self.total_uploads  
         self.save()
-

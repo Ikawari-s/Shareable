@@ -255,20 +255,27 @@ class SharerUploadViews(APIView):
 class PreviewContentList(APIView):
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        sharer_id = self.kwargs.get('sharer_id')
+        visibility_tier = 'NON_FOLLOWER'
+        
+        queryset = SharerUpload.objects.all()
+        if sharer_id:
+            queryset = queryset.filter(uploaded_by_id=sharer_id)
+        
+        # Filter by visibility, checking if NON_FOLLOWER is present in the list
+        queryset = queryset.filter(visibility__contains=visibility_tier)
+        
+        queryset = queryset.order_by('-created_at')
+        return queryset
+
     def get(self, request, sharer_id):
         try:
-            sharer_content = SharerUpload.objects.filter(uploaded_by_id=sharer_id)
-            # Extract the visibility value from the list
-            visibility = request.GET.getlist('visibility', [])  # Extract visibility list from request query params
-            if visibility:  # Check if visibility list is not empty
-                visibility = visibility[0]  # Get the first element of the list
-                sharer_content = sharer_content.filter(visibility=visibility)
-            sharer_content = sharer_content.order_by('-created_at')
-            serializer = SharerUploadSerializer(sharer_content, many=True)
+            queryset = self.get_queryset()
+            serializer = SharerUploadListSerializer(queryset, many=True)
             return Response(serializer.data)
-        except SharerUpload.DoesNotExist:
-            return Response({"message": "No content found for this sharer"}, status=status.HTTP_404_NOT_FOUND)
-
+        except Exception as e:
+            return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 #IS SHARER // okay
@@ -410,7 +417,12 @@ class TipBoxCreateView(generics.CreateAPIView):
             sharer = serializer.validated_data.get('sharer')
 
             dashboard, created = Dashboard.objects.get_or_create(sharer=sharer)
-            dashboard.total_earnings += Decimal(str(tip_amount))  # Convert tip_amount to Decimal
+            dashboard.total_earnings += Decimal(str(tip_amount))
+            
+            # Calculate twenty percent
+            twenty_percent = Decimal('0.20')
+            twenty_percent_earnings = Decimal(str(tip_amount)) * twenty_percent
+            dashboard.twenty_percent_less_earning_send = dashboard.total_earnings - twenty_percent_earnings
             dashboard.save()
 
             serializer.save(user=self.request.user)
@@ -419,7 +431,6 @@ class TipBoxCreateView(generics.CreateAPIView):
         except Exception as e:
             logger.error(f"Error processing TipBox creation: {e}")
             return Response({"error": "An error occurred while processing the request."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
 
 class TopDonorView(APIView):
     def get(self, request, sharer_id):
@@ -475,14 +486,10 @@ class RatingViews(APIView):
             except ValueError:
                 return Response({"error": "Invalid Sharer ID"}, status=status.HTTP_400_BAD_REQUEST)
 
-        followed_sharers = user.follows_tier1.all() | user.follows_tier2.all() | user.follows_tier3.all()
         if sharer_id is not None:
-            if not followed_sharers.filter(id=sharer_id).exists():
-                return Response({"error": "You can only view ratings for sharers you follow"}, status=status.HTTP_403_FORBIDDEN)
-
             ratings = Rating.objects.filter(sharer=sharer_id, rating__in=[i * 0.1 for i in range(1, 51)])  
         else:
-            ratings = Rating.objects.filter(sharer__in=followed_sharers, rating__in=[i * 0.1 for i in range(1, 51)])  
+            ratings = Rating.objects.filter(rating__in=[i * 0.1 for i in range(1, 51)])  
 
         serialized_data = []
         for rating in ratings:
@@ -492,38 +499,48 @@ class RatingViews(APIView):
         return Response(serialized_data)
 
     def post(self, request, sharer_id):
-        user = request.user
-        try:
-            sharer_id = int(sharer_id)
-        except ValueError:
-            return Response({"error": "Invalid Sharer ID"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        if not (user.follows_tier1.filter(id=sharer_id).exists() or
-                user.follows_tier2.filter(id=sharer_id).exists() or
-                user.follows_tier3.filter(id=sharer_id).exists()):
-            return Response({"error": "You can only rate sharers you follow"}, status=status.HTTP_403_FORBIDDEN)
+            user = request.user
+            try:
+                sharer_id = int(sharer_id)
+            except ValueError:
+                return Response({"error": "Invalid Sharer ID"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if not (user.follows_tier1.filter(id=sharer_id).exists() or
+                    user.follows_tier2.filter(id=sharer_id).exists() or
+                    user.follows_tier3.filter(id=sharer_id).exists()):
+                return Response({"error": "You can only rate sharers you follow"}, status=status.HTTP_403_FORBIDDEN)
 
-        existing_rating = Rating.objects.filter(user=user, sharer_id=sharer_id).first()
-        if existing_rating:
-            return Response({"error": "You have already rated this sharer"}, status=status.HTTP_400_BAD_REQUEST)
+            sharer = Sharer.objects.get(pk=sharer_id)
 
-        try:
-            rating = float(request.data.get('rating'))
-        except ValueError:
-            return Response({"error": "Invalid rating format"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if rating <= 0:
-            return Response({"error": "Rating must be greater than zero"}, status=status.HTTP_400_BAD_REQUEST)
+            if user.is_sharer and user.sharer.id == sharer_id:
+                print( user.is_sharer and user.sharer.id)
+                print(sharer_id)
+                return Response({"error": "You cannot rate yourself"}, status=status.HTTP_400_BAD_REQUEST)
 
-        rating = min(rating, 5.0)
+            existing_rating = Rating.objects.filter(user=user, sharer_id=sharer_id).first()
+            if existing_rating:
+                return Response({"error": "You have already rated this sharer"}, status=status.HTTP_400_BAD_REQUEST)
 
-        data = request.data.copy()
-        data['rating'] = round(rating, 1)  
-        serializer = RatingSerializer(data=data, context={'user': user})
-        if serializer.is_valid():
-            serializer.save(user=user, sharer_id=sharer_id)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                rating = float(request.data.get('rating'))
+            except ValueError:
+                return Response({"error": "Invalid rating format"}, status=status.HTTP_400_BAD_REQUEST)
+
+            if rating <= 0:
+                return Response({"error": "Rating must be greater than zero"}, status=status.HTTP_400_BAD_REQUEST)
+
+            rating = min(rating, 5.0)
+
+            data = request.data.copy()
+            data['rating'] = round(rating, 1)  
+            serializer = RatingSerializer(data=data, context={'user': user})
+            if serializer.is_valid():
+                serializer.save(user=user, sharer_id=sharer_id)
+                print( user.is_sharer and user.sharer.id)
+                print(sharer_id)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
 #IS FOLLOW // okay
@@ -573,11 +590,11 @@ class RatingUpdateView(APIView):
         except ValueError:
             return Response({"error": "Invalid rating format"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Ensure rating is between 0 and 5
         if rating <= 0:
             return Response({"error": "Rating must be greater than zero"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        if rating > 5:  
-            return Response({"error": "Rating must not be greater than 5"}, status=status.HTTP_400_BAD_REQUEST)
+        elif rating > 5:
+            rating = 5
 
         comment = request.data.get('comment', existing_rating.comment)
 
@@ -588,31 +605,29 @@ class RatingUpdateView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
 class LikePost(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, upload_id):
-        user = request.user
+        app_user = request.user
         upload = get_object_or_404(SharerUpload, id=upload_id)
         
-        user_tiers = self.get_user_tiers(user)
+        sharer_instance = app_user.sharer
+        
+        if sharer_instance == upload.uploaded_by:
+            print("User is the uploader. Skipping visibility check.")
+            return self.handle_like(app_user, upload)
+        
+        user_tiers = self.get_user_tiers(app_user)
         post_visibility = self.get_post_visibility(upload)
 
-        print("User Tiers:", user_tiers)
-        print("Post Visibility:", post_visibility)
-        print("User:", user)
-        print("Uploaded By:", upload.uploaded_by)
-
-        if user == upload.uploaded_by:
-            print("User:", user)
-            print("Uploaded By:", upload.uploaded_by)
-            return self.handle_like(user, upload)
-        
-        if self.check_visibility_match(post_visibility, user_tiers) or user == upload.uploaded_by:
-            return self.handle_like(user, upload)
+        if self.check_visibility_match(post_visibility, user_tiers):
+            return self.handle_like(app_user, upload)
         else:
+            print("Visibility check failed. User cannot like the post.")
             return Response({"error": "You can only like posts with visibility matching your followed tiers"}, status=status.HTTP_403_FORBIDDEN)
+
 
     def handle_like(self, user, upload):
         try:
@@ -659,8 +674,7 @@ class LikePost(APIView):
                 if tier in user_tiers:
                     return True
         return False
-
-
+    
 class UnlikePost(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -668,12 +682,15 @@ class UnlikePost(APIView):
         user = request.user
         upload = get_object_or_404(SharerUpload, id=upload_id)
         
+        sharer_instance = user.sharer
+        
+        if sharer_instance == upload.uploaded_by:
+            print("User is the uploader. Skipping visibility check.")
+            return self.handle_unlike(user, upload)
+        
         user_tiers = self.get_user_tiers(user)
         post_visibility = self.get_post_visibility(upload)
 
-        if user == upload.uploaded_by:
-            return self.handle_like(user, upload)
-        
         if self.check_visibility_match(post_visibility, user_tiers) or user == upload.uploaded_by:
             return self.handle_unlike(user, upload)
         else:
@@ -684,14 +701,17 @@ class UnlikePost(APIView):
             like = Like.objects.get(user=user, post=upload)
             if like.unliked:
                 like.delete()
+                print(f"Post unlike removed successfully by {user}")
                 return Response({"message": "Post unlike removed successfully"}, status=status.HTTP_200_OK)
             else:
                 like.unliked = True
                 like.liked = False
                 like.save()
+                print(f"Post unliked successfully by {user}")
                 return Response({"message": "Post unliked successfully"}, status=status.HTTP_200_OK)
         except Like.DoesNotExist:
             Like.objects.create(user=user, post=upload, liked=False, unliked=True)
+            print(f"Post unliked successfully by {user}")
             return Response({"message": "Post unliked successfully"}, status=status.HTTP_201_CREATED)
 
     def get_user_tiers(self, user):
@@ -741,31 +761,36 @@ class CommentPost(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, upload_id):
-        user = request.user
-
-        try:
-            upload = SharerUpload.objects.get(id=upload_id)
-        except SharerUpload.DoesNotExist:
-            return Response({"message": "Post does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        app_user = request.user
+        upload = get_object_or_404(SharerUpload, id=upload_id)
         
-        if not self.can_comment(user, upload):
-            return Response({"error": "You can only comment on posts with visibility matching your followed tiers"}, status=status.HTTP_403_FORBIDDEN)
+        sharer_instance = app_user.sharer
+        
+        if sharer_instance == upload.uploaded_by:
+            print("User is the uploader. Skipping visibility check.")
+            return self.handle_comment(app_user, upload, request)
+        
+        user_tiers = self.get_user_tiers(app_user)
+        post_visibility = self.get_post_visibility(upload)
 
-        if user == upload.uploaded_by:
-            print("User:", user)
-            print("Uploaded By:", upload.uploaded_by)
-            return self.handle_comment(user, upload, request)
-
-        serializer = CommentSerializer(data=request.data, context={'request': request, 'user': user, 'post': upload})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if self.check_visibility_match(post_visibility, user_tiers):
+            return self.handle_comment(app_user, upload, request)
+        else:
+            print("Visibility check failed. User cannot comment on the post.")
+            return Response({"error": "You can only comment on posts with visibility matching your followed tiers or posts of users you follow"}, status=status.HTTP_403_FORBIDDEN)
 
     def can_comment(self, user, upload):
         user_tiers = self.get_user_tiers(user)
         post_visibility = self.get_post_visibility(upload)
-        return self.check_visibility_match(post_visibility, user_tiers)
+        
+        if not self.check_visibility_match(post_visibility, user_tiers) and user != upload.uploaded_by:
+            return False
+        
+        # Check if the user follows the user who uploaded the post
+        return user.follows_tier1.filter(id=upload.uploaded_by.id).exists() or \
+            user.follows_tier2.filter(id=upload.uploaded_by.id).exists() or \
+            user.follows_tier3.filter(id=upload.uploaded_by.id).exists()
+
 
     def get_user_tiers(self, user):
         user_tiers = []
@@ -864,7 +889,6 @@ class CommentDeleteView(generics.DestroyAPIView):
         return False
 
 
-    
 class CommentListView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
@@ -881,15 +905,20 @@ class CommentListView(generics.ListCreateAPIView):
         user = self.request.user
 
         if user == upload.uploaded_by:
-            return Comment.objects.filter(post_id=upload_id).select_related('user')
+            print("User is the uploader. Returning all comments for the post.")
+            queryset = Comment.objects.filter(post_id=upload_id).select_related('user')
+            print("Comments:", queryset)
+            return queryset
 
-        user_tiers = self.get_user_tiers(user)
-        post_visibility = self.get_post_visibility(upload)
+        sharer_instance = user.sharer
         
-        if not self.check_visibility_match(post_visibility, user_tiers):
-            print("NOT FOLLOWED")
-            return Comment.objects.none()
-
+        if sharer_instance != upload.uploaded_by:
+            user_tiers = self.get_user_tiers(user)
+            post_visibility = self.get_post_visibility(upload)
+            
+            if not self.check_visibility_match(post_visibility, user_tiers):
+                print("Visibility check failed. User cannot view comments on the post.")
+                return Comment.objects.none()
         return Comment.objects.filter(post_id=upload_id).select_related('user')
 
     def perform_create(self, serializer):
@@ -900,11 +929,14 @@ class CommentListView(generics.ListCreateAPIView):
             return Response({"error": "Upload not found"}, status=status.HTTP_400_BAD_REQUEST)
 
         user = self.request.user
-        user_tiers = self.get_user_tiers(user)
-        post_visibility = self.get_post_visibility(upload)
-        
-        if not self.check_visibility_match(post_visibility, user_tiers):
-            return Response({"error": "You can only comment on posts from users you follow"}, status=status.HTTP_403_FORBIDDEN)
+        sharer_instance = user.sharer
+
+        if sharer_instance != upload.uploaded_by:
+            user_tiers = self.get_user_tiers(user)
+            post_visibility = self.get_post_visibility(upload)
+            
+            if not self.check_visibility_match(post_visibility, user_tiers):
+                return Response({"error": "You can only comment on posts with visibility matching your followed tiers or posts of users you follow"}, status=status.HTTP_403_FORBIDDEN)
         
         serializer.save(user=user, post=upload)
 
@@ -938,3 +970,4 @@ class CommentListView(generics.ListCreateAPIView):
                 if tier in user_tiers:
                     return True
         return False
+    

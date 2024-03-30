@@ -5,44 +5,47 @@ const instance = axios.create({
   baseURL: "http://127.0.0.1:8000/",
 });
 
-export const followSharer = (sharerId, tier) => async (dispatch) => {
+export const followSharer = (sharerId, tier, amount) => async (dispatch) => {
   try {
     dispatch({ type: SHARER_FOLLOW_REQUEST });
 
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const token = userInfo ? userInfo.access_token : null;
-
-    const config = token
-      ? {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      : {};
-
-    const response = await instance.post(`/api/follow-sharer/${sharerId}`, { tier }, config); // Pass tier in the request body
-
-    if (response.status === 200) { // Adjust the status code according to your API
-      dispatch({
-        type: SHARER_FOLLOW_SUCCESS,
-        payload: { sharerId },
-      });
-    } else {
-      const data = await response.data;
-      dispatch({
-        type: SHARER_FOLLOW_FAIL,
-        payload: data.detail || 'Failed to follow sharer',
-      });
+    if (!token) {
+      throw new Error("Authorization token not found");
     }
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const requestData = {
+      tier,
+      amount: parseFloat(amount),
+    };
+
+    const response = await axios.post(`/api/follow-sharer/${sharerId}`, requestData, config);
+
+    dispatch({
+      type: SHARER_FOLLOW_SUCCESS,
+      payload: response.data, // Adjust payload as needed based on API response
+    });
+
+    return response; // Return response if needed
   } catch (error) {
     dispatch({
       type: SHARER_FOLLOW_FAIL,
-      payload: 'Failed to follow sharer',
+      payload: error.response ? error.response.data.detail || error.response.data.message : error.message,
     });
+
+    throw error;
   }
 };
+
 
 export const unfollowSharer = (sharerId, tier) => async (dispatch) => {
   try {

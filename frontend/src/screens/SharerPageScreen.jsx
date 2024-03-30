@@ -31,12 +31,14 @@ function SharerPageScreen() {
   const [newUsername, setNewUsername] = useState("");
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
-  const [newVisibility, setNewVisibility] = useState("");
+  const [newVisibility, setNewVisibility] = useState([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [deletePostId, setDeletePostId] = useState(null);
   const [coverPhoto, setCoverPhoto] = useState(null);
   const [editedPosts, setEditedPosts] = useState({});
   const [editedPostsFormatted, setEditedPostsFormatted] = useState({});
+  const [showUpdateConfirmation, setShowUpdateConfirmation] = useState(false); // State for update confirmation modal
+  const [editingPostId, setEditingPostId] = useState(null); // State to track the post being edited
 
   const CATEGORY_CHOICES = [
     { value: "", label: "Select a category" },
@@ -63,6 +65,13 @@ function SharerPageScreen() {
       label: "Business & Entrepreneurship",
     },
     { value: "Parenting & Family", label: "Parenting & Family" },
+  ];
+
+  const VISIBILITY_CHOICES = [
+    ["NON_FOLLOWER", "Preview Content"],
+    ["FOLLOWERS_TIER1", "BRONZE - Tier"],
+    ["FOLLOWERS_TIER2", "SILVER - Tier"],
+    ["FOLLOWERS_TIER3", "GOLD - Tier"],
   ];
 
   useEffect(() => {
@@ -105,23 +114,10 @@ function SharerPageScreen() {
     }
   };
 
-  const handleUpdatePost = async (postId) => {
-    try {
-      await dispatch(
-        editSharerPost(postId, {
-          title: newTitle || undefined,
-          description: newDescription || undefined,
-          visibility: newVisibility || undefined,
-        })
-      );
-      dispatch(listSharerPosts());
-      setNewTitle("");
-      setNewDescription("");
-      setNewVisibility("");
-      setEditedPosts((prev) => ({ ...prev, [postId]: true }));
-    } catch (error) {
-      console.error("Error updating post:", error);
-    }
+  const handleUpdatePost = async (postId, e) => {
+    e.preventDefault(); // Prevent default form submission behavior
+    setEditingPostId(postId); // Set post ID being edited
+    setShowUpdateConfirmation(true); // Show confirmation modal
   };
 
   const handleCategoryChange = (e) => {
@@ -129,7 +125,14 @@ function SharerPageScreen() {
   };
 
   const handleVisibilityChange = (e) => {
-    setNewVisibility(e.target.value);
+    const { value, checked } = e.target;
+    if (checked) {
+      setNewVisibility((prevVisibility) => [...prevVisibility, value]); // Add to array
+    } else {
+      setNewVisibility((prevVisibility) =>
+        prevVisibility.filter((item) => item !== value)
+      ); // Remove from array
+    }
   };
 
   if (loading || !userProfile) {
@@ -158,6 +161,30 @@ function SharerPageScreen() {
 
   const handleCancelDelete = () => {
     setShowDeleteConfirmation(false);
+  };
+
+  const handleConfirmUpdate = async () => {
+    setShowUpdateConfirmation(false); 
+    try {
+      await dispatch(
+        editSharerPost(editingPostId, {
+          title: newTitle || undefined,
+          description: newDescription || undefined,
+          visibility: JSON.stringify(newVisibility) || undefined,
+        })
+      );
+      dispatch(listSharerPosts());
+      setNewTitle("");
+      setNewDescription("");
+      setNewVisibility("");
+      setEditedPosts((prev) => ({ ...prev, [editingPostId]: true }));
+    } catch (error) {
+      console.error("Error updating post:", error);
+    }
+  };
+
+  const handleCancelUpdate = () => {
+    setShowUpdateConfirmation(false); 
   };
 
   return (
@@ -301,8 +328,8 @@ function SharerPageScreen() {
               ))}
             </div>
           )}
-          <form onSubmit={() => handleUpdatePost(post.id)}>
-            <div> 
+          <form onSubmit={(e) => handleUpdatePost(post.id, e)}>
+            <div>
               <h9>New Title: </h9>
               <input
                 type="text"
@@ -311,22 +338,31 @@ function SharerPageScreen() {
               />
             </div>
             <div>
-            <h9>New Description: </h9>
+              <h9>New Description: </h9>
               <textarea
                 value={newDescription || post.description}
                 onChange={(e) => setNewDescription(e.target.value)}
               />
             </div>
             <div>
+              {/* New visibility */}
               <label>New Visibility:</label>
-              <select
-                value={newVisibility || post.visibility}
-                onChange={handleVisibilityChange}
-              >
-                <option value="">Select visibility</option>
-                <option value="ALL">All (followers and non-followers)</option>
-                <option value="FOLLOWERS">Followers only</option>
-              </select>
+              <div>
+                {VISIBILITY_CHOICES.map((choice) => (
+                  <div key={choice[0]}>
+                    {" "}
+                    {/* Ensure each key is unique */}
+                    <input
+                      type="checkbox"
+                      name="visibility"
+                      value={choice[0]}
+                      onChange={handleVisibilityChange}
+                      checked={newVisibility.includes(choice[0])} // Check if value is included in newVisibility array
+                    />
+                    <label>{choice[1]}</label>
+                  </div>
+                ))}
+              </div>
             </div>
             <button type="submit" className="btn btn-primary mt-3">
               Update Post
@@ -338,10 +374,18 @@ function SharerPageScreen() {
           </div>
         </div>
       ))}
+
+      {showUpdateConfirmation && (
+        <div className="confirmation-overlay">
+          <div className="confirmation-modal">
+            <p>Are you sure you want to update this post?</p>
+            <button onClick={handleConfirmUpdate}>Yes</button>
+            <button onClick={handleCancelUpdate}>No</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 export default SharerPageScreen;
-
-

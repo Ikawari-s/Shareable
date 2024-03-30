@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 import { DetailSharers, getSharerPostCount } from "../actions/sharerActions";
 import SharerLatestPost from "./SharerLatestPost";
-import { followSharer, unfollowSharer } from "../actions/followActions";
+import { followSharer, unfollowSharer } from "../actions/followActions"; // Import the followSharer action creator
 import {
   FetchSharerRatingsComponent,
   PostSharerRatingsComponent,
@@ -17,13 +17,14 @@ import TopDonor from "../components/Topdonor";
 import TierOneLatest from "../components/TierOneLatest";
 import TierTwoLatest from "../components/TierTwoLatest";
 import TierThreeLatest from "../components/TierThreeLatest";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 const SharerDetail = ({
   sharer,
   loading,
   error,
   DetailSharers,
-  followSharer,
+  followSharer, // Connect the followSharer action creator
   unfollowSharer,
   getSharerPostCount,
 }) => {
@@ -32,7 +33,12 @@ const SharerDetail = ({
   const [isFollowing, setIsFollowing] = useState(false);
   const [userHasRated, setUserHasRated] = useState(false);
   const [currentTier, setCurrentTier] = useState(null);
+  const [paypalLoaded, setPaypalLoaded] = useState(false);
+  const [followTier, setFollowTier] = useState(null);
+  const [showPaypalModal, setShowPaypalModal] = useState(false);
+  const [selectedAmount, setSelectedAmount] = useState(0); // State to store the selected amount
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (
@@ -43,6 +49,59 @@ const SharerDetail = ({
       navigate("/sharer-page");
     }
   }, [userInfo, id, navigate]);
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src =
+      "https://www.paypal.com/sdk/js?client-id=ATyV_k4Cl0uXb3m5rslF-APNEeMSqlO2xp42GOJoMOb7mzeguFi2028uPwa5UOTSbN8U7rjnKpOYFQT8&currency=USD";
+    script.async = true;
+    script.onload = () => setPaypalLoaded(true);
+    document.body.appendChild(script);
+
+    return () => {
+      if (script.parentNode === document.body) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
+
+  const createOrder = (data, actions) => {
+    const amount = selectedAmount;
+    return actions.order.create({
+      purchase_units: [
+        {
+          amount: {
+            value: amount,
+            currency_code: "USD",
+          },
+        },
+      ],
+    });
+  };
+  
+  const handleCreateOrder = (data, actions) => {
+    return createOrder(data, actions);
+  };
+
+  const onApprove = (data, actions) => {
+    return actions.order.capture().then(() => {
+      followSharer(id, followTier, selectedAmount)
+        .then(() => {
+          console.log("Sharer followed successfully");
+          // Update userInfo in local storage
+          const updatedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
+          updatedUserInfo.followed_sharers[followTier].push(parseInt(id));
+          localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
+          window.location.reload(); // Refresh the page
+        })
+        .catch((error) => {
+          console.error("Error following sharer:", error);
+        });
+    });
+  };
+  
+  
+
 
   useEffect(() => {
     DetailSharers(id);
@@ -62,72 +121,42 @@ const SharerDetail = ({
     setIsFollowing(followedSharers.includes(parseInt(id)));
   }, [id, userInfo]);
 
-  const handleFollowToggle = (tier) => {
-    const updatedUserInfo = userInfo ? { ...userInfo } : {};
-    updatedUserInfo.followed_sharers = updatedUserInfo.followed_sharers || {};
-    const idInt = parseInt(id);
+const handleTierButtonClick = (tier, amount) => {
+  console.log("Selected Amount:", amount);
+  console.log("Tier:", tier);
+  console.log("Sharer ID:", id);
+  setCurrentTier(tier); // Update the currentTier state
+  setFollowTier(tier);
+  setSelectedAmount(amount);
+  setShowPaypalModal(true);
+};
 
-    const isCurrentlyFollowing = Object.values(updatedUserInfo.followed_sharers)
-      .flatMap((t) => t)
-      .includes(idInt);
-
-    const updatedFollowedSharers = { ...updatedUserInfo.followed_sharers };
-    Object.keys(updatedFollowedSharers).forEach((t) => {
-      updatedFollowedSharers[t] = updatedFollowedSharers[t].filter(
-        (sharerId) => sharerId !== idInt
-      );
-    });
-
-    if (!isCurrentlyFollowing) {
-      updatedFollowedSharers[tier] = [...updatedFollowedSharers[tier], idInt];
-    }
-
-    setIsFollowing(!isFollowing);
-    setCurrentTier(tier);
-    updatedUserInfo.followed_sharers = updatedFollowedSharers;
-    localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
-
-    if (isCurrentlyFollowing) {
-      unfollowSharer(id, tier);
-    } else {
-      followSharer(id, tier);
-    }
-  };
+  
 
   const handleUnfollow = () => {
-    console.log("ID:", id);
-  
-    // Extract followed sharers data from userInfo
     const followedSharers = userInfo?.followed_sharers;
-  
-    // Ensure followedSharers exists and has tiers
+
     if (!followedSharers || Object.keys(followedSharers).length === 0) {
       console.error("Followed sharers data is missing or empty.");
       return;
     }
-  
+
     let currentTier = null;
-  
-    // Check each tier to find the one containing the current id
+
     Object.entries(followedSharers).forEach(([tier, ids]) => {
       if (ids.includes(parseInt(id))) {
         currentTier = tier;
       }
     });
-  
-    console.log("Current Tier:", currentTier);
-  
-    // Ensure currentTier is set properly
+
     if (!currentTier) {
       console.error("Current Tier is not set.");
       return;
     }
-  
-    // Unfollow the sharer from the current tier
+
     unfollowSharer(id, currentTier);
     setIsFollowing(false);
-  
-    // Remove the sharer id from the followed sharers list in userInfo
+
     const updatedUserInfo = { ...userInfo };
     updatedUserInfo.followed_sharers[currentTier] =
       updatedUserInfo.followed_sharers[currentTier].filter(
@@ -135,7 +164,6 @@ const SharerDetail = ({
       );
     localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
   };
-  
 
   return (
     <div>
@@ -180,25 +208,43 @@ const SharerDetail = ({
               <>
                 <Button
                   variant="success"
-                  onClick={() => handleFollowToggle("tier1")}
+                  onClick={() => handleTierButtonClick("tier1", 5)}
                 >
                   Tier 1
                 </Button>
                 <Button
                   variant="success"
-                  onClick={() => handleFollowToggle("tier2")}
+                  onClick={() => handleTierButtonClick("tier2", 10)}
                 >
                   Tier 2
                 </Button>
                 <Button
                   variant="success"
-                  onClick={() => handleFollowToggle("tier3")}
+                  onClick={() => handleTierButtonClick("tier3", 20)}
                 >
                   Tier 3
                 </Button>
               </>
             )}
+            {/* PayPal button section */}
+            {showPaypalModal && followTier && paypalLoaded && (
+              <PayPalScriptProvider
+                options={{
+                  "client-id": "ATyV_k4Cl0uXb3m5rslF-APNEeMSqlO2xp42GOJoMOb7mzeguFi2028uPwa5UOTSbN8U7rjnKpOYFQT8",
+                  currency: "USD",
+                }}
+              >
+                <div>
+                  <PayPalButtons
+                    style={{ layout: "horizontal" }}
+                    createOrder={createOrder}
+                    onApprove={onApprove}
+                  />
+                </div>
+              </PayPalScriptProvider>
+            )}
           </div>
+
           <div>
             {isFollowing ? (
               <div>
@@ -260,7 +306,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   DetailSharers,
-  followSharer,
+  followSharer, // Connect the followSharer action creator
   unfollowSharer,
   getSharerPostCount,
 };

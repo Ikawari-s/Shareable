@@ -33,17 +33,17 @@ function PreviewContent({ sharerId }) {
           <div key={post.id}>
             <h3>{post.title}</h3>
             <p>{post.description}</p>
-            {post.image && post.image.map((image, index) => (
-              <img key={index} src={image} alt={`Preview ${index}`} />
+            {post.images && post.images.map((image, index) => (
+              <img key={index} src={image.image} alt={`Preview ${index}`} />
             ))}
-            {post.video && post.video.map((video, index) => (
+            {post.videos && post.videos.map((video, index) => (
               <video key={index} controls>
-                <source src={video} type="video/mp4" /> 
+                <source src={video.video} type="video/mp4" /> 
                 Your browser does not support the video tag.
               </video>
             ))}
-            {post.file && post.file.map((file, index) => (
-              <a key={index} href={file}>Download File {index + 1}</a>
+            {post.files && post.files.map((file, index) => (
+              <a key={index} href={file.file}>Download File {index + 1}</a>
             ))}
           </div>
         ))

@@ -33,6 +33,7 @@ from sharer.serializers import *
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.cache import cache
 from datetime import datetime, timedelta
+from django.shortcuts import get_object_or_404
 User = get_user_model()
 
 
@@ -355,29 +356,45 @@ class SharerChecker(APIView):
         else:
             return Response({'error': 'User is not authenticated.'}, status=status.HTTP_401_UNAUTHORIZED)
 
+# CONSULT THE PAYMENT // GET THE SHARER_ID USING THE SHARER FIELD ON THE models as bridge
+
 
 class FollowSharer(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         sharer_id = self.kwargs.get('sharer_id')
-        tier = request.data.get('tier') 
+        tier = request.data.get('tier')
+        amount_provided = request.data.get('amount')
+
         try:
-            sharer = Sharer.objects.get(pk=sharer_id)
+            print(f"Sharer ID: {sharer_id}")  # Print sharer_id before processing
+            sharer = get_object_or_404(Sharer, pk=sharer_id)
             user = request.user
 
+            try:
+                amount_provided = int(amount_provided)
+            except ValueError:
+                return Response({'detail': 'Amount must be an integer'}, status=status.HTTP_400_BAD_REQUEST)
 
-            if tier == 'tier1':
-                user.follows_tier2.remove(sharer)
-                user.follows_tier3.remove(sharer)
-            elif tier == 'tier2':
-                user.follows_tier1.remove(sharer)
-                user.follows_tier3.remove(sharer)
-            elif tier == 'tier3':
-                user.follows_tier1.remove(sharer)
-                user.follows_tier2.remove(sharer)
+            tier_amounts = {'tier1': 5, 'tier2': 10, 'tier3': 20}
 
+            required_amount = tier_amounts.get(tier)
+            if amount_provided != required_amount:
+                return Response({'detail': f'You must provide {required_amount} to follow at {tier} tier'}, status=status.HTTP_400_BAD_REQUEST)
 
+            # Check if user is already following any tier of the sharer
+            if user.follows_tier1.filter(pk=sharer_id).exists() or \
+               user.follows_tier2.filter(pk=sharer_id).exists() or \
+               user.follows_tier3.filter(pk=sharer_id).exists():
+                raise ValidationError('You are already following this sharer')
+
+            # Remove user from all tiers for the sharer
+            user.follows_tier1.remove(sharer)
+            user.follows_tier2.remove(sharer)
+            user.follows_tier3.remove(sharer)
+
+            # Add user to the selected tier for the sharer
             if tier == 'tier1':
                 user.follows_tier1.add(sharer)
             elif tier == 'tier2':
@@ -389,11 +406,19 @@ class FollowSharer(generics.GenericAPIView):
 
             user.save()
 
+            dashboard, _ = Dashboard.objects.get_or_create(sharer=sharer)
+            print(f"Dashboard ID: {dashboard.id}") 
+            print(f"Sharer's Dashboard ID: {sharer.dashboard.id}") 
+            dashboard.total_earnings += amount_provided
+            # Calculate the twenty percent less earning
+            dashboard.twenty_percent_less_earning_send = dashboard.total_earnings - (dashboard.total_earnings * Decimal('0.20'))
+            dashboard.save()
+
             serializer = SharerSerializer(sharer)
 
             return Response({'detail': f'Successfully followed sharer in {tier}', 'sharer': serializer.data}, status=status.HTTP_200_OK)
-        except Sharer.DoesNotExist:
-            return Response({'detail': 'Sharer not found'}, status=status.HTTP_404_NOT_FOUND)
+        except ValueError:
+            return Response({'detail': 'Invalid sharer ID'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UnfollowSharer(generics.GenericAPIView):
@@ -401,20 +426,13 @@ class UnfollowSharer(generics.GenericAPIView):
 
     def delete(self, request, *args, **kwargs):
         sharer_id = self.kwargs.get('sharer_id')
-        tier = request.data.get('tier')  
         try:
             sharer = Sharer.objects.get(pk=sharer_id)
-            
 
-            if tier == 'tier1':
-                request.user.follows_tier1.remove(sharer)
-            elif tier == 'tier2':
-                request.user.follows_tier2.remove(sharer)
-            elif tier == 'tier3':
-                request.user.follows_tier3.remove(sharer)
-            else:
-                return Response({'detail': 'Invalid tier provided'}, status=status.HTTP_400_BAD_REQUEST)
-
+            # Remove user from all tiers for the sharer
+            request.user.follows_tier1.remove(sharer)
+            request.user.follows_tier2.remove(sharer)
+            request.user.follows_tier3.remove(sharer)
             request.user.save()
 
             serializer = SharerSerializer(sharer)
@@ -422,7 +440,8 @@ class UnfollowSharer(generics.GenericAPIView):
             return Response({'detail': 'Successfully unfollowed sharer', 'sharer': serializer.data}, status=status.HTTP_200_OK)
         except Sharer.DoesNotExist:
             return Response({'detail': 'Sharer not found'}, status=status.HTTP_404_NOT_FOUND)
-        
+
+
 
 class FollowedSharerList(generics.ListAPIView):
     serializer_class = SharerSerializer
