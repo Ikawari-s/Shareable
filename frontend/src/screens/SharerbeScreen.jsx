@@ -56,23 +56,24 @@ function SharerbeScreen() {
     <div>
       <div className="container brap">
         <div
-          className="card custom-card-background text-white"
-          style={{ backgroundColor: "black", width: "40rem", margin: "auto" }}
+          style={{ backgroundColor: "transparent", width: "35rem", margin: "auto", border: 'solid rgba(255,255,255,0.5) 1px', borderRadius: '.5rem', padding: '1rem' }}
         >
-          <div className="card-header">
-            <h3 className="text-center">Let's Name your Page!</h3>
+          <div style={{padding: '2rem'}}>
+            <h1>Let's Name your Page!</h1>
+            <p style={{paddingBottom: '2.5rem'}}>Crafting the perfect title sets the tone for your page's identity and purpose. Find the ideal name to make your page stand out!</p>
+            <label style={{paddingBottom: '0.3rem'}}>Page Name</label>
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Page Name</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Page Name"
                   value={pageName}
                   onChange={(e) => setPageName(e.target.value)}
+                  id="page-name"
                 />
               </Form.Group>
               <div className="text-center">
-                <Button type="submit" variant="primary">
+                <Button id='paw' type="submit" variant="primary">
                   Be A Sharer!  
                 </Button>
               </div>

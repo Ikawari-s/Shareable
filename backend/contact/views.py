@@ -35,9 +35,12 @@ class SubmitContactRequestView(viewsets.ModelViewSet):
         Request Type: {contact_data['request_type']}
         Email: {contact_data['email']}
         Subject: {contact_data['subject']}
-        Description: {contact_data['description']}
-        Attached file: {contact_data['attachment'].name}
-        
+        Description: {contact_data['description']}"""
+
+        if 'attachment' in contact_data and contact_data['attachment']:
+            message += f"\nAttached file: {contact_data['attachment'].name}"
+
+        message += """
         We will get back to you as soon as possible.
 
         Best regards,
@@ -49,9 +52,8 @@ class SubmitContactRequestView(viewsets.ModelViewSet):
 
         email_message = EmailMessage(subject, message, from_email, to_email)
 
-        if contact_data['attachment']:
+        if 'attachment' in contact_data and contact_data['attachment']:
             attachment = contact_data['attachment']
             email_message.attach(attachment.name, attachment.read(), attachment.content_type)
 
         email_message.send(fail_silently=False)
-

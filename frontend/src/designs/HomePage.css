@@ -1,6 +1,8 @@
 .waw{
     background-image: linear-gradient(to bottom, #0b1550, #014981);
-    /* background-color: #3a6481; */
+    background-size: cover;
+    background-attachment: fixed;
+    background-color: #1f1f1f;
     margin-bottom: -1rem;
     min-height: 100vh;
     padding: 2rem 0rem 2rem 0;
@@ -9,6 +11,15 @@
 .brap{
     padding-top: 3rem;
     /* padding-left: 3rem; */
+}
+
+#searc:hover{   
+    color: white;
+    border-color: white;
+}
+#searc:focus{
+    color: white;
+    border-color: white;
 }
 
 #da-pics{
@@ -59,3 +70,142 @@
     margin: -.5rem;
     margin-top: -1rem;
 }
+
+#prof-info{
+    width: 36rem;
+    /* background-color: red; */
+    padding: 2rem 6rem 2rem 2rem !important;
+    margin: 0 3rem 0rem 12rem;
+    border-right: solid rgba(255,255,255,0.5) 1px;
+}
+
+#displayName{
+    color: #747474;
+    padding: .6rem 1rem;
+    width: auto;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: .02rem;
+    background-color: white;
+    border-radius: 20px;
+}
+
+#displayName:focus{
+    color: #333333;
+}
+
+#displayName:hover{
+    color: #333333;
+}
+
+#emal{
+    color: #747474;
+    padding: .6rem 1rem;
+    width: auto;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: .02rem;
+    background-color: white;
+    border-radius: 20px;
+}
+
+#page-name{
+    color: #747474;
+    padding: .6rem 1rem;
+    width: 28rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: .02rem;
+    background-color: white;
+    border-radius: 20px;
+}
+
+#paswrd{
+    color: #333333;
+    padding: .6rem 1rem;
+    width: 28rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: .02rem;
+    background-color: white;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+}
+
+#page-name:focus{
+    color: #333333;
+}
+
+#page-name:hover{
+    color: #333333;
+}
+
+.form-control::placeholder {
+    color: #747474 !important;
+}
+
+
+#country{
+    margin: 0.4rem 0 1.5rem 0;
+    color: #333333;
+    padding: .6rem 1rem 0.6rem .7rem;
+    width: auto;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: .02rem;
+    background-color: white;
+    border-radius: 20px;
+}   
+
+#country:placeholder{
+    color: #747474;
+}
+
+#country option{
+    color: #333333;
+    background: transparent;
+    margin-top: 1rem !important;
+    border-radius: 20px !important;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+#country:focus{
+    color: #333333;
+}
+
+#country:hover{
+    color: #333333;
+}
+
+#country::-webkit-scrollbar {
+    scrollbar-width: 0;
+  }
+
+#paw{
+   border-radius: 6.25rem;
+   border-color: #084d6e;
+   background-color: #084d6e;
+}
+
+#paw:hover{
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+    border-color: #0071bd;
+    background-color: #0071bd;
+ }
+
+ #paw:active{
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+    border-color: #e83283;
+    background-color: #e83283;
+ }
+
+ .dange{
+    /* background-color: #0071bd; */
+    width: 30rem;
+    padding: 0 4rem 4rem 4rem;
+ }

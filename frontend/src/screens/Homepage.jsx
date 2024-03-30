@@ -90,6 +90,7 @@ function Homepage({ sharerList, listSharers }) {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="form-control"
+              id="searc"
             />
           </div>
         </div>
@@ -195,7 +196,7 @@ function Homepage({ sharerList, listSharers }) {
           {!groupedSharers &&
             sortedSharers.map((sharer) => (
               <div className="col-md-3 mb-3" key={sharer.id}>
-                <a href={`/homepage/sharers/${sharer.id}`} style={{ textDecoration: 'none', color: 'inherit', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '10ch', whiteSpace: 'nowrap' }}>
+                <a href={`/homepage/sharers/${sharer.id}`} style={{ textDecoration: 'none', color: 'inherit', overflow: 'scroll', whiteSpace: 'nowrap' }}>
                 <Card id="kard">
                   <div id="rates">
                   {sharer.average_rating !== null

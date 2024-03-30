@@ -1,0 +1,271 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+
+.bg {
+    background: linear-gradient(to right, #1F456E, #151E3D);
+    position: relative;
+    width: 100%;
+    height: 105vh;
+    display: flex;
+    padding-bottom: 48rem;
+
+}
+
+.logo-contact {
+    background-image: url('images/sharelogocontact.png');
+    height: 15rem;
+    width: 15rem;
+    background-size: cover; 
+    margin-left: 75rem;
+    margin-top: 3rem;
+    z-index: 5;
+    position: relative;
+    opacity: 0; 
+    animation: slideAndFadeIn 1s ease forwards;
+    transform: translateY(-10rem); 
+    position: absolute;
+}
+
+@keyframes slideAndFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px); 
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0); 
+    }
+}
+
+
+
+.image-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('images/triangletransparent.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    animation: slideLeftToRight 0.5s linear forwards;
+    animation-delay: 0s;
+    pointer-events: none;
+
+}
+
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateX(-10%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.box {
+    position: relative;
+    width: 45rem;
+    height: 3rem;
+    margin-left: 3rem;
+    margin-bottom: 1rem;
+    border-radius: 2rem;
+    z-index: 1;
+    background-color: #d4d8ed;
+    border: none;
+    opacity: 0;
+    animation: fadeInSlide 0.5s ease-in-out forwards;
+}
+
+input.box,
+textarea.box {
+    padding-left: 1.5rem; 
+    border: none;
+}
+
+
+.box input[type="file"] {
+    margin-top: 0.5rem;
+    width: calc(100% - 2rem);
+} 
+
+.box select {
+    width: calc(100% - 2rem);
+    height: 100%;
+    padding-left: 1rem;
+    border: none;
+    background-color: transparent;
+    color: #1F456E;
+}
+
+.box:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    width: 47rem;
+    transition: width 0.3s ease;
+}
+
+@keyframes slideLeftToRight {
+    0% {
+        background-position: left 0;
+    }
+    100% {
+        background-position: calc(25% + 4rem) 0;
+    }
+}
+
+#fx {
+    border: none;
+    background-color: #03254c;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    cursor: pointer;
+    margin-left: 15rem;
+    height: 3rem;
+    width: 6rem;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    z-index: 2; 
+    animation: fadeInSlide 0.5s;
+}
+
+#fx:hover {
+    background-color: #1167b1;
+    transform: translateY(-2px);
+}
+
+#fk {
+    border: none;
+    background-color: #006CA5;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    cursor: pointer;
+    height: 3rem;
+    width: 9rem;
+    margin-left: 15rem;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    z-index: 2; 
+    animation: fadeInSlide 0.5s;
+}
+
+#fk:hover {
+    background-color: #ffeacc;
+    transform: translateY(-2px);
+}
+
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateX(-10%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.bg h6 {
+    color: #d0efff !important; 
+    font-size: 0.8rem!important; 
+    animation: fadeIn 1.2s ease-in-out forwards  !important;
+    font-family: 'Poppins', sans-serif;
+    margin-left: 5rem;
+
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+.bg h2 {
+    color: #d0efff !important; 
+    font-size: 1.8rem!important; 
+    animation: fadeIn 1.2s ease-in-out forwards  !important;
+    font-family: 'Poppins', sans-serif;
+    margin-left: 5rem;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+#labl {
+    color: #ffe0b3; 
+    font-size: 0.88rem; 
+    margin-left: 5rem; 
+    font-family: 'Poppins', sans-serif;
+    animation: fadeIn 2s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.form-control-file{
+    display: inline-block;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #0077B6; 
+    padding: .5rem 6rem;
+    border-radius: 2rem;
+    transition: background-color 0.3s ease;
+    position: absolute;
+    top: -0.5rem;
+    left: 0;
+    width: 45rem !important;
+    height: 100%; 
+    text-align: center; 
+}
+
+.form-control-file:hover {
+    background-color: #2C7E8B; 
+    width: 47rem !important;
+}
+
+.form-control-file::before {
+    content: 'Choose File';
+}
+
+.form-control-file:focus {
+    outline: none;
+}
+
+.error-message {
+    color: #ff6666; 
+    margin-top: 10px;
+}
+
+.success-message {
+    color: #66cc66; 
+    margin-top: 10px;
+}
+
+.submit-status-container {
+    position: absolute;
+    bottom: 0;
+    width: 50%;
+    box-sizing: border-box;
+    margin-left: 4rem;
+  }
+

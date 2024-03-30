@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { Button, Form } from "react-bootstrap";
 import { useDispatch } from 'react-redux'; 
 import { changePassword } from '../actions/userActions';
+import '../designs/HomePage.css';
 
 function UserProfileAccount() {
   const navigate = useNavigate();
@@ -39,66 +40,65 @@ function UserProfileAccount() {
 
   return (
     <form className="settings-form" onSubmit={handleSave}>
-      <div className="title">
-        <h1 className="text-white">
-          <b>User</b>
-        </h1>
-        <div className="section-container">
-          <div className="d-flex justify-content-around">
+        <div className="section-container" style={{position: 'absolute', left: '50rem', top: '3.6rem'}}>
+          {/* <div className="d-flex justify-content-around">
             <Nav.Link id="itaas" as={Link} to="/userprofile">
               Profile Information
             </Nav.Link>
             <Nav.Link id="itaas" as={Link} to="/userprofileaccount">
               Account
             </Nav.Link>
-          </div>
-          <div
-            className="card h-10 h5-1 mb-1"
-            className="card custom-card-background text-white"
+          </div> */}
+          {/* <div
+            className="card custom-card-background text-white card h-10 h5-1 mb-1"
             style={{ backgroundColor: "black", width: "50rem", margin: "auto" }}
-          >
-            <h1 className="profInfo">Profile Information</h1>
-            <div style={{ width: "47rem", margin: "20px" }}>
+          > */}
+            <h1 style={{lineHeight: '2.5rem'}} className="profInfo">Change Password</h1>
+            <div style={{ width: "31.3rem", margin: "20px", }}>
               <div>
                 <div>
+                  <label>Replace your current password with a new one</label> <br /><br /><br />
                   <label>Current password</label>
                   <Form.Group className="mb-3" controlId="formBasicEmail">
                     <input
                       className="bar"
                       type="password"
-                      placeholder="Current password"
+                      placeholder="Enter current password"
                       value={currentPassword}
+                      style={{ fontSize: '1rem', fontWeight: 400, lineHeight: 1.5, letterSpacing: '.02rem', padding: '.6rem 1rem' }}
                       onChange={(e) => setCurrentPassword(e.target.value)}
                     />
                   </Form.Group>
                 </div>
                 <div>
-                  <label>New password</label>
+                  <label>Enter new password</label>
                   <Form.Group className="mb-3" controlId="formBasicEmail">
                     <input
                       className="bar"
                       type="password"
                       placeholder="New password"
                       value={newPassword}
+                      style={{ fontSize: '1rem', fontWeight: 400, lineHeight: 1.5, letterSpacing: '.02rem', padding: '.6rem 1rem' }}
                       onChange={(e) => setNewPassword(e.target.value)}
                     />
                   </Form.Group>
                 </div>
                 <div>
-                  <label>Confirm password</label>
+                  <label>Confirm new password</label>
                   <Form.Group className="mb-3" controlId="formBasicEmail">
                     <input
                       className="bar"
                       type="password"
                       placeholder="Confirm password"
                       value={confirmPassword}
+                      style={{ fontSize: '1rem', fontWeight: 400, lineHeight: 1.5, letterSpacing: '.02rem', padding: '.6rem 1rem' }}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                   </Form.Group>
                 </div>
                 <Button
                   className="save-btn"
-                  style={{ width: "6rem", margin: "30px" }}
+                  id="paw"
                   variant="primary"
                   type="submit"
                 >
@@ -108,8 +108,7 @@ function UserProfileAccount() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        {/* </div> */}
     </form>
   );
 }

@@ -51,13 +51,18 @@ function ChangePassword() {
 
   return (
     <div className="container brap">
-      <h1>Change Password</h1>
+      <div className="dange">
+      <h1 style={{lineHeight: '2.5rem'}} className="profInfo">Change Password</h1>
+            <div style={{ width: "31.3rem", margin: "20px", }}>
+              <label>Replace your current password with a new one</label> <br /><br />
+            </div>      
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="currentPassword">
           <Form.Label>Current Password</Form.Label>
           <Form.Control
             type="password"
             placeholder="Enter current password"
+            id='paswrd'
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
             required
@@ -68,6 +73,7 @@ function ChangePassword() {
           <Form.Control
             type="password"
             placeholder="Enter new password"
+            id='paswrd'
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             required
@@ -78,16 +84,18 @@ function ChangePassword() {
           <Form.Control
             type="password"
             placeholder="Confirm new password"
+            id='paswrd'
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
         </Form.Group>
-        <Button variant="primary" type="submit" disabled={loading}>
+        <Button id='paw' variant="primary" type="submit" disabled={loading}>
           {loading ? 'Changing...' : 'Change Password'}
         </Button>
       </Form>
       {message && <p>{message}</p>}
+      </div>
     </div>
   );
 }

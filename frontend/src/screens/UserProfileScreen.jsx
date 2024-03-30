@@ -3,7 +3,9 @@ import { Nav, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUserProfile } from '../actions/userActions';
-import { profile } from '../actions/profileActions'; // Import the profile action
+import { profile } from '../actions/profileActions'; //
+import '../designs/HomePage.css';
+import UserProfileAccount from '../screens/UserProfileAccount.jsx';
 
 const localStorageValue = localStorage.getItem("userInfo");
 const userInfo = localStorageValue ? JSON.parse(localStorageValue) : null;
@@ -82,30 +84,33 @@ const Settings = () => {
   };
   
   return (
-    <form className="settings-form">
-      <div className="title">
-        <h1 className="text-white"><b>User</b></h1>
+  <div className="waw">
+    <form id="prof-info" className="settings-form">
         <div className="section-container">
-          <div className="d-flex justify-content-around">
+          {/* <div className="d-flex justify-content-around">
             <Nav.Link id="itaas" as={Link} to="/userprofile">Profile Information</Nav.Link>
             <Nav.Link id="itaas" as={Link} to="/userprofileaccount">Account</Nav.Link>
-          </div>
-          <div className="card h-10 h5-1 mb-1 custom-card-background text-white" style={{ backgroundColor: "black", width: "50rem", margin: "auto" }}>
-            <h1 className="profInfo">Profile Information</h1>
-            <div style={{ width: "47rem", margin: "20px" }}>
-              <label>Profile</label>
-              <div>
-                <img src={profilePicture} className="card-img-top" alt="..." id="profile-image"/>
+          </div> */}
+          {/* <div className="card h-10 h5-1 mb-1 custom-card-background text-white" style={{ backgroundColor: "black", width: "50rem", margin: "auto" }}> */}
+          <div style={{borderBottom: 'solid rgba(255,255,255,0.5) 1px', paddingBottom: '1.5rem'}}>
+            <h1>Profile Information</h1>
+            <p style={{width: '28rem'}}>Keep your personal details private. Information you add here is visible to anyone who can view your profile.</p>
+            <div>
+              <div style={{ marginBottom: '2rem'}}>
+                <img 
+                src={profilePicture}
+                style={{borderRadius: '50%', width: '3rem', height: '3rem', marginRight: '1rem', position: 'relative'}}
+                />
                 <input type="file" accept="image/*" onChange={handleProfilePictureUpload} />
               </div>
               <label>Display name</label>
-              <div><input type="text" id="displayName" value={username} onChange={handleNameChange} /></div>
+              <div><input type="text" className="form-control" id="displayName" value={username} onChange={handleNameChange} /></div>
               <label>Email</label>
-              <div><input type="email" id="email" value={userInfo.user_info.email} disabled /></div>
-              <label>Country of Residence</label>
+              <div><input type="email" id="emal" value={userInfo.user_info.email} disabled /></div>
+              <label>Country of Residence</label>   
               <div>
                 <select id="country" value={selectedCountry} onChange={handleCountryChange}>
-                  <option value="">Please select a country...</option>
+                  <option value="">Please select a country</option>
                   {Countries.map((country) => (
                     <option key={country.id} value={country.name}>
                       {country.name}
@@ -113,13 +118,13 @@ const Settings = () => {
                   ))}
                 </select>
               </div>
-              <Button className="save-btn" style={{ width: "6rem", margin: "30px" }} variant="primary" onClick={handleSave}>Save</Button>
+              <Button className="save-btn" id='paw' variant="primary" onClick={handleSave}>Save</Button>
             </div>
           </div>
         </div>
         <br />
-        <div className="card h-10 h5-1 mb-1 custom-card-background text-white" style={{ backgroundColor: "black", width: "50rem", margin: "auto" }}>
-          <div className="membership-container">
+        <div>
+          <div>
             <h4>Memberships ✓</h4>
             <ol>
               <li>Followed sharer 1: TIER 2</li>
@@ -128,8 +133,10 @@ const Settings = () => {
             </ol>
           </div>
         </div>
-      </div>
     </form>
+    <UserProfileAccount />
+    
+  </div>    
   );
 };
 
