@@ -111,6 +111,30 @@
     border-radius: 20px;
 }
 
+#page-name{
+    color: #747474;
+    padding: .6rem 1rem;
+    width: 28rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: .02rem;
+    background-color: white;
+    border-radius: 20px;
+}
+
+#page-name:focus{
+    color: #333333;
+}
+
+#page-name:hover{
+    color: #333333;
+}
+
+.form-control::placeholder {
+    color: #747474 !important;
+}
+
 
 #country{
     margin: 0.4rem 0 1.5rem 0;

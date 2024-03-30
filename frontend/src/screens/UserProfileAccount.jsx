@@ -57,7 +57,7 @@ function UserProfileAccount() {
             <div style={{ width: "31.3rem", margin: "20px", }}>
               <div>
                 <div>
-                  <label>Change your current password with a new one</label> <br /><br /><br />
+                  <label>Replace your current password with a new one</label> <br /><br /><br />
                   <label>Current password</label>
                   <Form.Group className="mb-3" controlId="formBasicEmail">
                     <input

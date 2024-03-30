@@ -73,7 +73,7 @@ const ContactPageScreen = ({ submitContactRequest }) => {
       <div className="image-container"></div>
       <form style={{ marginTop: '5rem' }} onSubmit={handleSubmit}>
       <h2>Submit a Request</h2>
-      <label>Providing as much information as possible in your request will allow us to help you faster.</label>
+      <label id='labl'>Providing as much information as possible in your request will allow us to help you faster.</label>
         <div className="form-group">
           <h6>Request type: *</h6>
           <select className="box custom-select option" value={requestType} onChange={(e) => setRequestType(e.target.value)} required>
@@ -96,7 +96,7 @@ const ContactPageScreen = ({ submitContactRequest }) => {
           <h6>Description: *</h6>
           <input className="box" value={description} onChange={(e) => setDescription(e.target.value)} required />
         </div>
-        <label>Please enter the details of your request. A member of our team will reach out with a response.</label>
+        <label id='labl'>Please enter the details of your request. A member of our team will reach out with a response.</label>
 
         <div className="form-group">
           <h6>Attachment (Optional):</h6>
@@ -105,11 +105,11 @@ const ContactPageScreen = ({ submitContactRequest }) => {
           <input type="file" className="form-control-file" onChange={(e) => setAttachment(e.target.files[0])} />
         </div>
         <div className="form-group">
-          <label>Supported file types are: .pdf, .jpeg, .jpg, .png, .doc, .docx. Filesize must not exceed 1 MB.</label>
+          <label id='labl'>Supported file types are: .pdf, .jpeg, .jpg, .png, .doc, .docx. Filesize must not exceed 1 MB.</label>
         </div>
 
-        <Button type="submit" variant="primary">Done</Button>
-        <Button type="button" variant="secondary" onClick={clearForm} style={{ marginLeft: '10px' }}>Clear Form</Button>
+        <Button id='fx' type="submit" variant="primary">Done</Button>
+        <Button id='fk' type="button" variant="secondary" onClick={clearForm} style={{ marginLeft: '10px' }}>Clear Form</Button>
 
       </form>
       <div className="submit-status-container">

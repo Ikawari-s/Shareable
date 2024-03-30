@@ -7,6 +7,7 @@
     width: 100%;
     height: 105vh;
     display: flex;
+    padding-bottom: 48rem;
 
 }
 
@@ -49,7 +50,7 @@
     background-repeat: no-repeat;
     animation: slideLeftToRight 0.5s linear forwards;
     animation-delay: 0s;
-    pointer-events: none; 
+    pointer-events: none;
 
 }
 
@@ -114,7 +115,7 @@ textarea.box {
     }
 }
 
-button[type="submit"] {
+#fx {
     border: none;
     background-color: #03254c;
     color: white;
@@ -129,12 +130,12 @@ button[type="submit"] {
     animation: fadeInSlide 0.5s;
 }
 
-button[type="submit"]:hover {
+#fx:hover {
     background-color: #1167b1;
     transform: translateY(-2px);
 }
 
-button[type="button"] {
+#fk {
     border: none;
     background-color: #006CA5;
     color: white;
@@ -149,7 +150,7 @@ button[type="button"] {
     animation: fadeInSlide 0.5s;
 }
 
-button[type="button"]:hover {
+#fk:hover {
     background-color: #ffeacc;
     transform: translateY(-2px);
 }
@@ -202,7 +203,7 @@ button[type="button"]:hover {
 }
 
 
-label {
+#labl {
     color: #ffe0b3; 
     font-size: 0.88rem; 
     margin-left: 5rem; 

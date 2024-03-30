@@ -4,3 +4,17 @@ main {
   min-height: 80vh;
 }
 
+html {
+    background-image: linear-gradient(to bottom, #0b1550, #014981);
+    background-size: cover;
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+#root {
+  background-image: linear-gradient(to bottom, #0b1550, #014981);
+  background-size: cover;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
