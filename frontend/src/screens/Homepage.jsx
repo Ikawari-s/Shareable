@@ -39,9 +39,17 @@ function Homepage({ sharerList, listSharers }) {
     sortedSharers = sortedSharers.sort(
       (a, b) => b.total_followers - a.total_followers
     );
+  } else if (sortBy === "followers_low") {
+    sortedSharers = sortedSharers.sort(
+      (a, b) => a.total_followers - b.total_followers
+    );
   } else if (sortBy === "rating") {
     sortedSharers = sortedSharers.sort(
       (a, b) => b.average_rating - a.average_rating
+    );
+  } else if (sortBy === "rating_low") {
+    sortedSharers = sortedSharers.sort(
+      (a, b) => a.average_rating - b.average_rating
     );
   } else if (sortBy === "sharer_id") {
     sortedSharers = sortedSharers.sort((a, b) => b.id - a.id); // Sort by sharer ID (highest to lowest)
@@ -80,8 +88,8 @@ function Homepage({ sharerList, listSharers }) {
   });
 
   return (
-  <div className="waw">
-    <div className="container">
+    <div className="waw">
+      <div className="container">
         <div className="row">
           <div className="col-md-12 mb-2">
             <input
@@ -101,8 +109,13 @@ function Homepage({ sharerList, listSharers }) {
               id="buttones"
               style={buttonStyle("default")}
               onClick={() => {
-                setSortBy("default");
-                setLastClickedSort("default");
+                if (lastClickedSort === "default") {
+                  setSortBy("default");
+                  setLastClickedSort(null);
+                } else {
+                  setSortBy("default");
+                  setLastClickedSort("default");
+                }
               }}
             >
               Default
@@ -112,8 +125,13 @@ function Homepage({ sharerList, listSharers }) {
               id="buttones"
               style={buttonStyle("category")}
               onClick={() => {
-                setSortBy("category");
-                setLastClickedSort("category");
+                if (lastClickedSort === "category") {
+                  setSortBy("default");
+                  setLastClickedSort(null);
+                } else {
+                  setSortBy("category");
+                  setLastClickedSort("category");
+                }
               }}
             >
               Sort by Category
@@ -123,8 +141,13 @@ function Homepage({ sharerList, listSharers }) {
               id="buttones"
               style={buttonStyle("followers")}
               onClick={() => {
-                setSortBy("followers");
-                setLastClickedSort("followers");
+                if (lastClickedSort === "followers") {
+                  setSortBy("default");
+                  setLastClickedSort(null);
+                } else {
+                  setSortBy("followers");
+                  setLastClickedSort("followers");
+                }
               }}
             >
               Sort by Followers (High to Low)
@@ -132,59 +155,101 @@ function Homepage({ sharerList, listSharers }) {
             <Button
               variant="outline-primary"
               id="buttones"
+              style={buttonStyle("followers_low")}
+              onClick={() => {
+                if (lastClickedSort === "followers_low") {
+                  setSortBy("default");
+                  setLastClickedSort(null);
+                } else {
+                  setSortBy("followers_low");
+                  setLastClickedSort("followers_low");
+                }
+              }}
+            >
+              Sort by Followers (Low to High)
+            </Button>
+            <Button
+              variant="outline-primary"
+              id="buttones"
               style={buttonStyle("rating")}
               onClick={() => {
-                setSortBy("rating");
-                setLastClickedSort("rating");
+                if (lastClickedSort === "rating") {
+                  setSortBy("default");
+                  setLastClickedSort(null);
+                } else {
+                  setSortBy("rating");
+                  setLastClickedSort("rating");
+                }
               }}
             >
               Sort by Total Rating (High to Low)
+            </Button>
+            <Button
+              variant="outline-primary"
+              id="buttones"
+              style={buttonStyle("rating_low")}
+              onClick={() => {
+                if (lastClickedSort === "rating_low") {
+                  setSortBy("default");
+                  setLastClickedSort(null);
+                } else {
+                  setSortBy("rating_low");
+                  setLastClickedSort("rating_low");
+                }
+              }}
+            >
+              Sort by Total Rating (Low to High)
             </Button>
             <Button
                 variant="outline-primary"
                 id="buttones" 
                 style={buttonStyle("sharer_id")}
                 onClick={() => {
-                  setSortBy("sharer_id");
-                  setLastClickedSort("sharer_id");
+                  if (lastClickedSort === "sharer_id") {
+                    setSortBy("default");
+                    setLastClickedSort(null);
+                  } else {
+                    setSortBy("sharer_id");
+                    setLastClickedSort("sharer_id");
+                  }
                 }}
               >
                 Sort by sharer created (Recent to Old)
               </Button>
-            </div>
           </div>
-          <div className="row">
-            {/* {groupedSharers &&
-              Object.keys(groupedSharers).map((category) => (
-                <React.Fragment key={category}>
-                  <h3>{category}</h3>
-                  {groupedSharers[category].map((sharer) => (
-                    <div className="col-md-4 mb-3" key={sharer.id}>
-                      <Card style={{ width: "18rem" }}>
-                        {sharer.image && (
-                          <Card.Img
-                            variant="top"
-                            src={sharer.image}
-                            style={{ width: "100%", height: "auto" }}
-                          />
-                        )}
-                        <Card.Body className="p-3 d-flex flex-column justify-content-between">
-                          <div>
-                            <Card.Title>{sharer.name}</Card.Title>
-                            <Card.Text>{sharer.description}</Card.Text>
-                            <Card.Text>
-                              <small className="text-muted">
-                                {sharer.category}
-                              </small>
-                            </Card.Text>
-                            <Card.Text>
-                              followers : {sharer.total_followers}
-                            </Card.Text>
-                            <Card.Text>
-                              average rating : {sharer.average_rating}
-                            </Card.Text>
-                          </div>
-                          <Link to={`/homepage/sharers/${sharer.id}`}>
+        </div>
+        <div className="row">
+          {groupedSharers &&
+            Object.keys(groupedSharers).map((category) => (
+              <React.Fragment key={category}>
+                <h3>{category}</h3>
+                {groupedSharers[category].map((sharer) => (
+                  <div className="col-md-4 mb-3" key={sharer.id}>
+                    <Card style={{ width: "18rem" }}>
+                      {sharer.image && (
+                        <Card.Img
+                          variant="top"
+                          src={sharer.image}
+                          style={{ width: "100%", height: "auto" }}
+                        />
+                      )}
+                      <Card.Body className="p-3 d-flex flex-column justify-content-between">
+                        <div>
+                          <Card.Title>{sharer.name}</Card.Title>
+                          <Card.Text>{sharer.description}</Card.Text>
+                          <Card.Text>
+                            <small className="text-muted">
+                              {sharer.category}
+                            </small>
+                          </Card.Text>
+                          <Card.Text>
+                            followers : {sharer.total_followers}
+                          </Card.Text>
+                          <Card.Text>
+                            average rating : {sharer.average_rating}
+                          </Card.Text>
+                        </div>
+                        <Link to={`/homepage/sharers/${sharer.id}`}>
                           <Button variant="primary">See More</Button>
                         </Link>
                       </Card.Body>
@@ -192,59 +257,59 @@ function Homepage({ sharerList, listSharers }) {
                   </div>
                 ))}
               </React.Fragment>
-            ))} */}
+            ))}
           {!groupedSharers &&
             sortedSharers.map((sharer) => (
               <div className="col-md-3 mb-3" key={sharer.id}>
                 <a href={`/homepage/sharers/${sharer.id}`} style={{ textDecoration: 'none', color: 'inherit', overflow: 'scroll', whiteSpace: 'nowrap' }}>
-                <Card id="kard">
-                  <div id="rates">
-                  {sharer.average_rating !== null
-                          ? sharer.average_rating > 0
-                            ? `${sharer.average_rating}/5`
-                            : " N/A"
-                          : "N/A"}
-                  </div>
-                  {sharer.image && (
-                    <Card.Img
-                      variant="top"
-                      src={sharer.image}
-                      id="da-pics"
-                    />
-                  )}
-                  <Card.Body className="p-3 d-flex flex-column justify-content-between">
-                    <div id="da-text">
-                      <Card.Title style={{ textTransform: 'uppercase' }}>{sharer.name}</Card.Title>
-                      <Card.Text>{sharer.description}</Card.Text>
-                      <Card.Text style={{ lineHeight: '0.4rem' }}>
-                        <small className="text-muted">{sharer.category}</small>
-                      </Card.Text>
-                      <Card.Text style={{ lineHeight: '0.4rem' }}>
-                      <small className="text-muted">Followers : {sharer.total_followers}</small>
-                      </Card.Text>
-                      {/* <Card.Text>
-                        Total rating:
-                        {sharer.average_rating !== null
-                          ? sharer.average_rating > 0
-                            ? `${sharer.average_rating}/5`
-                            : " N/A"
-                          : "N/A"}
-                      </Card.Text> */}
+                  <Card id="kard">
+                    <div id="rates">
+                      {sharer.average_rating !== null
+                        ? sharer.average_rating > 0
+                          ? `${sharer.average_rating}/5`
+                          : " N/A"
+                        : "N/A"}
                     </div>
-                    {/* <Link to={`/homepage/sharers/${sharer.id}`}>
-                      <Button variant="primary">See More</Button>
-                    </Link> */}
-                  </Card.Body>
-                </Card>
-              </a>  
+                    {sharer.image && (
+                      <Card.Img
+                        variant="top"
+                        src={sharer.image}
+                        id="da-pics"
+                      />
+                    )}
+                    <Card.Body className="p-3 d-flex flex-column justify-content-between">
+                      <div id="da-text">
+                        <Card.Title style={{ textTransform: 'uppercase' }}>{sharer.name}</Card.Title>
+                        <Card.Text>{sharer.description}</Card.Text>
+                        <Card.Text style={{ lineHeight: '0.4rem' }}>
+                          <small className="text-muted">{sharer.category}</small>
+                        </Card.Text>
+                        <Card.Text style={{ lineHeight: '0.4rem' }}>
+                          <small className="text-muted">Followers : {sharer.total_followers}</small>
+                        </Card.Text>
+                        {/* <Card.Text>
+                          Total rating:
+                          {sharer.average_rating !== null
+                            ? sharer.average_rating > 0
+                              ? `${sharer.average_rating}/5`
+                              : " N/A"
+                            : "N/A"}
+                        </Card.Text> */}
+                      </div>
+                      {/* <Link to={`/homepage/sharers/${sharer.id}`}>
+                        <Button variant="primary">See More</Button>
+                      </Link> */}
+                    </Card.Body>
+                  </Card>
+                </a>
               </div>
             ))}
         </div>
-      <Col xl={12} id="fol">
-        <FollowedSharersList />
-      </Col>
+        <Col xl={12} id="fol">
+          <FollowedSharersList />
+        </Col>
+      </div>
     </div>
-  </div>    
   );
 }
 
