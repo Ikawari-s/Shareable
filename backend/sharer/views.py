@@ -368,29 +368,16 @@ class PostCount(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, sharer_id):
+ 
         try:
             sharer_id = int(sharer_id)
         except ValueError:
             return Response({"error": "Invalid Sharer ID"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Total post count
-        total_post_count = SharerUpload.objects.filter(uploaded_by_id=sharer_id).count()
 
-        # Dictionary to store post counts per tier
-        post_counts = {}
+        post_count = SharerUpload.objects.filter(uploaded_by_id=sharer_id).count()
 
-        # Iterate over visibility tiers
-        for tier in ['tier1', 'tier2', 'tier3']:
-            visibility_tier = f'FOLLOWERS_{tier.upper()}'
-            post_count = SharerUpload.objects.filter(uploaded_by_id=sharer_id, visibility__contains=visibility_tier).count()
-            post_counts[tier] = post_count
-
-        response_data = {
-            "post_count": total_post_count,
-            "post_counts_per_tier": post_counts
-        }
-
-        return Response(response_data, status=status.HTTP_200_OK)
+        return Response({"post_count": post_count}, status=status.HTTP_200_OK)
     
 #IS SHARER // okay
 class DashboardRetrieveUpdateView(generics.RetrieveUpdateAPIView):
