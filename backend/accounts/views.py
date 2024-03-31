@@ -33,6 +33,7 @@ from sharer.serializers import *
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.cache import cache
 from datetime import datetime, timedelta
+from threading import Timer
 from django.shortcuts import get_object_or_404
 User = get_user_model()
 
@@ -138,7 +139,6 @@ class UserLogin(APIView):
 
     def post(self, request):
         data = request.data
-        # Your validation code here
         validate_email(data)
         validate_password(data)
 
@@ -362,13 +362,29 @@ class SharerChecker(APIView):
 class FollowSharer(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
+    def __init__(self):
+        super().__init__()
+        self.start_follow_expiration_check()
+
+    def start_follow_expiration_check(self):
+        expiration_time = timedelta(days=30)
+        self.follow_expiration_timer = Timer(expiration_time.total_seconds(), self.check_expired_followings)
+        self.follow_expiration_timer.start()
+
+    def check_expired_followings(self):
+        expired_followings = FollowExpiration.objects.filter(expiration_date__lte=timezone.now())
+        for follow in expired_followings:
+            follow.check_and_unfollow_if_expired()
+            print(f"Automatically unfollowed sharer {follow.sharer_id} for user {follow.user_id}")
+
+        self.start_follow_expiration_check()
+
     def post(self, request, *args, **kwargs):
         sharer_id = self.kwargs.get('sharer_id')
         tier = request.data.get('tier')
         amount_provided = request.data.get('amount')
 
         try:
-            print(f"Sharer ID: {sharer_id}")  # Print sharer_id before processing
             sharer = get_object_or_404(Sharer, pk=sharer_id)
             user = request.user
 
@@ -383,18 +399,15 @@ class FollowSharer(generics.GenericAPIView):
             if amount_provided != required_amount:
                 return Response({'detail': f'You must provide {required_amount} to follow at {tier} tier'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Check if user is already following any tier of the sharer
             if user.follows_tier1.filter(pk=sharer_id).exists() or \
                user.follows_tier2.filter(pk=sharer_id).exists() or \
                user.follows_tier3.filter(pk=sharer_id).exists():
                 raise ValidationError('You are already following this sharer')
 
-            # Remove user from all tiers for the sharer
             user.follows_tier1.remove(sharer)
             user.follows_tier2.remove(sharer)
             user.follows_tier3.remove(sharer)
 
-            # Add user to the selected tier for the sharer
             if tier == 'tier1':
                 user.follows_tier1.add(sharer)
             elif tier == 'tier2':
@@ -406,15 +419,12 @@ class FollowSharer(generics.GenericAPIView):
 
             user.save()
 
-            dashboard, _ = Dashboard.objects.get_or_create(sharer=sharer)
-            print(f"Dashboard ID: {dashboard.id}") 
-            print(f"Sharer's Dashboard ID: {sharer.dashboard.id}") 
-            dashboard.total_earnings += amount_provided
-            # Calculate the twenty percent less earning
-            dashboard.twenty_percent_less_earning_send = dashboard.total_earnings - (dashboard.total_earnings * Decimal('0.20'))
-            dashboard.save()
+            expiration_date = timezone.now() + timedelta(days=30)
+            follow_expiration = FollowExpiration.objects.create(user=user, sharer=sharer, expiration_date=expiration_date)
 
             serializer = SharerSerializer(sharer)
+
+            print(f"Sharer {sharer_id} will expire at {expiration_date}")  
 
             return Response({'detail': f'Successfully followed sharer in {tier}', 'sharer': serializer.data}, status=status.HTTP_200_OK)
         except ValueError:

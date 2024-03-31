@@ -90,12 +90,22 @@ class beSharer(models.Model):
         return self.title
 
 class FollowExpiration(models.Model):
-    user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
-    sharer = models.ForeignKey('sharer.Sharer', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    sharer = models.ForeignKey(Sharer, on_delete=models.CASCADE)
     expiration_date = models.DateTimeField()
 
     def is_expired(self):
         return self.expiration_date <= timezone.now()
+
+    def check_and_unfollow_if_expired(self):
+        if self.is_expired():
+            user = self.user
+            sharer = self.sharer
+            user.follows_tier1.remove(sharer)
+            user.follows_tier2.remove(sharer)
+            user.follows_tier3.remove(sharer)
+            user.save()
+            self.delete()
     
 
 class FollowActivity(models.Model):
