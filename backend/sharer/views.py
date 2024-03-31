@@ -1046,5 +1046,29 @@ class CommentListView(generics.ListCreateAPIView):
         return False
     
     def get_top_donors(self, upload):
+        # Assuming top donors are calculated based on the sum of amounts donated by users
         top_donors = TipBox.objects.filter(sharer=upload.uploaded_by).values('user').annotate(total_amount=Sum('amount')).order_by('-total_amount')[:3]
         return top_donors
+
+    def assign_badges(self, top_donors, user_id):
+        top_donors_user_ids = [donor['user'] for donor in top_donors]
+        if user_id in top_donors_user_ids:
+            index = top_donors_user_ids.index(user_id)
+            if index == 0:
+                return "Gold"
+            elif index == 1:
+                return "Silver"
+            elif index == 2:
+                return "Bronze"
+        return "None"
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        upload_id = self.kwargs.get('upload_id')
+        try:
+            upload = SharerUpload.objects.get(id=upload_id)
+            top_donors = self.get_top_donors(upload)
+            context['top_donors'] = top_donors
+        except SharerUpload.DoesNotExist:
+            context['top_donors'] = []
+        return context
