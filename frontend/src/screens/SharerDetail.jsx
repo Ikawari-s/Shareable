@@ -27,6 +27,7 @@ const SharerDetail = ({
   followSharer, // Connect the followSharer action creator
   unfollowSharer,
   getSharerPostCount,
+  postCountsPerTier
 }) => {
   const { id } = useParams();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -202,30 +203,39 @@ const handleTierButtonClick = (tier, amount) => {
           <p>Category: {sharer.category}</p>
           <PostCount sharerId={id} />
           <div>
-            {isFollowing ? (
-              <Button onClick={handleUnfollow}>Unfollow Sharer</Button>
-            ) : (
-              <>
-                <Button
-                  variant="success"
-                  onClick={() => handleTierButtonClick("tier1", 5)}
-                >
-                  Tier 1
-                </Button>
-                <Button
-                  variant="success"
-                  onClick={() => handleTierButtonClick("tier2", 10)}
-                >
-                  Tier 2
-                </Button>
-                <Button
-                  variant="success"
-                  onClick={() => handleTierButtonClick("tier3", 20)}
-                >
-                  Tier 3
-                </Button>
-              </>
-            )}
+          {isFollowing ? (
+    <Button onClick={handleUnfollow}>Unfollow Sharer</Button>
+  ) : (
+    <>
+      <div>
+        <PostCount sharerId={id} tier="tier1" />
+        <Button
+          variant="success"
+          onClick={() => handleTierButtonClick("tier1", 5)}
+        >
+          Tier 1
+        </Button>
+      </div>
+      <div>
+        <PostCount sharerId={id} tier="tier2" />
+        <Button
+          variant="success"
+          onClick={() => handleTierButtonClick("tier2", 10)}
+        >
+          Tier 2
+        </Button>
+      </div>
+      <div>
+        <PostCount sharerId={id} tier="tier3" />
+        <Button
+          variant="success"
+          onClick={() => handleTierButtonClick("tier3", 20)}
+        >
+          Tier 3
+        </Button>
+      </div>
+    </>
+  )}
             {/* PayPal button section */}
             {showPaypalModal && followTier && paypalLoaded && (
               <PayPalScriptProvider
@@ -302,6 +312,7 @@ const mapStateToProps = (state) => ({
   sharer: state.SharerDetail.sharer,
   loading: state.SharerDetail.loading,
   error: state.SharerDetail.error,
+  postCountsPerTier: state.SharerDetail.postCountsPerTier
 });
 
 const mapDispatchToProps = {
