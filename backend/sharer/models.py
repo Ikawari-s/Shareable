@@ -28,7 +28,7 @@ class Sharer(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     email = models.EmailField()
     image = models.ImageField(upload_to=upload_image, null=False, blank=False)
-    name = models.CharField(max_length=30, null=False, blank=False)
+    name = models.CharField(max_length=30, unique=True, null=False, blank=False)
     description = models.CharField(max_length=150, null=False, blank=False)
     cover_photo = models.ImageField(upload_to='cover_photos', default='uploads/default/default_cover.jpg', null=True, blank=True)
     total_followers = models.IntegerField(default=0)
@@ -57,7 +57,7 @@ class Sharer(models.Model):
         ('Parenting & Family', 'Parenting & Family'),
     ]
 
-    category = models.CharField(max_length=30, choices=CATEGORY_CHOICES, null=False, blank=False)
+    category = models.CharField(max_length=30, choices=CATEGORY_CHOICES, default='', null=True, blank=True)
     username = models.CharField(max_length=50, unique=True, validators=[MinLengthValidator(4)])
     id = models.AutoField(primary_key=True)
     
@@ -73,15 +73,25 @@ class Sharer(models.Model):
         return self.follower_tier1.count() + self.follower_tier2.count() + self.follower_tier3.count()
 
     def save(self, *args, **kwargs):
-        if self.pk is None:  # Check if it's a new instance
-            super().save(*args, **kwargs)  # Save the new instance first
-            # Create a dashboard for the newly created sharer
+        if self.pk is None:  
+            super().save(*args, **kwargs)  
             Dashboard.objects.create(sharer=self)
-        else:  # Update existing instance
+        else:
             original_instance = Sharer.objects.get(pk=self.pk)
             if original_instance.total_followers != self.total_followers:
                 self.total_followers = self.appuser_set.count()  
             super().save(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        if self.pk is not None:  # Check if it's an update
+            original_instance = Sharer.objects.get(pk=self.pk)
+            if original_instance.image != self.image:  # Check if image has changed
+                self.user.profile_picture = self.image
+                self.user.save()
+
+        super().save(*args, **kwargs)
+
+
 
 class SharerUpload(models.Model):
     id = models.AutoField(primary_key=True)
@@ -91,7 +101,6 @@ class SharerUpload(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(null=True, blank=True) 
 
-    # Define visibility options
     VISIBILITY_CHOICES = [
         ('NON_FOLLOWER', 'Preview Content'),
         ('FOLLOWERS_TIER1', 'BRONZE - Tier'),
@@ -99,8 +108,8 @@ class SharerUpload(models.Model):
         ('FOLLOWERS_TIER3', 'GOLD - Tier'),
     ]
     
-    # Change visibility field to a CharField
-    visibility = models.CharField(max_length=255, blank=True)  # Allow blank values for multiple choices
+
+    visibility = models.CharField(max_length=255, blank=True) 
 
     def __str__(self):
         return f"{self.uploaded_by.email}'s Title: {self.title}"

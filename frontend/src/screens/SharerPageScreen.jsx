@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import LikeComponent from "../components/LikeComponents";
 import Comment from "../components/Comment";
 import "../designs/actionConfirmation.css";
+import axios from 'axios';
 
 function SharerPageScreen() {
   const dispatch = useDispatch();
@@ -87,12 +88,20 @@ function SharerPageScreen() {
       setName(userProfile.name);
       setUsername(userProfile.username);
       setDescription(userProfile.description);
-      setCategory(userProfile.category);
+      setCategory(userProfile.category || ''); 
     }
   }, [userProfile]);
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
+    console.log("Submitting profile update with the following values:");
+    console.log("New Name:", newName);
+    console.log("New Username:", newUsername);
+    console.log("Description:", description);
+    console.log("Category:", category === 'Default Category' ? '' : category);
+    console.log("New Profile Picture:", newProfilePicture);
+    console.log("Cover Photo:", coverPhoto);
+  
     try {
       await dispatch(
         SharerUpdateProfile({
@@ -100,7 +109,7 @@ function SharerPageScreen() {
           image: newProfilePicture,
           username: newUsername,
           description: description,
-          category: category,
+          category: category === 'Default Category' ? '' : category, 
           coverPhoto: coverPhoto,
         })
       );
@@ -185,6 +194,24 @@ function SharerPageScreen() {
 
   const handleCancelUpdate = () => {
     setShowUpdateConfirmation(false); 
+  };
+
+  const downloadFile = async (fileUrl) => {
+    try {
+      const response = await axios.get(fileUrl, {
+        responseType: 'blob',
+      });
+      
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'file');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
   };
 
   return (
@@ -322,9 +349,9 @@ function SharerPageScreen() {
             <div>
               <h3>Files:</h3>
               {post.files.map((file, index) => (
-                <a key={index} href={file.file} download>
-                  Download File {index + 1}
-                </a>
+      <button key={index} onClick={() => downloadFile(file.file)}>
+      Download File {index + 1}
+    </button>
               ))}
             </div>
           )}

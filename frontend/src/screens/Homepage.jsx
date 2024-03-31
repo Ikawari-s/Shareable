@@ -14,10 +14,17 @@ function Homepage({ sharerList, listSharers }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("default");
   const [lastClickedSort, setLastClickedSort] = useState(null);
+  const [originalOrder, setOriginalOrder] = useState([]);
 
   useEffect(() => {
     listSharers(); // Dispatch the action when the component mounts
   }, [listSharers]);
+
+  useEffect(() => {
+    if (sharerList.sharers) {
+      setOriginalOrder([...sharerList.sharers]);
+    }
+  }, [sharerList.sharers]);
 
   const { loading, error, sharers } = sharerList;
 
@@ -54,8 +61,8 @@ function Homepage({ sharerList, listSharers }) {
   } else if (sortBy === "sharer_id") {
     sortedSharers = sortedSharers.sort((a, b) => b.id - a.id); // Sort by sharer ID (highest to lowest)
   } else if (sortBy === "default") {
-    // Shuffle the array to implement random sorting
-    sortedSharers = sortedSharers.sort(() => Math.random() - 0.5);
+    // Use original order if available, otherwise shuffle
+    sortedSharers = originalOrder.length > 0 ? [...originalOrder] : sortedSharers.sort(() => Math.random() - 0.5);
   }
 
   if (loading) {
@@ -84,7 +91,7 @@ function Homepage({ sharerList, listSharers }) {
 
   const buttonStyle = (sortType) => ({
     marginRight: "2px",
-    backgroundColor: lastClickedSort === sortType ? "lightblue" : "inherit",
+    backgroundColor: lastClickedSort === sortType || (sortType === "default" && lastClickedSort === null) ? "lightblue" : "inherit",
   });
 
   return (
@@ -261,7 +268,7 @@ function Homepage({ sharerList, listSharers }) {
           {!groupedSharers &&
             sortedSharers.map((sharer) => (
               <div className="col-md-3 mb-3" key={sharer.id}>
-                <a href={`/homepage/sharers/${sharer.id}`} style={{ textDecoration: 'none', color: 'inherit', overflow: 'scroll', whiteSpace: 'nowrap' }}>
+                <Link to={`/homepage/sharers/${sharer.id}`} style={{ textDecoration: 'none', color: 'inherit', overflow: 'scroll', whiteSpace: 'nowrap' }}>
                   <Card id="kard">
                     <div id="rates">
                       {sharer.average_rating !== null
@@ -301,7 +308,7 @@ function Homepage({ sharerList, listSharers }) {
                       </Link> */}
                     </Card.Body>
                   </Card>
-                </a>
+                </Link>
               </div>
             ))}
         </div>

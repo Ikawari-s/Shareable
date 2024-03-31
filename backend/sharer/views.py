@@ -323,7 +323,6 @@ class SharerUpdateProfile(APIView):
 
         request_data = request.data.copy()
         
-
         if 'email' in request_data:
             return Response({"detail": "You cannot update your email address."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -331,7 +330,7 @@ class SharerUpdateProfile(APIView):
 
         if serializer.is_valid():
             username = serializer.validated_data.get('username')
-            if username:
+            if username is not None:  # Check if username is provided
                 if User.objects.exclude(email=user.email).filter(username=username).exists():
                     return Response({"detail": "The username is already in use."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -346,6 +345,7 @@ class SharerUpdateProfile(APIView):
 
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
 
 #IS SHARER // okay
@@ -985,3 +985,7 @@ class CommentListView(generics.ListCreateAPIView):
                     return True
         return False
     
+    def get_top_donors(self, upload):
+       
+        top_donors = TipBox.objects.filter(sharer=upload.uploaded_by).values('user').annotate(total_amount=Sum('amount')).order_by('-total_amount')[:3]
+        return top_donors

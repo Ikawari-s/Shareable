@@ -44,7 +44,7 @@ function HomeScreen() {
     password: "",
     retypePassword: "",
   });
-  const [error, setError] = useState(""); // Define error state
+  const [error, setError] = useState(""); 
 
   const handleLoginChange = (e) => {
     setLoginFormData({ ...loginFormData, [e.target.name]: e.target.value });
@@ -246,7 +246,6 @@ function HomeScreen() {
                 </div>
               </Form>
               {registerError && <Alert variant="danger">{registerError}</Alert>}
-              {error && <Alert variant="danger">{error}</Alert>}
             </div>
             <p className="text-center texto">Shareable Copyright ©</p>
           </div>
@@ -308,7 +307,6 @@ function HomeScreen() {
             </div>
 
             <div className="card-footer text-">
-              {error && <Alert variant="danger">{error}</Alert>}
               <Link id="da-link" to="/reset-password">
                 Forgot Password?{" "}
               </Link>

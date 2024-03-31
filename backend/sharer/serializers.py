@@ -163,6 +163,7 @@ class CommentSerializer(serializers.ModelSerializer):
     profile_picture = serializers.ImageField(source='user.profile_picture', read_only=True)
     badge = serializers.SerializerMethodField()
 
+
     class Meta:
         model = Comment
         fields = ['id', 'user', 'username', 'post', 'comments', 'created_at', 'profile_picture', 'badge']
@@ -175,25 +176,10 @@ class CommentSerializer(serializers.ModelSerializer):
         return Comment.objects.create(post=post, **validated_data)
     
     def get_badge(self, obj):
-        try:
-            top_donor = TipBox.objects.filter(user=obj.user).order_by('-amount').first()
-            if top_donor:
-                top_donors = TipBox.objects.filter(sharer=top_donor.sharer).values('user').annotate(
-                    total_amount=Coalesce(Sum('amount'), 0, output_field=DecimalField())
-                ).order_by('-total_amount')[:3]
-
-                top_donor_ids = [donor['user'] for donor in top_donors]
-
-                if obj.user.id == top_donor_ids[0]:
-                    return 'Gold'
-                elif obj.user.id == top_donor_ids[1]:
-                    return 'Silver'
-                elif obj.user.id == top_donor_ids[2]:
-                    return 'Bronze'
-            return 'None'
-        except:
-            return 'None'
-
+        if 'top_donors' in self.context:
+            top_donors = self.context['top_donors']
+            return self.context['view'].assign_badges(top_donors, obj.user.id)
+        return "None"
 
 
 class RatingSerializer(serializers.ModelSerializer):
@@ -231,20 +217,18 @@ class RatingSerializer(serializers.ModelSerializer):
 
     def get_badge(self, obj):
         try:
-            top_donor = TipBox.objects.filter(user=obj.user).order_by('-amount').first()
-            if top_donor:
-                top_donors = TipBox.objects.filter(sharer=top_donor.sharer).values('user').annotate(
-                    total_amount=Coalesce(Sum('amount'), 0, output_field=DecimalField())
-                ).order_by('-total_amount')[:3]
+            top_donors = TipBox.objects.filter(sharer=obj.sharer).values('user').annotate(
+                total_amount=Coalesce(Sum('amount'), 0, output_field=DecimalField())
+            ).order_by('-total_amount')[:3]
 
-                top_donor_ids = [donor['user'] for donor in top_donors]
+            top_donor_ids = [donor['user'] for donor in top_donors]
 
-                if obj.user.id == top_donor_ids[0]:
-                    return 'Gold'
-                elif obj.user.id == top_donor_ids[1]:
-                    return 'Silver'
-                elif obj.user.id == top_donor_ids[2]:
-                    return 'Bronze'
+            if obj.user.id == top_donor_ids[0]:
+                return 'Gold'
+            elif obj.user.id == top_donor_ids[1]:
+                return 'Silver'
+            elif obj.user.id == top_donor_ids[2]:
+                return 'Bronze'
             return 'None'
         except:
             return 'None'
