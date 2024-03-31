@@ -257,9 +257,9 @@ class DashboardSerializer(serializers.ModelSerializer):
 
     def get_twenty_percent_less_earning_send(self, obj):
         twenty_percent = Decimal('0.20')
-        total_earnings_decimal = Decimal(str(obj.total_earnings))  # Convert to Decimal
+        total_earnings_decimal = Decimal(str(obj.total_earnings))  
         twenty_percent_earnings = total_earnings_decimal * twenty_percent
-        return obj.total_earnings - twenty_percent_earnings
+        return total_earnings_decimal - twenty_percent_earnings
 
     def get_twenty_percent_cut(self, obj):
         twenty_percent = Decimal('0.20')    

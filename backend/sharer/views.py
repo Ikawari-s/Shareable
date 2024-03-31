@@ -313,7 +313,7 @@ class SharerUploadEditView(APIView):
 
 
 
-#IS SHARER // okay
+
 class SharerUpdateProfile(APIView):
     permission_classes = [IsAuthenticated, IsSharer]
 
@@ -346,9 +346,6 @@ class SharerUpdateProfile(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    
-
-#IS SHARER // okay
 class SharerDeletePostView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated, IsSharerPermission]
 
@@ -367,7 +364,6 @@ class SharerDeletePostView(generics.DestroyAPIView):
         return Response({"message": "Post deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
     
 
-#IS AUTH 
 class PostCount(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -613,21 +609,27 @@ class LikePost(APIView):
         app_user = request.user
         upload = get_object_or_404(SharerUpload, id=upload_id)
         
-        sharer_instance = app_user.sharer
+        try:
+            sharer_instance = app_user.sharer
+        except Sharer.DoesNotExist:
+            sharer_instance = None
+        
         
         if sharer_instance == upload.uploaded_by:
             print("User is the uploader. Allowing like.")
             return self.handle_like(app_user, upload)
         
-        user_tiers = self.get_user_tiers(app_user)
+        user_tiers = self.get_user_tiers(app_user, upload)
         post_visibility = self.get_post_visibility(upload)
+        print(user_tiers)
+        print(post_visibility)
 
-        if self.check_visibility_match(post_visibility, user_tiers):
+        
+        if self.check_visibility_match(post_visibility, user_tiers) or sharer_instance == upload.uploaded_by:
             return self.handle_like(app_user, upload)
         else:
             print("Visibility check failed. User cannot like the post.")
-            return Response({"error": "You can only like posts with visibility matching your followed tiers"}, status=status.HTTP_403_FORBIDDEN)
-
+            return Response({"error": "You can only like posts with visibility matching your followed tiers or if you are the uploader"}, status=status.HTTP_403_FORBIDDEN)
 
     def handle_like(self, user, upload):
         try:
@@ -644,15 +646,22 @@ class LikePost(APIView):
             Like.objects.create(user=user, post=upload, liked=True)
             return Response({"message": "Post liked successfully"}, status=status.HTTP_201_CREATED)
 
-    def get_user_tiers(self, user):
+
+    def get_user_tiers(self, user, upload):
         user_tiers = []
-        if user.follows_tier1.exists():
-            user_tiers.append("FOLLOWERS_TIER1")
-        if user.follows_tier2.exists():
-            user_tiers.append("FOLLOWERS_TIER2")
-        if user.follows_tier3.exists():
-            user_tiers.append("FOLLOWERS_TIER3")
+        if isinstance(upload, SharerUpload):
+            try:
+                sharer_instance = upload.uploaded_by
+                if user.follows_tier1.filter(id=sharer_instance.id).exists():
+                    user_tiers.append("FOLLOWERS_TIER1")
+                if user.follows_tier2.filter(id=sharer_instance.id).exists():
+                    user_tiers.append("FOLLOWERS_TIER2")
+                if user.follows_tier3.filter(id=sharer_instance.id).exists():
+                    user_tiers.append("FOLLOWERS_TIER3")
+            except Sharer.DoesNotExist:
+                pass
         return user_tiers
+
 
     def get_post_visibility(self, upload):
         visibility = upload.visibility
@@ -682,19 +691,24 @@ class UnlikePost(APIView):
         user = request.user
         upload = get_object_or_404(SharerUpload, id=upload_id)
         
-        sharer_instance = user.sharer
+        try:
+            sharer_instance = user.sharer
+        except Sharer.DoesNotExist:
+            sharer_instance = None
         
         if sharer_instance == upload.uploaded_by:
             print("User is the uploader. Allowing unlike.")
             return self.handle_unlike(user, upload)
         
-        user_tiers = self.get_user_tiers(user)
+        user_tiers = self.get_user_tiers(user, upload)  # Corrected variable name
         post_visibility = self.get_post_visibility(upload)
+        print(user_tiers)
+        print(post_visibility)
 
         if self.check_visibility_match(post_visibility, user_tiers) or user == upload.uploaded_by:
             return self.handle_unlike(user, upload)
         else:
-            return Response({"error": "You can only unlike posts with visibility matching your followed tiers"}, status=status.HTTP_403_FORBIDDEN)
+            return Response({"error": "You can only unlike posts with visibility matching your followed tiers or if you are the uploader"}, status=status.HTTP_403_FORBIDDEN)
 
     def handle_unlike(self, user, upload):
         try:
@@ -713,16 +727,22 @@ class UnlikePost(APIView):
             Like.objects.create(user=user, post=upload, liked=False, unliked=True)
             print(f"Post unliked successfully by {user}")
             return Response({"message": "Post unliked successfully"}, status=status.HTTP_201_CREATED)
-
-    def get_user_tiers(self, user):
+        
+    def get_user_tiers(self, user, upload):
         user_tiers = []
-        if user.follows_tier1.exists():
-            user_tiers.append("FOLLOWERS_TIER1")
-        if user.follows_tier2.exists():
-            user_tiers.append("FOLLOWERS_TIER2")
-        if user.follows_tier3.exists():
-            user_tiers.append("FOLLOWERS_TIER3")
+        if isinstance(upload, SharerUpload):
+            try:
+                sharer_instance = upload.uploaded_by
+                if user.follows_tier1.filter(id=sharer_instance.id).exists():
+                    user_tiers.append("FOLLOWERS_TIER1")
+                if user.follows_tier2.filter(id=sharer_instance.id).exists():
+                    user_tiers.append("FOLLOWERS_TIER2")
+                if user.follows_tier3.filter(id=sharer_instance.id).exists():
+                    user_tiers.append("FOLLOWERS_TIER3")
+            except Sharer.DoesNotExist:
+                pass
         return user_tiers
+
 
     def get_post_visibility(self, upload):
         visibility = upload.visibility
@@ -764,14 +784,20 @@ class CommentPost(APIView):
         app_user = request.user
         upload = get_object_or_404(SharerUpload, id=upload_id)
         
-        sharer_instance = app_user.sharer
-        
+        # Check if the user has a related sharer instance
+        try:
+            sharer_instance = app_user.sharer
+        except Sharer.DoesNotExist:
+            sharer_instance = None
+
         if sharer_instance == upload.uploaded_by:
             print("User is the uploader. Allowing comment.")
             return self.handle_comment(app_user, upload, request)
         
-        user_tiers = self.get_user_tiers(app_user)
+        user_tiers = self.get_user_tiers(app_user, upload)
         post_visibility = self.get_post_visibility(upload)
+        print(user_tiers)
+        print(post_visibility)
 
         if self.check_visibility_match(post_visibility, user_tiers) or app_user == upload.uploaded_by:
             return self.handle_comment(app_user, upload, request)
@@ -786,21 +812,27 @@ class CommentPost(APIView):
         if not self.check_visibility_match(post_visibility, user_tiers) and user != upload.uploaded_by:
             return False
         
-        # Check if the user follows the user who uploaded the post
+
         return user.follows_tier1.filter(id=upload.uploaded_by.id).exists() or \
             user.follows_tier2.filter(id=upload.uploaded_by.id).exists() or \
             user.follows_tier3.filter(id=upload.uploaded_by.id).exists()
 
 
-    def get_user_tiers(self, user):
+    def get_user_tiers(self, user, upload):
         user_tiers = []
-        if user.follows_tier1.exists():
-            user_tiers.append("FOLLOWERS_TIER1")
-        if user.follows_tier2.exists():
-            user_tiers.append("FOLLOWERS_TIER2")
-        if user.follows_tier3.exists():
-            user_tiers.append("FOLLOWERS_TIER3")
+        if isinstance(upload, SharerUpload):
+            try:
+                sharer_instance = upload.uploaded_by
+                if user.follows_tier1.filter(id=sharer_instance.id).exists():
+                    user_tiers.append("FOLLOWERS_TIER1")
+                if user.follows_tier2.filter(id=sharer_instance.id).exists():
+                    user_tiers.append("FOLLOWERS_TIER2")
+                if user.follows_tier3.filter(id=sharer_instance.id).exists():
+                    user_tiers.append("FOLLOWERS_TIER3")
+            except Sharer.DoesNotExist:
+                pass
         return user_tiers
+
 
     def get_post_visibility(self, upload):
         visibility = upload.visibility
@@ -829,77 +861,88 @@ class CommentPost(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
-class CommentDeleteView(generics.DestroyAPIView):
+class CommentDeleteView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def delete(self, request, *args, **kwargs):
+    def delete(self, request, comment_id):
         user = request.user
 
         try:
-            comment = Comment.objects.get(id=kwargs['comment_id'])
+            comment = Comment.objects.get(id=comment_id)
         except Comment.DoesNotExist:
             return Response({"message": "Comment does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
         if not self.can_delete_comment(user, comment):
-            print("User is not allowed to delete this comment.")
             return Response({"error": "You are not allowed to delete this comment"}, status=status.HTTP_403_FORBIDDEN)
 
         comment.delete()
         return Response({"message": "Comment deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
     def can_delete_comment(self, user, comment):
-        print("Checking if user can delete comment...")
         post_owner = comment.post.uploaded_by
-        sharer_instance = user.sharer  # Assuming user.sharer gives the sharer instance
-        upload = comment.post  # Assuming comment.post gives the upload instance
 
-        # Allow deletion if the user is the uploader
-        if sharer_instance == upload.uploaded_by:
-            print("User is the uploader. Allowing comment.")
-            return True
-
-        # Allow deletion if the user is the owner of the post
-        if user == post_owner:
-            print("User is the owner of the post. Allowing deletion.")
-            return True
-
-        # If user is not following the owner of the post, disallow deletion
-        if not self.is_following(user, post_owner):
-            print("User is not following the owner of the post. Not allowed to delete the comment.")
-            return False
-        
-        user_tiers = self.get_user_tiers(user)
+        user_tiers = self.get_user_tiers(user, comment.post)
         post_visibility = self.get_post_visibility(comment.post)
+
+        print("User Tiers:", user_tiers)
+        print("Post Visibility:", post_visibility)
+
         if not self.check_visibility_match(post_visibility, user_tiers):
-            print(post_visibility, user_tiers )
-            print("User's tier does not match post visibility criteria. Not allowed to delete the comment.")
             return False
         
+        if not self.is_following(user, post_owner):
+            return False
 
-        print("User is allowed to delete this comment.")
-        return True
+        if user == post_owner or user == comment.user or user.sharer == comment.post.uploaded_by:
+            return True
 
-    def get_user_tiers(self, user):
+        return False
+
+    def get_user_tiers(self, user, upload):
         user_tiers = []
-        if user.follows_tier1.exists():
-            user_tiers.append("FOLLOWERS_TIER1")
-        if user.follows_tier2.exists():
-            user_tiers.append("FOLLOWERS_TIER2")
-        if user.follows_tier3.exists():
-            user_tiers.append("FOLLOWERS_TIER3")
+        if isinstance(upload, SharerUpload):
+            try:
+                sharer_instance = upload.uploaded_by
+                if user.follows_tier1.filter(id=sharer_instance.id).exists():
+                    user_tiers.append("FOLLOWERS_TIER1")
+                if user.follows_tier2.filter(id=sharer_instance.id).exists():
+                    user_tiers.append("FOLLOWERS_TIER2")
+                if user.follows_tier3.filter(id=sharer_instance.id).exists():
+                    user_tiers.append("FOLLOWERS_TIER3")
+            except Sharer.DoesNotExist:
+                pass
         return user_tiers
 
+
     def get_post_visibility(self, post):
-        return post.visibility
+        visibility = post.visibility
+        try:
+            visibility_list = json.loads(visibility)
+            if isinstance(visibility_list, list):
+                return visibility_list
+        except (json.JSONDecodeError, TypeError):
+            if ',' in visibility:
+                visibility_list = [tier.strip() for tier in visibility.split(',')]
+            else:
+                visibility_list = [visibility.strip()]
+            return visibility_list
+        return []
 
     def check_visibility_match(self, post_visibility, user_tiers):
-        return any(tier in post_visibility for tier in user_tiers)
+        if post_visibility:
+            for tier in post_visibility:
+                if tier in user_tiers:
+                    return True
+        return False
 
     def is_following(self, user, post_owner):
         return (user.follows_tier1.filter(id=post_owner.id).exists() or
                 user.follows_tier2.filter(id=post_owner.id).exists() or
                 user.follows_tier3.filter(id=post_owner.id).exists())
+
+
 
 
 
@@ -924,16 +967,23 @@ class CommentListView(generics.ListCreateAPIView):
             print("Comments:", queryset)
             return queryset
 
-        sharer_instance = user.sharer
+        try:
+            sharer_instance = user.sharer
+        except Sharer.DoesNotExist:
+            sharer_instance = None
         
         if sharer_instance != upload.uploaded_by:
-            user_tiers = self.get_user_tiers(user)
+            user_tiers = self.get_user_tiers(user, upload)  # Pass 'upload' argument here
             post_visibility = self.get_post_visibility(upload)
+        
+            print("User Tiers:", user_tiers)
+            print("Post Visibility:", post_visibility)
             
             if not self.check_visibility_match(post_visibility, user_tiers):
                 print("Visibility check failed. User cannot view comments on the post.")
                 return Comment.objects.none()
         return Comment.objects.filter(post_id=upload_id).select_related('user')
+
 
     def perform_create(self, serializer):
         upload_id = self.kwargs.get('upload_id')
@@ -943,8 +993,12 @@ class CommentListView(generics.ListCreateAPIView):
             return Response({"error": "Upload not found"}, status=status.HTTP_400_BAD_REQUEST)
 
         user = self.request.user
-        sharer_instance = user.sharer
 
+        try:
+            sharer_instance = user.sharer
+        except Sharer.DoesNotExist:
+            sharer_instance = None
+        
         if sharer_instance != upload.uploaded_by:
             user_tiers = self.get_user_tiers(user)
             post_visibility = self.get_post_visibility(upload)
@@ -954,15 +1008,21 @@ class CommentListView(generics.ListCreateAPIView):
         
         serializer.save(user=user, post=upload)
 
-    def get_user_tiers(self, user):
+    def get_user_tiers(self, user, upload):
         user_tiers = []
-        if user.follows_tier1.exists():
-            user_tiers.append("FOLLOWERS_TIER1")
-        if user.follows_tier2.exists():
-            user_tiers.append("FOLLOWERS_TIER2")
-        if user.follows_tier3.exists():
-            user_tiers.append("FOLLOWERS_TIER3")
+        if isinstance(upload, SharerUpload):
+            try:
+                sharer_instance = upload.uploaded_by
+                if user.follows_tier1.filter(id=sharer_instance.id).exists():
+                    user_tiers.append("FOLLOWERS_TIER1")
+                if user.follows_tier2.filter(id=sharer_instance.id).exists():
+                    user_tiers.append("FOLLOWERS_TIER2")
+                if user.follows_tier3.filter(id=sharer_instance.id).exists():
+                    user_tiers.append("FOLLOWERS_TIER3")
+            except Sharer.DoesNotExist:
+                pass
         return user_tiers
+
 
     def get_post_visibility(self, upload):
         visibility = upload.visibility
@@ -986,6 +1046,5 @@ class CommentListView(generics.ListCreateAPIView):
         return False
     
     def get_top_donors(self, upload):
-       
         top_donors = TipBox.objects.filter(sharer=upload.uploaded_by).values('user').annotate(total_amount=Sum('amount')).order_by('-total_amount')[:3]
         return top_donors
