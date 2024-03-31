@@ -30,6 +30,7 @@
 
 #kard{
     max-height: 30rem !important;
+    min-height: 25rem !important;
     border-radius: 0.3rem;
     box-shadow: 0 2px 5px #00000080;
     background-image: none !important;
@@ -42,8 +43,7 @@
 }
 
 #buttones{
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding: 0.3rem 2rem 0.3rem 2rem;
     border: none;
     color: white;
     max-height: 30rem !important;
@@ -69,6 +69,7 @@
     padding: 0 0 1rem 0 !important;
     margin: -.5rem;
     margin-top: -1rem;
+    overflow: scroll;
 }
 
 #prof-info{
