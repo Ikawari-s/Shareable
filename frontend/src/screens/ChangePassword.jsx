@@ -59,7 +59,7 @@ function ChangePassword() {
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="currentPassword">
           <Form.Label>Current Password</Form.Label>
-          <Form.Control
+          <input
             type="password"
             placeholder="Enter current password"
             id='paswrd'
@@ -70,7 +70,7 @@ function ChangePassword() {
         </Form.Group>
         <Form.Group controlId="newPassword">
           <Form.Label>New Password</Form.Label>
-          <Form.Control
+          <input
             type="password"
             placeholder="Enter new password"
             id='paswrd'
@@ -81,7 +81,7 @@ function ChangePassword() {
         </Form.Group>
         <Form.Group controlId="confirmPassword">
           <Form.Label>Confirm Password</Form.Label>
-          <Form.Control
+          <input
             type="password"
             placeholder="Confirm new password"
             id='paswrd'
