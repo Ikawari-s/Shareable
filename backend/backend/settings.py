@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'accounts',
     'contact',
     'sharer',
+    'shareable',
 ]
 
 MIDDLEWARE = [

@@ -24,6 +24,7 @@ import SharerPageScreen from './screens/SharerPageScreen';
 import SharerDashboard from './screens/SharerDashboard';
 import ChangePassword from './screens/ChangePassword';
 import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
+import AdminDashboard from './screens/AdminDashboard';
 
 
 
@@ -49,23 +50,24 @@ function App() {
 
           {/* USER LEVEL ALL PROTECTED  */}
 
- 
           <Route path="/homepage/sharers/:id" element={<ProtectedRoute><SharerDetail /></ProtectedRoute>} />
-
           <Route path="/dashboard" element={<ProtectedRoute ><SharerDashboard /></ProtectedRoute>} /> 
           <Route path="/homepage" element={<ProtectedRoute ><Homepage /></ProtectedRoute>} />
           <Route path="/AccountSettings" element={<ProtectedRoute ><ChangePassword /></ProtectedRoute>} />
-
-
           <Route path="/sharer-page" element={<ProtectedRoute><SharerPageScreen/></ProtectedRoute>} />
           <Route path="/be-sharer" element={<ProtectedRoute><SharerbeScreen /></ProtectedRoute>} />
           <Route path="/userprofile" element={<ProtectedRoute><UserProfileScreen /></ProtectedRoute>} />
           <Route path="/userprofileaccount" element={<ProtectedRoute><UserProfileAccount /></ProtectedRoute>} />  
           <Route path="/home" element={<ProtectedRoute><HomeScreen /></ProtectedRoute>} />
-          
-          
 
           {/* USER LEVEL ALL PROTECTED  */}
+
+          {/* ADMIN  */}
+          <Route path="/admin-dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />  
+          {/* ADMIN  */}
+
+
+
 
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

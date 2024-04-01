@@ -40,6 +40,7 @@ function SharerPageScreen() {
   const [editedPostsFormatted, setEditedPostsFormatted] = useState({});
   const [showUpdateConfirmation, setShowUpdateConfirmation] = useState(false); // State for update confirmation modal
   const [editingPostId, setEditingPostId] = useState(null); // State to track the post being edited
+  const userInfo = useSelector((state) => state.userInfo);
 
   const CATEGORY_CHOICES = [
     { value: "", label: "Select a category" },
@@ -74,6 +75,18 @@ function SharerPageScreen() {
     ["FOLLOWERS_TIER2", "SILVER - Tier"],
     ["FOLLOWERS_TIER3", "GOLD - Tier"],
   ];
+
+  useEffect(() => {
+    if (userInfo && userInfo.is_sharer) {
+      dispatch(listSharerPosts());
+      dispatch(profileSharers());
+      const storedEditedPosts =
+        JSON.parse(localStorage.getItem("editedPosts")) || {};
+      setEditedPosts(storedEditedPosts);
+    } else {
+      navigate('/homepage');
+    }
+  }, [dispatch, navigate, userInfo]);
 
   useEffect(() => {
     dispatch(listSharerPosts());

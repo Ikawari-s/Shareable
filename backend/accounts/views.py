@@ -194,11 +194,11 @@ class UserLogin(APIView):
                     'followed_sharers': followed_sharers,
                     'user_info': {
                         'email': user.email,
-                        'username': user.username
+                        'username': user.username,
+                        'is_admin': user.is_staff  # Indicate admin status based on is_staff field
                     },
                     'rating_id': rating_id,
                 }
-
 
                 return JsonResponse(response_data, status=status.HTTP_200_OK)
             else:
