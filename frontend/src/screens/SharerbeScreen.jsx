@@ -63,8 +63,8 @@ function SharerbeScreen() {
             <p style={{paddingBottom: '2.5rem'}}>Crafting the perfect title sets the tone for your page's identity and purpose. Find the ideal name to make your page stand out!</p>
             <label style={{paddingBottom: '0.3rem'}}>Page Name</label>
             <Form onSubmit={handleSubmit}>
-              <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Control
+              <Form.Group className="mb-3"controlId="formBasicEmail">
+                <input
                   type="text"
                   placeholder="Page Name"
                   value={pageName}

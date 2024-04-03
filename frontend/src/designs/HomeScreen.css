@@ -10,6 +10,12 @@
     background-position: center;    
 }
 
+.creator1 h1 {
+    
+    animation: slideAndFadeIn 1s ease forwards;
+}
+
+
 .content1{
     position: relative;
     width: 100%;
@@ -53,6 +59,7 @@
     background-color: #fffc94;
     background-size: cover;
     background-position: center;
+    overflow: hidden;
 }
 
 .content2 h1 {
@@ -475,10 +482,6 @@
 .welcome{
     font-size: 2.4rem;
     margin-bottom: 0;
-}
-
-#SignUpPage ::placeholder{
-    color: gray;
 }
 
 #SignUpPage input:hover{

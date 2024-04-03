@@ -229,39 +229,40 @@ function Homepage({ sharerList, listSharers }) {
           {groupedSharers &&
             Object.keys(groupedSharers).map((category) => (
               <React.Fragment key={category}>
-                <h3>{category}</h3>
+              <h3>{category}</h3>
                 {groupedSharers[category].map((sharer) => (
-                  <div className="col-md-4 mb-3" key={sharer.id}>
-                    <Card style={{ width: "18rem" }}>
-                      {sharer.image && (
-                        <Card.Img
-                          variant="top"
-                          src={sharer.image}
-                          style={{ width: "100%", height: "auto" }}
-                        />
-                      )}
-                      <Card.Body className="p-3 d-flex flex-column justify-content-between">
-                        <div>
-                          <Card.Title>{sharer.name}</Card.Title>
-                          <Card.Text>{sharer.description}</Card.Text>
-                          <Card.Text>
-                            <small className="text-muted">
-                              {sharer.category}
-                            </small>
-                          </Card.Text>
-                          <Card.Text>
-                            followers : {sharer.total_followers}
-                          </Card.Text>
-                          <Card.Text>
-                            average rating : {sharer.average_rating}
-                          </Card.Text>
-                        </div>
-                        <Link to={`/homepage/sharers/${sharer.id}`}>
-                          <Button variant="primary">See More</Button>
-                        </Link>
-                      </Card.Body>
-                    </Card>
-                  </div>
+                  <div className="col-md-3 mb-3" key={sharer.id}>
+                <Link to={`/homepage/sharers/${sharer.id}`} style={{ textDecoration: 'none', color: 'inherit', overflow: 'scroll', whiteSpace: 'nowrap' }}>
+                  <Card id="kard">
+                    <div id="rates">
+                      {sharer.average_rating !== null
+                        ? sharer.average_rating > 0
+                          ? `${sharer.average_rating}/5`
+                          : " N/A"
+                        : "N/A"}
+                    </div>
+                    {sharer.image && (
+                      <Card.Img
+                        variant="top"
+                        src={sharer.image}
+                        id="da-pics"
+                      />
+                    )}
+                    <Card.Body className="p-3 d-flex flex-column justify-content-between">
+                      <div id="da-text">
+                        <Card.Title style={{ textTransform: 'uppercase' }}>{sharer.name}</Card.Title>
+                        <Card.Text>{sharer.description}</Card.Text>
+                        <Card.Text style={{ lineHeight: '0.4rem' }}>
+                          <small className="text-muted">{sharer.category}</small>
+                        </Card.Text>
+                        <Card.Text style={{ lineHeight: '0.4rem' }}>
+                          <small className="text-muted">Followers : {sharer.total_followers}</small>
+                        </Card.Text>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Link>
+              </div>
                 ))}
               </React.Fragment>
             ))}
