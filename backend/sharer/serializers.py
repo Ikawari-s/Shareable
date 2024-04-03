@@ -189,11 +189,12 @@ class RatingSerializer(serializers.ModelSerializer):
     already_rated = serializers.BooleanField(read_only=True)
     average_rating = serializers.SerializerMethodField()
     badge = serializers.SerializerMethodField()
+    user_tier = serializers.SerializerMethodField()
 
 
     class Meta:
         model = Rating
-        fields = ['id', 'sharer', 'user', 'rating', 'comment', 'username', 'profile_picture', 'user_rated', 'already_rated', 'average_rating', 'badge']
+        fields = ['id', 'sharer', 'user', 'rating', 'comment', 'username', 'profile_picture', 'user_rated', 'already_rated', 'average_rating', 'badge', 'user_tier']
 
     def get_user_tier(self, obj):
         user = obj.user
