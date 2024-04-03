@@ -10,7 +10,7 @@ from .models import *
 from django.db.models import Sum, DecimalField
 from sharer.models import TipBox
 from django.db.models.functions import Coalesce
-
+import re
 UserModel = get_user_model()
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -29,6 +29,10 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     def validate_password(self, value):
         if len(value) < 8:
             raise serializers.ValidationError("Password must be at least 8 characters long.")
+        if not re.search(r'[a-zA-Z]', value):
+            raise serializers.ValidationError("Password must contain at least one letter.")
+        if not re.search(r'[!@#$%^&*()_+{}|:"<>?]', value):
+            raise serializers.ValidationError("Password must contain at least one special character.")
         return value
 
 class UserLoginSerializer(serializers.Serializer):
@@ -46,8 +50,16 @@ class UserSerializer(serializers.ModelSerializer):
     badge = serializers.SerializerMethodField()
 
     class Meta:
-        model = UserModel
-        fields = ['id', 'email', 'username', 'is_active', 'is_staff', 'profile_picture', 'profile_picture_url', 'badge']
+        model = AppUser 
+        fields = ['id', 'email', 'username', 'password', 'is_active', 'is_staff', 'is_sharer', 'is_superuser', 'profile_picture', 'profile_picture_url', 'badge' ]  
+
+    def create(self, validated_data):
+        password = validated_data.pop('password', None)  
+        user = super().create(validated_data)
+        if password is not None:
+            user.set_password(password)  
+            user.save()  
+        return user
 
     def get_profile_picture_url(self, obj):
         if obj.profile_picture:
@@ -73,6 +85,8 @@ class UserSerializer(serializers.ModelSerializer):
             return 'None'
         except:
             return 'None'
+        
+
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=False)
@@ -165,3 +179,11 @@ class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(min_length=8, required=True)
     new_password = serializers.CharField(min_length=8, required=True)
 
+    def validate_new_password(self, value):
+        if len(value) < 8:
+            raise serializers.ValidationError("Password must be at least 8 characters long.")
+        if not re.search(r'[a-zA-Z]', value):
+            raise serializers.ValidationError("Password must contain at least one letter.")
+        if not re.search(r'[!@#$%^&*()_+{}|:"<>?]', value):
+            raise serializers.ValidationError("Password must contain at least one special character.")
+        return value

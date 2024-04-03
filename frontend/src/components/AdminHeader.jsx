@@ -17,6 +17,7 @@ import {
   FaUserAlt,
   FaUserCheck,
   FaUserCog,
+  FaUserTie
 } from "react-icons/fa";
 
 function AdminHeader() {
@@ -53,12 +54,22 @@ function AdminHeader() {
           </Nav.Link>
         </li>
         <li>
-          <Nav.Link id="pluh" as={Link} to="/admin-dashboard">
+          <Nav.Link id="pluh" as={Link} to="/adminuser-dashboard">
             <span class="nav-item">
               <span className="nav-icon">
                 <FaUser />
               </span>
-              <span class="nav-text">Dashboard</span>
+              <span class="nav-text">Users</span>
+            </span>
+          </Nav.Link>
+        </li>
+        <li>
+          <Nav.Link id="pluh" as={Link} to="/adminsharer-dashboard">
+            <span class="nav-item">
+              <span className="nav-icon">
+                <FaUserTie />
+              </span>
+              <span class="nav-text">Sharers</span>
             </span>
           </Nav.Link>
         </li>

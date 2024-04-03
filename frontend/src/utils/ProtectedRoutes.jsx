@@ -13,10 +13,10 @@ const ProtectedRoute = ({ children }) => {
 
   const role = userInfo.is_sharer ? 'sharer' : 'regular';
 
-  // Check if the user is an admin
+
   const isAdmin = userInfo.user_info.is_admin;
 
-  // Render the appropriate header based on the user's role
+
   let renderHeader;
   if (isAdmin) {
     renderHeader = <AdminHeader />;

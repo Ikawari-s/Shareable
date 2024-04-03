@@ -8,6 +8,7 @@ import { followReducer, unfollowReducer, followedSharerListReducer } from './red
 import { SharerUpdateProfile, deleteSharerRatings, fetchSharerRatings, patchSharerRatings, sharerDeletePost } from './actions/sharerActions';
 import { tier1FollowedSharersReducer, tier2FollowedSharersReducer, tier3FollowedSharersReducer } from './reducers/subscriptionReducer';
 import {contactReducers} from './reducers/contactReducers'; 
+import { adminUserReducer, createUserAdminReducer, sentSharerIncomeAdminReducer, sharerIncomeAdminReducer, updateUserAdminReducer } from './reducers/adminReducers';
 
 
 
@@ -54,8 +55,12 @@ const reducer = combineReducers({
   topDonor : topDonorReducer,
   tier1List : tier1FollowedSharersReducer,
   tier2List : tier2FollowedSharersReducer,
-  tier3List : tier3FollowedSharersReducer
-  
+  tier3List : tier3FollowedSharersReducer,
+  userAdmin : adminUserReducer,
+  createUserAdmin : createUserAdminReducer,
+  updateUserAdmin : updateUserAdminReducer,
+  sharerIncomeAdmin : sharerIncomeAdminReducer,
+  sentSharerIncome : sentSharerIncomeAdminReducer
   
 
 

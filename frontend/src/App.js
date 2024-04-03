@@ -24,7 +24,8 @@ import SharerPageScreen from './screens/SharerPageScreen';
 import SharerDashboard from './screens/SharerDashboard';
 import ChangePassword from './screens/ChangePassword';
 import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
-import AdminDashboard from './screens/AdminDashboard';
+import AdminSharerDashboard from './screens/AdminSharerDashboard';
+import AdminUserDashboard from './screens/AdminUserDashboard';
 
 
 
@@ -63,7 +64,8 @@ function App() {
           {/* USER LEVEL ALL PROTECTED  */}
 
           {/* ADMIN  */}
-          <Route path="/admin-dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />  
+          <Route path="/adminsharer-dashboard" element={<ProtectedRoute><AdminSharerDashboard /></ProtectedRoute>} />  
+          <Route path="/adminuser-dashboard" element={<ProtectedRoute><AdminUserDashboard /></ProtectedRoute>} />  
           {/* ADMIN  */}
 
 

@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, BasePermission
+from rest_framework.permissions import IsAuthenticated, BasePermission, IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import *
 from accounts.models import *
@@ -347,7 +347,7 @@ class SharerUpdateProfile(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class SharerDeletePostView(generics.DestroyAPIView):
-    permission_classes = [IsAuthenticated, IsSharerPermission]
+    permission_classes = [IsAuthenticated, (IsAdminUser | IsSharerPermission)]
 
     def delete(self, request, *args, **kwargs):
         upload_id = kwargs.get('upload_id')
@@ -356,6 +356,10 @@ class SharerDeletePostView(generics.DestroyAPIView):
             upload = SharerUpload.objects.get(id=upload_id)
         except SharerUpload.DoesNotExist:
             return Response({"message": "Post does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        if request.user.is_staff:  # Check if the user is an admin
+            upload.delete()
+            return Response({"message": "Post deleted successfully by admin"}, status=status.HTTP_204_NO_CONTENT)
 
         if upload.uploaded_by.user != request.user:
             return Response({"message": "You are not the owner of this post"}, status=status.HTTP_403_FORBIDDEN)
@@ -422,15 +426,16 @@ class TipBoxCreateView(generics.CreateAPIView):
             serializer = self.get_serializer(data=mutable_data)
             serializer.is_valid(raise_exception=True)
 
-            tip_amount = serializer.validated_data.get('amount')
+            tip_amount = Decimal(str(serializer.validated_data.get('amount'))) 
             sharer = serializer.validated_data.get('sharer')
 
             dashboard, created = Dashboard.objects.get_or_create(sharer=sharer)
-            dashboard.total_earnings += Decimal(str(tip_amount))
-            
-            # Calculate twenty percent
+
+            # Ensure total_earnings is Decimal as well
+            dashboard.total_earnings = Decimal(str(dashboard.total_earnings)) + tip_amount  
+
             twenty_percent = Decimal('0.20')
-            twenty_percent_earnings = Decimal(str(tip_amount)) * twenty_percent
+            twenty_percent_earnings = tip_amount * twenty_percent
             dashboard.twenty_percent_less_earning_send = dashboard.total_earnings - twenty_percent_earnings
             dashboard.save()
 
@@ -440,6 +445,7 @@ class TipBoxCreateView(generics.CreateAPIView):
         except Exception as e:
             logger.error(f"Error processing TipBox creation: {e}")
             return Response({"error": "An error occurred while processing the request."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class TopDonorView(APIView):
     def get(self, request, sharer_id):
@@ -477,8 +483,6 @@ def get_top_donors(sharer_id):
         return None
     
     
-
-
 
 
 #IS FOLLOW
@@ -562,6 +566,12 @@ class DeleteRating(APIView):
         except Rating.DoesNotExist:
             return Response({"error": "Rating not found"}, status=status.HTTP_404_NOT_FOUND)
 
+        # Check if the user is an admin
+        if request.user.is_staff:
+            rating.delete()
+            return Response({"message": "Rating deleted successfully by admin"}, status=status.HTTP_204_NO_CONTENT)
+
+        # For non-admin users
         if request.user == rating.user:
             if not (request.user.follows_tier1.filter(id=rating.sharer_id).exists() or
                     request.user.follows_tier2.filter(id=rating.sharer_id).exists() or
@@ -572,7 +582,7 @@ class DeleteRating(APIView):
         else:
             return Response({"error": "You are not authorized to delete this rating"}, status=status.HTTP_403_FORBIDDEN)
         
-#IS FOLLOW // okay
+
 class RatingUpdateView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -887,6 +897,10 @@ class CommentDeleteView(APIView):
         except Comment.DoesNotExist:
             return Response({"message": "Comment does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
+        if request.user.is_staff:  # Check if the user is an admin
+            comment.delete()
+            return Response({"message": "Comment deleted successfully by admin"}, status=status.HTTP_204_NO_CONTENT)
+
         if not self.can_delete_comment(user, comment):
             return Response({"error": "You are not allowed to delete this comment"}, status=status.HTTP_403_FORBIDDEN)
 
@@ -894,22 +908,31 @@ class CommentDeleteView(APIView):
         return Response({"message": "Comment deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
     def can_delete_comment(self, user, comment):
-        post_owner = comment.post.uploaded_by
+        post_owner_username = comment.post.uploaded_by.username
+        comment_owner_username = comment.user.username
 
         user_tiers = self.get_user_tiers(user, comment.post)
         post_visibility = self.get_post_visibility(comment.post)
 
         print("User Tiers:", user_tiers)
         print("Post Visibility:", post_visibility)
+        print (comment_owner_username)
+        print(post_owner_username)
+
+        if user.username == post_owner_username and user.username == comment_owner_username:
+            return True
 
         if not self.check_visibility_match(post_visibility, user_tiers):
             return False
         
-        if not self.is_following(user, post_owner):
+        if not self.is_following(user, comment.post.uploaded_by):
             return False
 
-        if user == post_owner or user == comment.user or user.sharer == comment.post.uploaded_by:
+        if user.username == post_owner_username:
             return True
+
+        if user.username == comment_owner_username:
+            return True  
 
         return False
 

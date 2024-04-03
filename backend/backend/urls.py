@@ -14,7 +14,7 @@ urlpatterns = ([
     path('api/', include('accounts.urls')),
     path('api/sharer/', include('sharer.urls')),
     path('api/', include(router.urls)),
-    path('api/admin/', include('shareable.urls')),
+    path('api/admin/', include('shareableAdmin.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
                + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))
 

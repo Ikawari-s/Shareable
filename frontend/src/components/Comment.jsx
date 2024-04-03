@@ -18,6 +18,8 @@ function Comment({ uploadId }) {
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const username =
     userInfo && userInfo.user_info ? userInfo.user_info.username : null;
+  const isAdmin =
+    userInfo && userInfo.user_info ? userInfo.user_info.is_admin : false;
 
   useEffect(() => {
     dispatch(listComments(uploadId)).catch((error) => {
@@ -99,7 +101,7 @@ function Comment({ uploadId }) {
                   {comment.badge === 'Bronze' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/201939.png" style={{maxWidth: '3rem'}} />}
                   {comment.badge === 'None' && null}
                   <div style={{ marginTop: '0.1rem', color: 'black'}}>{comment.comments}</div>
-                  {userInfo.user_id === comment.user && (
+                  {(userInfo.user_id === comment.user || isAdmin) && (
                     <>
                       <button onClick={() => handleDelete(comment.id)}>Delete</button>
                       {deletingCommentId === comment.id && (

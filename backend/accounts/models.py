@@ -8,6 +8,8 @@ import string
 from django.conf import settings
 from sharer.models import Sharer
 from django.core.validators import MinLengthValidator
+from threading import local
+thread_locals = local()
 
 class AppUserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
@@ -35,11 +37,11 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_sharer = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
     follows_tier1 = models.ManyToManyField(Sharer, related_name="follower_tier1", blank=True)
     follows_tier2 = models.ManyToManyField(Sharer, related_name="follower_tier2", blank=True)
     follows_tier3 = models.ManyToManyField(Sharer, related_name="follower_tier3", blank=True)
     profile_picture = models.ImageField(upload_to='uploads/images', default='uploads/default/default.png', null=True, blank=True)
-
     otp_id = models.CharField(max_length=50, blank=True, null=True) 
 
     otp_code = models.CharField(max_length=6, blank=True, null=True)
@@ -76,12 +78,72 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
         return self.otp_code == otp and self.otp_expires_at > timezone.now() and self.otp_id == otp_id  # Check OTP ID as well
 
     def save(self, *args, **kwargs):
-        if self.pk is not None:
-            orig = AppUser.objects.get(pk=self.pk)
-            if orig.is_sharer and not self.is_sharer:
-                self.sharer.delete()
-        super().save(*args, **kwargs)
+        # Check if the current context is Be_sharer
+        if hasattr(thread_locals, 'is_be_sharer_context') and thread_locals.is_be_sharer_context:
+            super().save(*args, **kwargs)  # Call the parent save method
+        else:
+            # your existing save method logic
+            if self.pk is not None:
+                orig = AppUser.objects.get(pk=self.pk)
+                if orig.is_sharer and not self.is_sharer:
+                    self.sharer.delete()
+                super().save(*args, **kwargs)
+                # Update Sharer username if changed
+                if orig.username != self.username:
+                    try:
+                        self.sharer.username = self.username
+                        self.sharer.save()
+                    except Sharer.DoesNotExist:
+                        pass
+                # Update Sharer image if changed
+                if orig.profile_picture != self.profile_picture:
+                    try:
+                        self.sharer.image = self.profile_picture
+                        self.sharer.save()
+                    except Sharer.DoesNotExist:
+                        pass
 
+
+                # Create Sharer instance if the user is not currently a sharer and is set to true
+                if not orig.is_sharer and self.is_sharer:
+                    sharer_category = self.sharer.category if hasattr(self, 'sharer') else ''  # Retrieve category from Sharer model
+                    sharer_description = f"Sharer profile for {self.username}"  # Set description as "Sharer profile for [username]"
+                    sharer = Sharer.objects.create(
+                        name=self.username,
+                        username=self.username,
+                        email=self.email,
+                        user=self,
+                        category=sharer_category,  # Adding the category field here
+                        description=sharer_description  # Adding the description field here
+                    )
+                    if self.profile_picture:
+                        sharer.image = self.profile_picture
+                        sharer.save()
+                    self.sharer = sharer
+                    self.save()
+            else:
+                super().save(*args, **kwargs)
+                # Create Sharer instance if the user is not a sharer and is set to true
+                if self.is_sharer:
+                    sharer_category = self.sharer.category if hasattr(self, 'sharer') else ''  # Retrieve category from Sharer model
+                    sharer_description = f"Sharer profile for {self.username}"  # Set description as "Sharer profile for [username]"
+                    if not hasattr(self, 'sharer'):
+                        # Create Sharer instance with the username, email, category, and description from the AppUser
+                        sharer = Sharer.objects.create(
+                            name=self.username,
+                            username=self.username,
+                            email=self.email,
+                            user=self,  # Linking the Sharer to the AppUser
+                            category=sharer_category,  # Adding the category field here
+                            description=sharer_description  # Adding the description field here
+                        )
+                        if self.profile_picture:
+                            sharer.image = self.profile_picture
+                            sharer.save()
+                        self.sharer = sharer
+                        self.save()
+
+                        
 class beSharer(models.Model):
     user = models.OneToOneField(AppUser, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)

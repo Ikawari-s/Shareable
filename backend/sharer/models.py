@@ -23,9 +23,8 @@ def upload_cover_photo(instance, filename):
     return f'uploads/cover_photo/{filename}'
 
 
-
 class Sharer(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sharer')
     email = models.EmailField()
     image = models.ImageField(upload_to=upload_image, null=False, blank=False)
     name = models.CharField(max_length=30, unique=True, null=False, blank=False)
@@ -59,8 +58,7 @@ class Sharer(models.Model):
 
     category = models.CharField(max_length=30, choices=CATEGORY_CHOICES, default='', null=True, blank=True)
     username = models.CharField(max_length=50, unique=True, validators=[MinLengthValidator(4)])
-    id = models.AutoField(primary_key=True)
-    
+
     def __str__(self):
         return self.name
 
@@ -73,23 +71,22 @@ class Sharer(models.Model):
         return self.follower_tier1.count() + self.follower_tier2.count() + self.follower_tier3.count()
 
     def save(self, *args, **kwargs):
-        if self.pk is None:  
+        if not self.pk:  # If the object is new
             super().save(*args, **kwargs)  
             Dashboard.objects.create(sharer=self)
         else:
-            original_instance = Sharer.objects.get(pk=self.pk)
-            if original_instance.total_followers != self.total_followers:
-                self.total_followers = self.appuser_set.count()  
-            super().save(*args, **kwargs)
+            try:
+                original_instance = Sharer.objects.get(pk=self.pk)
+                if original_instance.total_followers != self.total_followers:
+                    self.total_followers = self.appuser_set.count()  
 
-    def save(self, *args, **kwargs):
-        if self.pk is not None:  # Check if it's an update
-            original_instance = Sharer.objects.get(pk=self.pk)
-            if original_instance.image != self.image:  # Check if image has changed
-                self.user.profile_picture = self.image
-                self.user.save()
+                if original_instance.image != self.image:  # Check if image has changed
+                    self.user.profile_picture = self.image
+                    self.user.save()
 
-        super().save(*args, **kwargs)
+                super().save(*args, **kwargs)  # Call the superclass's save method
+            except Sharer.DoesNotExist:
+                pass
 
 
 

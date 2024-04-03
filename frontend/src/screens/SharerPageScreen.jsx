@@ -77,16 +77,17 @@ function SharerPageScreen() {
   ];
 
   useEffect(() => {
-    if (userInfo && userInfo.is_sharer) {
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    if (userInfo && !userInfo.is_sharer) {
+      navigate("/homepage");
+    } else {
       dispatch(listSharerPosts());
       dispatch(profileSharers());
       const storedEditedPosts =
         JSON.parse(localStorage.getItem("editedPosts")) || {};
       setEditedPosts(storedEditedPosts);
-    } else {
-      navigate('/homepage');
     }
-  }, [dispatch, navigate, userInfo]);
+  }, [dispatch, navigate]);
 
   useEffect(() => {
     dispatch(listSharerPosts());
@@ -283,6 +284,7 @@ function SharerPageScreen() {
         </div>
         <form onSubmit={handleUpdateProfile}>
           <div className="mb-3">
+            <h2>Page Title</h2>
             <input
               type="text"
               value={newName}
@@ -290,6 +292,7 @@ function SharerPageScreen() {
               onChange={(e) => setNewName(e.target.value)}
               className="form-control mb-2"
             />
+            <h2> New Username</h2>
             <input
               type="text"
               value={newUsername}
@@ -297,6 +300,7 @@ function SharerPageScreen() {
               onChange={(e) => setNewUsername(e.target.value)}
               className="form-control mb-2"
             />
+            <h2> Description </h2>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}

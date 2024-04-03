@@ -35,6 +35,7 @@ from django.core.cache import cache
 from datetime import datetime, timedelta
 from threading import Timer
 from django.shortcuts import get_object_or_404
+from django.db import transaction
 User = get_user_model()
 
 
@@ -141,6 +142,7 @@ class UserLogin(APIView):
         data = request.data
         validate_email(data)
         validate_password(data)
+        
 
         serializer = UserLoginSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
@@ -295,53 +297,46 @@ class Be_sharer(APIView):
 
     def post(self, request):
         try:
-            if request.method == 'POST':
-                page_name = request.data.get('page_name')
-                profile_picture = request.data.get('profile_picture')  # Retrieve profile picture from request
+            page_name = request.data.get('page_name')
 
-                if page_name:
-                    user = AppUser.objects.get(email=request.user.email)
-                    if not user.is_sharer:  # Check if the user is not already a sharer
-                        if not Sharer.objects.filter(name=page_name).exists():  # Check if the name already exists
-                            user.is_sharer = True
-                            user.save()
+            if page_name:
+                thread_locals.is_be_sharer_context = True  # Set the context to Be_sharer
+                user = AppUser.objects.get(email=request.user.email)
+                if not user.is_sharer:  
+                    if not Sharer.objects.filter(name=page_name).exists():  
+                        user.is_sharer = True
+                        user.save()
 
-                            # Extract profile picture from AppUser
-                            profile_picture = user.profile_picture
+                        sharer_instance_data = {
+                            'user': user,
+                            'email': user.email,
+                            'image': user.profile_picture, 
+                            'name': page_name,
+                            'description': f"Sharer profile for {page_name}",
+                            'category': "Default Category",
+                            'username': user.username
+                        }
+                        sharer_instance = Sharer.objects.create(**sharer_instance_data)
 
-                            # Create Sharer instance with user's data including profile picture
-                            sharer_instance_data = {
-                                'user': user,
-                                'email': user.email,  # You may need to adjust this depending on your serializer
-                                'image': profile_picture,
-                                'name': page_name,  # Set the sharer's name to the provided page_name
-                                'description': f"Sharer profile for {page_name}",
-                                'category': "Default Category",
-                                'username': user.username  # Set the username to the user's username
-                            }
-                            sharer_instance = Sharer.objects.create(**sharer_instance_data)
+                        sharer_id = sharer_instance.id
 
-                            user.sharer_id = sharer_instance.id
-                            user.save()
-
-                            response_data = {
-                                'message': 'User is now a sharer',
-                                'sharer_id': sharer_instance.id
-                            }
-                            return Response(response_data, status=status.HTTP_200_OK)
-                        else:
-                            return Response({'error': 'Name already exists'}, status=status.HTTP_400_BAD_REQUEST)
+                        response_data = {
+                            'message': 'User is now a sharer',
+                            'sharer_id': sharer_id  
+                        }
+                        return Response(response_data, status=status.HTTP_200_OK)
                     else:
-                        return Response({'error': 'User is already a sharer'}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({'error': 'Name already exists'}, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response({'error': 'Missing page_name parameter'}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'error': 'User is already a sharer'}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response({'error': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+                return Response({'error': 'Missing page_name parameter'}, status=status.HTTP_400_BAD_REQUEST)
         except ObjectDoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'error': f'Internal Server Error: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+        finally:
+            del thread_locals.is_be_sharer_context 
 
 
 
@@ -357,6 +352,8 @@ class SharerChecker(APIView):
             return Response({'error': 'User is not authenticated.'}, status=status.HTTP_401_UNAUTHORIZED)
 
 # CONSULT THE PAYMENT // GET THE SHARER_ID USING THE SHARER FIELD ON THE models as bridge
+
+
 
 
 class FollowSharer(generics.GenericAPIView):
@@ -376,7 +373,7 @@ class FollowSharer(generics.GenericAPIView):
         for follow in expired_followings:
             follow.check_and_unfollow_if_expired()
             print(f"Automatically unfollowed sharer {follow.sharer_id} for user {follow.user_id}")
-
+    
         self.start_follow_expiration_check()
 
     def post(self, request, *args, **kwargs):
@@ -421,6 +418,17 @@ class FollowSharer(generics.GenericAPIView):
 
             expiration_date = timezone.now() + timedelta(days=30)
             follow_expiration = FollowExpiration.objects.create(user=user, sharer=sharer, expiration_date=expiration_date)
+
+            # Update dashboard total earnings within a transaction block
+            try:
+                with transaction.atomic():
+                    dashboard, _ = Dashboard.objects.get_or_create(sharer=sharer)
+                    dashboard.total_earnings += amount_provided
+                    dashboard.save()
+            except AppUser.sharer.RelatedObjectDoesNotExist:
+                print("User does not have a sharer")
+            except Exception as e:
+                print(f"Error updating dashboard: {e}")
 
             serializer = SharerSerializer(sharer)
 
@@ -472,7 +480,7 @@ class FollowedSharerList(generics.ListAPIView):
 
     
 
-#PANG GET LAHAT NG USER
+
 
 class UserView(APIView):
     authentication_classes = (JWTAuthentication,)
@@ -484,7 +492,7 @@ class UserView(APIView):
 
 
 
-# USE THIS FOR GET PROFILE
+
 class UserProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
@@ -497,9 +505,6 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
-
-
-# PANG EDIT
 
 
 class ProfileUpdateView(APIView):

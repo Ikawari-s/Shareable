@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux'; 
-import { FetchSharerPreviewList } from '../actions/sharerActions';
+import { useDispatch, useSelector } from 'react-redux';
+import { FetchSharerPreviewList, sharerDeletePost } from '../actions/sharerActions';
+import axios from 'axios';
 
 function PreviewContent({ sharerId }) {
   const dispatch = useDispatch();
-  const previews = useSelector(state => state.sharerPreviewList.previews);
+  const previews = useSelector((state) => state.sharerPreviewList.previews);
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+  const isAdmin = userInfo ? userInfo.user_info.is_admin : false;
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,6 +24,33 @@ function PreviewContent({ sharerId }) {
     fetchPreviewData();
   }, [sharerId, dispatch]);
 
+  const downloadFile = async (fileUrl) => {
+    try {
+      const response = await axios.get(fileUrl, {
+        responseType: 'blob',
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'file');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  };
+
+  const handleDeletePost = async (postId) => {
+    try {
+      await dispatch(sharerDeletePost(postId));
+      window.location.reload()
+    } catch (error) {
+      console.error('Error deleting post:', error);
+    }
+  };
+
   console.log('Loading:', loading);
   console.log('Preview data:', previews);
 
@@ -29,22 +59,32 @@ function PreviewContent({ sharerId }) {
       {loading ? (
         <p>Loading preview content...</p>
       ) : previews && previews.length > 0 ? (
-        previews.map(post => (
+        previews.map((post) => (
           <div key={post.id}>
+            {/* Render delete button if user is admin */}
+            {isAdmin && (
+              <button onClick={() => handleDeletePost(post.id)}>Delete Post</button>
+            )}
             <h3>{post.title}</h3>
             <p>{post.description}</p>
-            {post.images && post.images.map((image, index) => (
-              <img key={index} src={image.image} alt={`Preview ${index}`} />
-            ))}
-            {post.videos && post.videos.map((video, index) => (
-              <video key={index} controls>
-                <source src={video.video} type="video/mp4" /> 
-                Your browser does not support the video tag.
-              </video>
-            ))}
-            {post.files && post.files.map((file, index) => (
-              <a key={index} href={file.file}>Download File {index + 1}</a>
-            ))}
+            {post.images &&
+              post.images.map((image, index) => (
+                <img key={index} src={image.image} alt={`Preview ${index}`} />
+              ))}
+            {post.videos &&
+              post.videos.map((video, index) => (
+                <video key={index} controls>
+                  <source src={video.video} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              ))}
+            {post.files &&
+              post.files.map((file, index) => (
+                <div key={index}>
+                  <button onClick={() => downloadFile(file.file)}>Download File {index + 1}</button>
+                  <p>File {index + 1}</p>
+                </div>
+              ))}
           </div>
         ))
       ) : (

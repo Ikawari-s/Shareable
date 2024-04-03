@@ -1,13 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchSharerRatings, postSharerRatings, deleteSharerRatings, patchSharerRatings } from '../actions/sharerActions';
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  fetchSharerRatings,
+  postSharerRatings,
+  deleteSharerRatings,
+  patchSharerRatings,
+} from "../actions/sharerActions";
 
 const FetchSharerRatingsComponent = ({ sharerId }) => {
   const dispatch = useDispatch();
-  const { ratings, loading, error } = useSelector((state) => state.sharerRating);
-  const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+  const { ratings, loading, error } = useSelector(
+    (state) => state.sharerRating
+  );
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const userId = userInfo ? userInfo.user_id : null;
-  const followedSharers = userInfo ? userInfo.followed_sharers : { tier1: [], tier2: [], tier3: [] };
+  const isAdmin = userInfo ? userInfo.user_info.is_admin : false;
+  const followedSharers = userInfo
+    ? userInfo.followed_sharers
+    : { tier1: [], tier2: [], tier3: [] };
 
   // Define userHasRated state
   const [userHasRated, setUserHasRated] = useState(false);
@@ -18,26 +28,31 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
 
   useEffect(() => {
     // Check if the user has already rated the sharer
-    const userHasRated = ratings.some(rating => rating.user === userId);
+    const userHasRated = ratings.some((rating) => rating.user === userId);
     // Update the state accordingly
     setUserHasRated(userHasRated);
   }, [ratings, userId]);
 
   const [updateRatingId, setUpdateRatingId] = useState(null);
   const [updateRatingValue, setUpdateRatingValue] = useState(0);
-  const [updateComment, setUpdateComment] = useState('');
+  const [updateComment, setUpdateComment] = useState("");
   const [deletingRatingId, setDeletingRatingId] = useState(null);
 
   const handleUpdateRating = async () => {
     try {
       console.log("Updating rating with id:", updateRatingId);
-      await dispatch(patchSharerRatings(updateRatingId, { rating: updateRatingValue, comment: updateComment }));
+      await dispatch(
+        patchSharerRatings(updateRatingId, {
+          rating: updateRatingValue,
+          comment: updateComment,
+        })
+      );
       setUpdateRatingId(null);
       setUpdateRatingValue(0);
-      setUpdateComment('');
+      setUpdateComment("");
       dispatch(fetchSharerRatings(sharerId));
     } catch (error) {
-      console.error('Error updating rating:', error);
+      console.error("Error updating rating:", error);
     }
   };
 
@@ -46,7 +61,7 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
       console.log("Deleting rating with id:", ratingId);
       setDeletingRatingId(ratingId);
     } catch (error) {
-      console.error('Error deleting rating:', error);
+      console.error("Error deleting rating:", error);
     }
   };
 
@@ -82,25 +97,90 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
   const averageRating = calculateAverageRating();
 
   return (
-    <div className="scroll-box overflow-auto" style={{ background: 'black', maxWidth: '60rem', margin: '0 auto'}}>
+    <div
+      className="scroll-box overflow-auto"
+      style={{ background: "black", maxWidth: "60rem", margin: "0 auto" }}
+    >
       <h2>Sharer Ratings</h2>
-      <div>Total Rating: {averageRating !== null ? ((averageRating).toFixed(1) + "/5") : "No ratings available"}</div>
+      <div>
+        Total Rating:{" "}
+        {averageRating !== null
+          ? averageRating.toFixed(1) + "/5"
+          : "No ratings available"}
+      </div>
       <ul>
         {ratings.map((rating) => (
           <li key={rating.id}>
-            <div style={{ background: 'green'}}>
+            <div style={{ background: "green" }}>
               {rating.profile_picture && (
-                <img src={rating.profile_picture} alt="Profile" style={{ width: 50, height: 50, borderRadius: "50%" }} />
+                <img
+                  src={rating.profile_picture}
+                  alt="Profile"
+                  style={{ width: 50, height: 50, borderRadius: "50%" }}
+                />
               )}
-              User: {rating.username} 
-              {rating.badge === 'Gold' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/252.png" style={{maxWidth: '3rem'}} />}
-              {rating.badge === 'Silver' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/2544.png" style={{maxWidth: '3rem'}} />}
-              {rating.badge === 'Bronze' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/201939.png" style={{maxWidth: '3rem'}} />}
-              {rating.badge === 'None' && null}, Rating: {rating.rating}, Comment: {rating.comment}
-              {(followedSharers.tier1.includes(rating.sharer) || followedSharers.tier2.includes(rating.sharer) || followedSharers.tier3.includes(rating.sharer)) && rating.user === userId && (
+              User: {rating.username}{" "}
+              {rating.user_tier === "tier3" && (
+                <img
+                  src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630188.png?imwidth=1040&imheight=760"
+                  style={{ maxWidth: "3rem" }}
+                />
+              )}
+              {rating.user_tier === "tier2" && (
+                <img
+                  src="https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/4871145.png"
+                  style={{ maxWidth: "3rem" }}
+                />
+              )}
+              {rating.user_tier === "tier1" && (
+                <img
+                  src="https://cdn.nba.com/headshots/nba/latest/1040x760/1628970.png"
+                  style={{ maxWidth: "3rem" }}
+                />
+              )}
+              {rating.badge === "Gold" && (
+                <img
+                  src="https://cdn.nba.com/headshots/nba/latest/1040x760/252.png"
+                  style={{ maxWidth: "3rem" }}
+                />
+              )}
+              {rating.badge === "Silver" && (
+                <img
+                  src="https://cdn.nba.com/headshots/nba/latest/1040x760/2544.png"
+                  style={{ maxWidth: "3rem" }}
+                />
+              )}
+              {rating.badge === "Bronze" && (
+                <img
+                  src="https://cdn.nba.com/headshots/nba/latest/1040x760/201939.png"
+                  style={{ maxWidth: "3rem" }}
+                />
+              )}
+              {rating.badge === "None" && null}, Rating: {rating.rating},
+              Comment: {rating.comment}
+              {isAdmin && (
                 <>
-                  <button onClick={() => handleDeleteRating(rating.id)}>Delete</button>
-                  <button onClick={() => setUpdateRatingId(rating.id)}>Update</button>
+                  {(followedSharers.tier1.includes(rating.sharer) ||
+                    followedSharers.tier2.includes(rating.sharer) ||
+                    followedSharers.tier3.includes(rating.sharer)) && (
+                    <>
+                      <button onClick={() => handleDeleteRating(rating.id)}>
+                        Delete
+                      </button>
+                      {rating.user === userId && (
+                        <button onClick={() => setUpdateRatingId(rating.id)}>
+                          Update
+                        </button>
+                      )}
+                    </>
+                  )}
+                  {!followedSharers.tier1.includes(rating.sharer) &&
+                    !followedSharers.tier2.includes(rating.sharer) &&
+                    !followedSharers.tier3.includes(rating.sharer) && (
+                      <button onClick={() => handleDeleteRating(rating.id)}>
+                        Delete
+                      </button>
+                    )}
                 </>
               )}
             </div>
@@ -110,7 +190,9 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
                   <div>
                     Are you sure you want to delete this rating?
                     <button onClick={confirmDeleteRating}>Yes</button>
-                    <button onClick={() => setDeletingRatingId(null)}>No</button>
+                    <button onClick={() => setDeletingRatingId(null)}>
+                      No
+                    </button>
                   </div>
                 </div>
               </div>
@@ -123,7 +205,9 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
                   max="5"
                   step="0.1"
                   value={updateRatingValue}
-                  onChange={(e) => setUpdateRatingValue(parseFloat(e.target.value))}
+                  onChange={(e) =>
+                    setUpdateRatingValue(parseFloat(e.target.value))
+                  }
                 />
                 <input
                   type="text"
@@ -143,15 +227,15 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
 const PostSharerRatingsComponent = ({ sharerId }) => {
   const dispatch = useDispatch();
   const [ratingValue, setRatingValue] = useState(0);
-  const [comment, setComment] = useState('');
-  const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+  const [comment, setComment] = useState("");
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const userId = userInfo ? userInfo.user_id : null;
   const { ratings } = useSelector((state) => state.sharerRating);
   const [userHasRated, setUserHasRated] = useState(false); // Define userHasRated state
 
   useEffect(() => {
     // Check if the user has already rated the sharer
-    const userHasRated = ratings.some(rating => rating.user === userId);
+    const userHasRated = ratings.some((rating) => rating.user === userId);
     // Update the state accordingly
     setUserHasRated(userHasRated);
   }, [ratings, userId]);
@@ -172,7 +256,7 @@ const PostSharerRatingsComponent = ({ sharerId }) => {
       await dispatch(postSharerRatings(sharerId, ratingData));
       window.location.reload();
     } catch (error) {
-      console.error('Error posting rating:', error);
+      console.error("Error posting rating:", error);
     }
   };
 

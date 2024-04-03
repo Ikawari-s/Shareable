@@ -195,6 +195,17 @@ class RatingSerializer(serializers.ModelSerializer):
         model = Rating
         fields = ['id', 'sharer', 'user', 'rating', 'comment', 'username', 'profile_picture', 'user_rated', 'already_rated', 'average_rating', 'badge']
 
+    def get_user_tier(self, obj):
+        user = obj.user
+        if user:
+            if user.follows_tier1.filter(id=obj.sharer_id).exists():
+                return 'tier1'
+            elif user.follows_tier2.filter(id=obj.sharer_id).exists():
+                return 'tier2'
+            elif user.follows_tier3.filter(id=obj.sharer_id).exists():
+                return 'tier3'
+        return None
+
     def get_username(self, obj):
         return obj.user.username if obj.user else None
 
