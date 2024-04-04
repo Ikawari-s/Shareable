@@ -11,7 +11,6 @@
 }
 
 .creator1 h1 {
-    
     animation: slideAndFadeIn 1s ease forwards;
 }
 
@@ -507,6 +506,9 @@
     color: #c2ccda !important;
 }
 
+#SignUpPage ::placeholder{
+    color: #747474 !important;
+}
 
 .cum button{
    border-radius: 6.25rem;

@@ -50,7 +50,7 @@ function ChangePassword() {
   };
 
   return (
-    <div className="container brap">
+    <div className="container waw">
       <div className="dange">
       <h1 style={{lineHeight: '2.5rem'}} className="profInfo">Change Password</h1>
             <div style={{ width: "31.3rem", margin: "20px", }}>

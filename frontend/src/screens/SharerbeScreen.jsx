@@ -53,8 +53,8 @@ function SharerbeScreen() {
   };
 
   return (
-    <div>
-      <div className="container brap">
+    <div className="waw">
+      <div className="container">
         <div
           style={{ backgroundColor: "transparent", width: "35rem", margin: "auto", border: 'solid rgba(255,255,255,0.5) 1px', borderRadius: '.5rem', padding: '1rem' }}
         >

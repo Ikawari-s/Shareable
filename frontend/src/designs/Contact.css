@@ -48,7 +48,7 @@
     background-image: url('images/triangletransparent.png');
     background-size: cover;
     background-repeat: no-repeat;
-    animation: slideLeftToRight 0.5s linear forwards;
+    /* animation: slideLeftToRight 0.5s linear forwards; */
     animation-delay: 0s;
     pointer-events: none;
 
