@@ -4,6 +4,8 @@ import Button from 'react-bootstrap/Button';
 import { submitContactRequest } from '../actions/contactActions'; 
 import '../designs/Contact.css';
 import GuestHeader from '../components/GuestHeader';
+import { useNavigate } from 'react-router-dom';
+
 
 const ContactPageScreen = ({ submitContactRequest }) => {
   const [requestType, setRequestType] = useState('');
@@ -12,6 +14,8 @@ const ContactPageScreen = ({ submitContactRequest }) => {
   const [description, setDescription] = useState('');
   const [attachment, setAttachment] = useState(null);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const navigate = useNavigate();
+
 
   const clearForm = () => {
     setRequestType('');
@@ -110,6 +114,7 @@ const ContactPageScreen = ({ submitContactRequest }) => {
 
         <Button id='fx' type="submit" variant="primary">Done</Button>
         <Button id='fk' type="button" variant="secondary" onClick={clearForm} style={{ marginLeft: '10px' }}>Clear Form</Button>
+        <Button id='fk' type="button" variant="secondary" onClick={() => navigate('/')} style={{ marginLeft: '10px' }}>Go Back</Button>
 
       </form>
       <div className="submit-status-container">

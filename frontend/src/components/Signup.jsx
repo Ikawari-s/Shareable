@@ -31,6 +31,27 @@ function Signup() {
       return;
     }
 
+    if (!formData.email || !formData.username || !formData.password || !formData.retypePassword) {
+      setError('All fields are required');
+      return;
+    }
+
+    if (!formData.email.trim()) {
+      setError('Email is required');
+      return;
+    }
+  
+    if (!formData.username.trim()) {
+      setError('Username is required');
+      return;
+    }
+  
+    if (!formData.password.trim()) {
+      setError('Password is required');
+      return;
+    }
+  
+
     setIsLoading(true);
 
     try {
