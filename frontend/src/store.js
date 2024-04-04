@@ -9,6 +9,7 @@ import { SharerUpdateProfile, deleteSharerRatings, fetchSharerRatings, patchShar
 import { tier1FollowedSharersReducer, tier2FollowedSharersReducer, tier3FollowedSharersReducer } from './reducers/subscriptionReducer';
 import {contactReducers} from './reducers/contactReducers'; 
 import { adminUserReducer, createUserAdminReducer, sentSharerIncomeAdminReducer, sharerIncomeAdminReducer, updateUserAdminReducer } from './reducers/adminReducers';
+import { userProfileReducer } from './reducers/profileReducer';
 
 
 
@@ -60,8 +61,8 @@ const reducer = combineReducers({
   createUserAdmin : createUserAdminReducer,
   updateUserAdmin : updateUserAdminReducer,
   sharerIncomeAdmin : sharerIncomeAdminReducer,
-  sentSharerIncome : sentSharerIncomeAdminReducer
-  
+  sentSharerIncome : sentSharerIncomeAdminReducer,
+  userProfile : userProfileReducer,
 
 
 });
