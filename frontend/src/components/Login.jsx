@@ -12,6 +12,8 @@ function Login() {
     email: "",
     password: "",
   });
+  const [error, setError] = useState(null);
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,6 +21,17 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.email.trim()) {
+      setError("Email is required");
+      return;
+    }
+
+    if (!formData.password.trim()) {
+      setError("Password is required");
+      return;
+    }
+
     try {
       const response = await dispatch(login(formData.email, formData.password));
       if (response && response.data) {
