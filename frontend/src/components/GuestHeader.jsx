@@ -60,7 +60,7 @@ function GuestHeader({ scrollToSpecificHeight }) {
             <Nav.Link className="d-flex justify-content-center yea" style={{ color: 'gray', fontWeight: '', paddingTop: '0.95rem', fontWeight: '600'}} onClick={scrollToFindSharer}>FIND A SHARER</Nav.Link>
             <Nav.Link className="d-flex justify-content-center yea" style={{ color: 'gray', fontWeight: '', paddingTop: '0.95rem', fontWeight: '600'}} onClick={scrollToSignUpPage}>SIGN UP</Nav.Link>
             <Nav.Link className="d-flex justify-content-center yea" style={{ color: 'gray', fontWeight: '', paddingTop: '0.95rem', fontWeight: '600'}} onClick={scrollToLogInPage}>LOG IN</Nav.Link>
-            <Nav.Link className="d-flex justify-content-center yea" style={{ color: 'gray', fontWeight: '', paddingTop: '0.95rem', fontWeight: '600' }} onClick={handleContactClick}>CONTACT</Nav.Link>
+            {/* <Nav.Link className="d-flex justify-content-center yea" style={{ color: 'gray', fontWeight: '', paddingTop: '0.95rem', fontWeight: '600' }} onClick={handleContactClick}>CONTACT</Nav.Link> */}
     
           </nav>
 
