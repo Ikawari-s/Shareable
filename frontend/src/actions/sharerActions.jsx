@@ -64,7 +64,10 @@ import {
   GET_DASHBOARD_FAILURE,
   GET_TOP_DONOR_REQUEST,
   GET_TOP_DONOR_SUCCESS,
-  GET_TOP_DONOR_FAILURE
+  GET_TOP_DONOR_FAILURE,
+  SHARER_LIST_SORT_REQUEST,
+  SHARER_LIST_SORT_SUCCESS,
+  SHARER_LIST_SORT_FAIL,
 } from "../constants/sharerConstants";
 
 const instance = axios.create({
@@ -103,36 +106,48 @@ export const DetailSharers = (id) => async (dispatch) => {
 
 
 
-export const listSharers = () => async (dispatch) => {
-  try {
-    dispatch({ type: SHARER_LIST_REQUEST });
+export const listSharers =
+  (sort_by = null, order_by = "desc") =>
+  async (dispatch) => {
+    try {
+      dispatch({
+        type: sort_by ? SHARER_LIST_SORT_REQUEST : SHARER_LIST_REQUEST,
+      });
 
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      const token = userInfo ? userInfo.access_token : null;
 
-    const token = userInfo ? userInfo.access_token : null;
+      const config = token
+        ? {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        : {};
 
-    const config = token
-      ? {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      : {};
+      let url = "api/sharer/";
+      if (sort_by) {
+        url += `?sort_by=${sort_by}&order_by=${order_by}`;
+      }
 
-    const { data } = await instance.get("api/sharer/", config);
-    dispatch({ type: SHARER_LIST_SUCCESS, payload: data });
-  } catch (error) {
-    dispatch({
-      type: SHARER_LIST_FAIL,
-      payload:
-        error.message && error.response.data.message
-          ? error.response.data.message
-          : error.message,
-    });
-  }
-};
+      const { data } = await instance.get(url, config);
+
+      dispatch({
+        type: sort_by ? SHARER_LIST_SORT_SUCCESS : SHARER_LIST_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: sort_by ? SHARER_LIST_SORT_FAIL : SHARER_LIST_FAIL,
+        payload:
+          error.response && error.response.data.detail
+            ? error.response.data.detail
+            : error.message,
+      });
+    }
+  };
 
 export const beSharer = (page_name) => async (dispatch) => {
   try {
