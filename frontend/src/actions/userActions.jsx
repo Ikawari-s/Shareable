@@ -334,6 +334,10 @@ export const updateUserProfile = ({ profile_picture, username }) => async (dispa
       formData.append('username', username);
     }
 
+    // Log the username and profile_picture
+    console.log("Username:", username);
+    console.log("Profile Picture:", profile_picture);
+
     const config = {
       headers: {
         "Authorization": `Bearer ${token}`,
@@ -357,6 +361,9 @@ export const updateUserProfile = ({ profile_picture, username }) => async (dispa
     });
   }
 };
+
+
+
 
 export const fetchUserProfile = () => async (dispatch) => {
   try {

@@ -8,9 +8,7 @@ const instance = axios.create({
 
 export const profile = () => async (dispatch) => {
   try {
-    dispatch({
-      type: USER_PROFILE_REQUEST,
-    });
+    dispatch({ type: USER_PROFILE_REQUEST });
 
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const token = userInfo ? userInfo.access_token : null;
@@ -19,27 +17,16 @@ export const profile = () => async (dispatch) => {
       ? {
           headers: {
             "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
+            "Accept": "application/json",
+            "Authorization": `Bearer ${token}`,
           },
         }
       : {};
-    const { data } = await instance.get(
-      'api/user/profile/',
-      config
-    );
 
-    dispatch({
-      type: USER_PROFILE_SUCCESS,
-      payload: data,
-    });
+    const response = await instance.get('api/user/profile/', config);
 
+    dispatch({ type: USER_PROFILE_SUCCESS, payload: response.data });
   } catch (error) {
-    dispatch({
-      type: USER_PROFILE_FAIL,
-      payload: error.response && error.response.data.detail
-        ? error.response.data.detail
-        : error.message,
-    });
+    dispatch({ type: USER_PROFILE_FAIL, payload: error.message });
   }
 };
