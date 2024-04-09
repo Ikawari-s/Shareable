@@ -150,7 +150,7 @@ class beSharer(models.Model):
 
     def __str__(self):
         return self.title
-
+    
 class FollowExpiration(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     sharer = models.ForeignKey(Sharer, on_delete=models.CASCADE)

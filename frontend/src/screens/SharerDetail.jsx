@@ -24,7 +24,7 @@ const SharerDetail = ({
   loading,
   error,
   DetailSharers,
-  followSharer, // Connect the followSharer action creator
+  followSharer, 
   unfollowSharer,
   getSharerPostCount,
 }) => {
@@ -36,7 +36,7 @@ const SharerDetail = ({
   const [paypalLoaded, setPaypalLoaded] = useState(false);
   const [followTier, setFollowTier] = useState(null);
   const [showPaypalModal, setShowPaypalModal] = useState(false);
-  const [selectedAmount, setSelectedAmount] = useState(0); // State to store the selected amount
+  const [selectedAmount, setSelectedAmount] = useState(0); 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -78,6 +78,56 @@ const SharerDetail = ({
       ],
     });
   };
+
+  useEffect(() => {
+    const followedSharers = Object.values(userInfo?.followed_sharers || {})
+      .flatMap((tier) => tier)
+      .map((sharer) => parseInt(sharer));
+
+    setIsFollowing(followedSharers.includes(parseInt(id)));
+  }, [id, userInfo]);
+
+  useEffect(() => {
+    const expirationDates = userInfo?.expiration_dates || {};
+    const currentDateTime = new Date();
+
+    Object.entries(expirationDates).forEach(([sharerId, expirationDate]) => {
+      if (new Date(expirationDate) <= currentDateTime) {
+        const updatedUserInfo = { ...userInfo };
+        for (const tier in updatedUserInfo.followed_sharers) {
+          updatedUserInfo.followed_sharers[tier] =
+            updatedUserInfo.followed_sharers[tier].filter(
+              (sharer) => sharer !== parseInt(sharerId)
+            );
+        }
+        delete updatedUserInfo.expiration_dates[sharerId];
+        localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
+
+        unfollowSharer(sharerId);
+      }
+    });
+  }, [userInfo, unfollowSharer]);
+
+  useEffect(() => {
+    const checkAndRefresh = () => {
+      const expirationDates = userInfo?.expiration_dates || {};
+      const currentDateTime = new Date();
+  
+      const isExpired = Object.entries(expirationDates).some(
+        ([sharerId, expirationDate]) => {
+          return new Date(expirationDate) <= currentDateTime;
+        }
+      );
+  
+      if (isExpired) {
+        window.location.reload();
+      }
+    };
+  
+    const interval = setInterval(checkAndRefresh, 20 * 60 * 60 * 1000);
+  
+    return () => clearInterval(interval);
+  }, [userInfo]);
   
   const handleCreateOrder = (data, actions) => {
     return createOrder(data, actions);
@@ -87,19 +137,19 @@ const SharerDetail = ({
     return actions.order.capture().then(() => {
       followSharer(id, followTier, selectedAmount)
         .then(() => {
-          console.log("Sharer followed successfully");
-          // Update userInfo in local storage
           const updatedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
           updatedUserInfo.followed_sharers[followTier].push(parseInt(id));
+          const expirationDate = new Date();
+          expirationDate.setDate(expirationDate.getDate() + 30);
+          updatedUserInfo.expiration_dates[id] = expirationDate;
           localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
-          window.location.reload(); // Refresh the page
+          window.location.reload();
         })
         .catch((error) => {
           console.error("Error following sharer:", error);
         });
     });
   };
-  
   
 
 
@@ -121,17 +171,15 @@ const SharerDetail = ({
     setIsFollowing(followedSharers.includes(parseInt(id)));
   }, [id, userInfo]);
 
-const handleTierButtonClick = (tier, amount) => {
-  console.log("Selected Amount:", amount);
-  console.log("Tier:", tier);
-  console.log("Sharer ID:", id);
-  setCurrentTier(tier); // Update the currentTier state
-  setFollowTier(tier);
-  setSelectedAmount(amount);
-  setShowPaypalModal(true);
-};
-
-  
+  const handleTierButtonClick = (tier, amount) => {
+    console.log("Selected Amount:", amount);
+    console.log("Tier:", tier);
+    console.log("Sharer ID:", id);
+    setCurrentTier(tier); 
+    setFollowTier(tier);
+    setSelectedAmount(amount);
+    setShowPaypalModal(true);
+  };
 
   const handleUnfollow = () => {
     const followedSharers = userInfo?.followed_sharers;
@@ -162,6 +210,8 @@ const handleTierButtonClick = (tier, amount) => {
       updatedUserInfo.followed_sharers[currentTier].filter(
         (sharerId) => sharerId !== parseInt(id)
       );
+
+    delete updatedUserInfo.expiration_dates[id];
     localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
   };
 
@@ -199,47 +249,48 @@ const handleTierButtonClick = (tier, amount) => {
           )}
           <h2>{sharer.name}</h2>
           <p>{sharer.description}</p>
-          <p>Category: {sharer.category}</p>
+          <p>Category: {sharer.category ? sharer.category : "Not Specified"}</p>
           <PostCount sharerId={id} />
           <div>
-          {isFollowing ? (
-    <Button onClick={handleUnfollow}>Unfollow Sharer</Button>
-  ) : (
-    <>
-      <div>
-        <PostCount sharerId={id} tier="tier1" />
-        <Button
-          variant="success"
-          onClick={() => handleTierButtonClick("tier1", 5)}
-        >
-          Tier 1
-        </Button>
-      </div>
-      <div>
-        <PostCount sharerId={id} tier="tier2" />
-        <Button
-          variant="success"
-          onClick={() => handleTierButtonClick("tier2", 10)}
-        >
-          Tier 2
-        </Button>
-      </div>
-      <div>
-        <PostCount sharerId={id} tier="tier3" />
-        <Button
-          variant="success"
-          onClick={() => handleTierButtonClick("tier3", 20)}
-        >
-          Tier 3
-        </Button>
-      </div>
-    </>
-  )}
+            {isFollowing ? (
+              <Button onClick={handleUnfollow}>Unfollow Sharer</Button>
+            ) : (
+              <>
+                <div>
+                  <PostCount sharerId={id} tier="tier1" />
+                  <Button
+                    variant="success"
+                    onClick={() => handleTierButtonClick("tier1", 5)}
+                  >
+                    Tier 1
+                  </Button>
+                </div>
+                <div>
+                  <PostCount sharerId={id} tier="tier2" />
+                  <Button
+                    variant="success"
+                    onClick={() => handleTierButtonClick("tier2", 10)}
+                  >
+                    Tier 2
+                  </Button>
+                </div>
+                <div>
+                  <PostCount sharerId={id} tier="tier3" />
+                  <Button
+                    variant="success"
+                    onClick={() => handleTierButtonClick("tier3", 20)}
+                  >
+                    Tier 3
+                  </Button>
+                </div>
+              </>
+            )}
             {/* PayPal button section */}
             {showPaypalModal && followTier && paypalLoaded && (
               <PayPalScriptProvider
                 options={{
-                  "client-id": "ATyV_k4Cl0uXb3m5rslF-APNEeMSqlO2xp42GOJoMOb7mzeguFi2028uPwa5UOTSbN8U7rjnKpOYFQT8",
+                  "client-id":
+                    "ATyV_k4Cl0uXb3m5rslF-APNEeMSqlO2xp42GOJoMOb7mzeguFi2028uPwa5UOTSbN8U7rjnKpOYFQT8",
                   currency: "USD",
                 }}
               >

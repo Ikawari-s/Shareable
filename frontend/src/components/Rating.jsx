@@ -7,6 +7,7 @@ import {
   patchSharerRatings,
 } from "../actions/sharerActions";
 
+
 const FetchSharerRatingsComponent = ({ sharerId }) => {
   const dispatch = useDispatch();
   const { ratings, loading, error } = useSelector(
@@ -76,25 +77,27 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
     }
   };
 
-  const calculateAverageRating = () => {
-    if (!ratings || ratings.length === 0) {
-      return null;
-    }
 
-    const totalRatings = ratings.length;
-    let totalRatingValue = 0;
+  // DI NA GAMIT, get ko nalang from backend
+  // const calculateAverageRating = () => {
+  //   if (!ratings || ratings.length === 0) {
+  //     return null;
+  //   }
 
-    for (const rating of ratings) {
-      const ratingValue = parseFloat(rating.rating);
-      if (!isNaN(ratingValue)) {
-        totalRatingValue += ratingValue;
-      }
-    }
+  //   const totalRatings = ratings.length;
+  //   let totalRatingValue = 0;
 
-    return totalRatingValue / totalRatings;
-  };
+  //   for (const rating of ratings) {
+  //     const ratingValue = parseFloat(rating.rating);
+  //     if (!isNaN(ratingValue)) {
+  //       totalRatingValue += ratingValue;
+  //     }
+  //   }
 
-  const averageRating = calculateAverageRating();
+  //   return totalRatingValue / totalRatings;
+  // };
+
+  // const averageRating = calculateAverageRating();
 
   return (
     <div
@@ -104,8 +107,10 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
       <h2>Sharer Ratings</h2>
       <div>
         Total Rating:{" "}
-        {averageRating !== null
-          ? averageRating.toFixed(1) + "/5"
+        {ratings.length > 0
+          ? ratings[0].average_rating !== null
+            ? ratings[0].average_rating.toFixed(1) + "/5"
+            : "No ratings available"
           : "No ratings available"}
       </div>
       <ul>
@@ -119,7 +124,7 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
                   style={{ width: 50, height: 50, borderRadius: "50%" }}
                 />
               )}
-              User: {rating.username}{" "}
+              : {rating.username}{" "}
               {rating.user_tier === "tier3" && (
                 <img
                   src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630188.png?imwidth=1040&imheight=760"
@@ -158,31 +163,28 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
               )}
               {rating.badge === "None" && null}, Rating: {rating.rating},
               Comment: {rating.comment}
-              {isAdmin && (
+              <div style={{ background: "green" }}>
+                {rating.edited && rating.last_edit_date && (
+                  <>Last Edit Date: {rating.last_edit_date}</>
+                )}
+              </div>
+              {isAdmin || // Admin can always see delete button
+                ( // Other users need to be following
+                  followedSharers.tier1.includes(rating.sharer) ||
+                  followedSharers.tier2.includes(rating.sharer) ||
+                  followedSharers.tier3.includes(rating.sharer)
+                ) ? (
                 <>
-                  {(followedSharers.tier1.includes(rating.sharer) ||
-                    followedSharers.tier2.includes(rating.sharer) ||
-                    followedSharers.tier3.includes(rating.sharer)) && (
-                    <>
-                      <button onClick={() => handleDeleteRating(rating.id)}>
-                        Delete
-                      </button>
-                      {rating.user === userId && (
-                        <button onClick={() => setUpdateRatingId(rating.id)}>
-                          Update
-                        </button>
-                      )}
-                    </>
+                  <button onClick={() => handleDeleteRating(rating.id)}>
+                    Delete
+                  </button>
+                  {rating.user === userId && (
+                    <button onClick={() => setUpdateRatingId(rating.id)}>
+                      Update
+                    </button>
                   )}
-                  {!followedSharers.tier1.includes(rating.sharer) &&
-                    !followedSharers.tier2.includes(rating.sharer) &&
-                    !followedSharers.tier3.includes(rating.sharer) && (
-                      <button onClick={() => handleDeleteRating(rating.id)}>
-                        Delete
-                      </button>
-                    )}
                 </>
-              )}
+              ) : null}
             </div>
             {deletingRatingId === rating.id && (
               <div className="confirmation-overlay">
@@ -190,9 +192,7 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
                   <div>
                     Are you sure you want to delete this rating?
                     <button onClick={confirmDeleteRating}>Yes</button>
-                    <button onClick={() => setDeletingRatingId(null)}>
-                      No
-                    </button>
+                    <button onClick={() => setDeletingRatingId(null)}>No</button>
                   </div>
                 </div>
               </div>

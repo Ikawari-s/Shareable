@@ -13,7 +13,7 @@ function AdminCreateUser() {
     is_active: false,
     is_sharer: false,
     is_staff: false,
-    is_superuser: false // Add is_superuser field
+    is_superuser: false
   });
   const [error, setError] = useState('');
   const { loading, createUserError } = useSelector(state => state.createUserAdmin);
@@ -35,7 +35,6 @@ function AdminCreateUser() {
       if (response) {
         window.location.reload();
       } else {
-        // Handle error condition here
         setError("Failed to create user");
       }
     }
@@ -46,44 +45,40 @@ function AdminCreateUser() {
       <h2>Create New User</h2>
       {createUserError && <Alert variant="danger" onClose={() => setError('')} dismissible>{createUserError}</Alert>}
       {error && <Alert variant="danger" onClose={() => setError('')} dismissible>{error}</Alert>}
-      <form onSubmit={handleSubmit} style={{ maxWidth: '400px' }}>
-        <div style={{ marginBottom: '10px' }}>
-          <label style={{ display: 'block' }}>Username:</label>
-          <input type="text" name="username" value={formData.username} onChange={handleChange} required />
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-          <label style={{ display: 'block' }}>Email:</label>
-          <input type="email" name="email" value={formData.email} onChange={handleChange} required />
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-          <label style={{ display: 'block' }}>Password:</label>
-          <input type="password" name="password1" value={formData.password1} onChange={handleChange} required />
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-          <label style={{ display: 'block' }}>Confirm Password:</label>
-          <input type="password" name="password2" value={formData.password2} onChange={handleChange} required />
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-          <label style={{ marginRight: '10px' }}>Is Active:</label>
-          <input type="checkbox" name="is_active" checked={formData.is_active} onChange={handleChange} />
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-          <label style={{ marginRight: '10px' }}>Is Staff:</label>
-          <input type="checkbox" name="is_staff" checked={formData.is_staff} onChange={handleChange} />
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-          <label style={{ marginRight: '10px' }}>Is Sharer:</label>
-          <input type="checkbox" name="is_sharer" checked={formData.is_sharer} onChange={handleChange} />
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-          <label style={{ marginRight: '10px' }}>Is Superuser:</label>
-          <input type="checkbox" name="is_superuser" checked={formData.is_superuser} onChange={handleChange} />
-        </div>
-        <Button type="submit" disabled={loading}>Create User</Button>
+      <Form onSubmit={handleSubmit} style={{ maxWidth: '400px' }}>
+        <Form.Group controlId="formUsername">
+          <Form.Label>Username:</Form.Label>
+          <Form.Control type="text" name="username" value={formData.username} onChange={handleChange} required />
+        </Form.Group>
+        <Form.Group controlId="formEmail">
+          <Form.Label>Email:</Form.Label>
+          <Form.Control type="email" name="email" value={formData.email} onChange={handleChange} required />
+        </Form.Group>
+        <Form.Group controlId="formPassword1">
+          <Form.Label>Password:</Form.Label>
+          <Form.Control type="password" name="password1" value={formData.password1} onChange={handleChange} required />
+        </Form.Group>
+        <Form.Group controlId="formPassword2">
+          <Form.Label>Confirm Password:</Form.Label>
+          <Form.Control type="password" name="password2" value={formData.password2} onChange={handleChange} required />
+        </Form.Group>
+        <Form.Group controlId="formIsActive">
+          <Form.Check type="checkbox" label="Is Active" name="is_active" checked={formData.is_active} onChange={handleChange} />
+        </Form.Group>
+        <Form.Group controlId="formIsStaff">
+          <Form.Check type="checkbox" label="Is Staff" name="is_staff" checked={formData.is_staff} onChange={handleChange} />
+        </Form.Group>
+        <Form.Group controlId="formIsSharer">
+          <Form.Check type="checkbox" label="Is Sharer" name="is_sharer" checked={formData.is_sharer} onChange={handleChange} />
+        </Form.Group>
+        <Form.Group controlId="formIsSuperuser">
+          <Form.Check type="checkbox" label="Is Superuser" name="is_superuser" checked={formData.is_superuser} onChange={handleChange} />
+        </Form.Group>
+        <Button variant="primary" type="submit" disabled={loading}>Create User</Button>
         {loading && <Spinner animation="border" role="status">
           <span className="sr-only">Loading...</span>
         </Spinner>}
-      </form>
+      </Form>
     </div>
   );
 }

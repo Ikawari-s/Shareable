@@ -15,7 +15,7 @@ function PostCount({ sharerId, tier }) {
     if (postCount && postCount.post_count) {
       return postCount.post_count;
     }
-    return null;
+    return 0;
   };
 
   // Function to get post count based on tier

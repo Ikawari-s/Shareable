@@ -1,19 +1,32 @@
-import React, { useState } from 'react';
+// AdminUpdateUser.jsx
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { updateUserAdmin } from '../actions/adminActions';
 import { Form, Button, Alert } from 'react-bootstrap';
 
-function AdminUpdateUser({ userId }) {
+function AdminUpdateUser({ userId, isActive, isStaff, isSharer, isSuperuser }) {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     username: '',
-    is_active: false,
-    is_sharer: false,
-    is_staff: false,
-    is_superuser: false, // Add is_superuser field
+    is_active: isActive,
+    is_sharer: isSharer,
+    is_staff: isStaff,
+    is_superuser: isSuperuser,
     profile_picture: null
   });
   const [error, setError] = useState('');
+
+  // Update formData when props change
+  useEffect(() => {
+    setFormData({
+      username: '',
+      is_active: isActive,
+      is_sharer: isSharer,
+      is_staff: isStaff,
+      is_superuser: isSuperuser,
+      profile_picture: null
+    });
+  }, [userId, isActive, isStaff, isSharer, isSuperuser]);
 
   const handleChange = (e) => {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;

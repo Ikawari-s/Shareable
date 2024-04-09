@@ -86,7 +86,7 @@ class Tier1FollowedSharers(generics.ListAPIView):
         if not queryset.exists():
             if is_follow(request.user, kwargs.get('sharer_id'), self.tier):
                 message = f"No posts yet from this sharer in {self.tier.capitalize()} tier."
-                return Response({"message": message}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"message": message}, status=status.HTTP_204_NO_CONTENT)
             else:
                 return Response({"detail": "You are not followed in this tier."}, status=status.HTTP_403_FORBIDDEN)
         
@@ -126,7 +126,7 @@ class Tier2FollowedSharers(generics.ListAPIView):
         if not queryset.exists():
             if is_follow(request.user, kwargs.get('sharer_id'), self.tier):
                 message = f"No posts yet from this sharer in {self.tier.capitalize()} tier."
-                return Response({"message": message}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"message": message}, status=status.HTTP_204_NO_CONTENT)
             else:
                 return Response({"detail": "You are not followed in this tier."}, status=status.HTTP_403_FORBIDDEN)
         
@@ -166,7 +166,7 @@ class Tier3FollowedSharers(generics.ListAPIView):
         if not queryset.exists():
             if is_follow(request.user, kwargs.get('sharer_id'), self.tier):
                 message = f"No posts yet from this sharer in {self.tier.capitalize()} tier."
-                return Response({"message": message}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"message": message}, status=status.HTTP_204_NO_CONTENT)
             else:
                 return Response({"detail": "You are not followed in this tier."}, status=status.HTTP_403_FORBIDDEN)
         
@@ -451,9 +451,9 @@ class TopDonorView(APIView):
     def get(self, request, sharer_id):
         top_donor = get_top_donors(sharer_id)
         if top_donor:
-            return Response(top_donor, status=200)
+            return Response(top_donor, status=status.HTTP_200_OK)
         else:
-            return Response({'error': 'Sharer not found or no donations exist for this sharer.'}, status=404)
+            return Response({'error': 'No donors found for this sharer.'}, status=status.HTTP_204_NO_CONTENT)
         
         
 def get_top_donors(sharer_id):
@@ -624,6 +624,9 @@ class RatingUpdateView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+    
     
 class LikePost(APIView):
     permission_classes = [IsAuthenticated]

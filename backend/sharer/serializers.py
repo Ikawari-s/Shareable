@@ -190,11 +190,29 @@ class RatingSerializer(serializers.ModelSerializer):
     average_rating = serializers.SerializerMethodField()
     badge = serializers.SerializerMethodField()
     user_tier = serializers.SerializerMethodField()
+    edited = serializers.SerializerMethodField()
+    last_edit_date = serializers.SerializerMethodField()
 
 
     class Meta:
         model = Rating
-        fields = ['id', 'sharer', 'user', 'rating', 'comment', 'username', 'profile_picture', 'user_rated', 'already_rated', 'average_rating', 'badge', 'user_tier']
+        fields = ['id', 'sharer', 'user', 'rating', 'comment', 'username', 'profile_picture', 'user_rated', 'already_rated', 'average_rating', 'badge', 'user_tier','edited', 'last_edit_date']
+
+    def get_edited(self, obj):
+        # Check if the rating has been edited
+        if obj.updated_at:
+            # If the time difference between created_at and updated_at is negligible, it's a new instance
+            if (obj.updated_at - obj.created_at) < timezone.timedelta(seconds=1):
+                return False
+            return True
+        return False
+    
+    def get_last_edit_date(self, obj):
+        # Get the date of the last edit if available
+        if obj.updated_at:
+            return obj.updated_at.strftime("%Y-%m-%d")
+        else:
+            return None
 
     def get_user_tier(self, obj):
         user = obj.user

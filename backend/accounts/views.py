@@ -36,6 +36,7 @@ from datetime import datetime, timedelta
 from threading import Timer
 from django.shortcuts import get_object_or_404
 from django.db import transaction
+from pytz import timezone as tz
 User = get_user_model()
 
 
@@ -79,6 +80,7 @@ class SendOTP(APIView):
 
             user.send_otp(otp_id)  
             return Response({"message": "OTP sent successfully"}, status=status.HTTP_200_OK)
+
 
 class ResendOTP(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -133,7 +135,8 @@ class VerifyOTP(APIView):
                 return Response({"message": "OTP verified successfully and user activated"}, status=status.HTTP_200_OK)
             else:
                 return Response({"error": "Invalid OTP, OTP expired, or OTP ID mismatch"}, status=status.HTTP_400_BAD_REQUEST)
-
+            
+            
 class UserLogin(APIView):
     permission_classes = (AllowAny,)
     authentication_classes = (JWTAuthentication,)
@@ -143,7 +146,6 @@ class UserLogin(APIView):
         validate_email(data)
         validate_password(data)
         
-
         serializer = UserLoginSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             user = authenticate(request, username=data['email'], password=data['password'])
@@ -197,10 +199,21 @@ class UserLogin(APIView):
                     'user_info': {
                         'email': user.email,
                         'username': user.username,
-                        'is_admin': user.is_staff  # Indicate admin status based on is_staff field
+                        'is_admin': user.is_staff  
                     },
                     'rating_id': rating_id,
                 }
+
+
+                expiration_dates = {}
+                for tier, ids in followed_sharers.items():
+                    for sharer_id in ids:
+                        expiration_date = FollowExpiration.objects.filter(user=user, sharer__id=sharer_id).values_list('expiration_date', flat=True).first()
+                        if expiration_date:
+                            expiration_date = expiration_date.astimezone(tz('Asia/Manila'))
+                        expiration_dates[sharer_id] = expiration_date
+                        print(f"Sharer {sharer_id} expiration date: {expiration_date}")  
+                response_data['expiration_dates'] = expiration_dates
 
                 return JsonResponse(response_data, status=status.HTTP_200_OK)
             else:
@@ -339,6 +352,20 @@ class Be_sharer(APIView):
             del thread_locals.is_be_sharer_context 
 
 
+class CanUnfollowSharer(permissions.BasePermission):
+    def has_permission(self, request, view):
+        sharer_id = view.kwargs.get('sharer_id')
+        if sharer_id:
+            sharer = Sharer.objects.filter(pk=sharer_id).first()
+            if sharer:
+                user = request.user
+                return user.follows_tier1.filter(pk=sharer.pk).exists() or \
+                       user.follows_tier2.filter(pk=sharer.pk).exists() or \
+                       user.follows_tier3.filter(pk=sharer.pk).exists()
+        return False
+
+
+
 
 # CHECKING LANG IF is_sharer sa headers
 
@@ -352,29 +379,11 @@ class SharerChecker(APIView):
             return Response({'error': 'User is not authenticated.'}, status=status.HTTP_401_UNAUTHORIZED)
 
 # CONSULT THE PAYMENT // GET THE SHARER_ID USING THE SHARER FIELD ON THE models as bridge
-
-
-
-
 class FollowSharer(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def __init__(self):
         super().__init__()
-        self.start_follow_expiration_check()
-
-    def start_follow_expiration_check(self):
-        expiration_time = timedelta(days=30)
-        self.follow_expiration_timer = Timer(expiration_time.total_seconds(), self.check_expired_followings)
-        self.follow_expiration_timer.start()
-
-    def check_expired_followings(self):
-        expired_followings = FollowExpiration.objects.filter(expiration_date__lte=timezone.now())
-        for follow in expired_followings:
-            follow.check_and_unfollow_if_expired()
-            print(f"Automatically unfollowed sharer {follow.sharer_id} for user {follow.user_id}")
-    
-        self.start_follow_expiration_check()
 
     def post(self, request, *args, **kwargs):
         sharer_id = self.kwargs.get('sharer_id')
@@ -414,33 +423,41 @@ class FollowSharer(generics.GenericAPIView):
             else:
                 return Response({'detail': 'Invalid tier provided'}, status=status.HTTP_400_BAD_REQUEST)
 
+            with transaction.atomic():
+                dashboard, _ = Dashboard.objects.get_or_create(sharer=sharer)
+                dashboard.total_earnings += amount_provided
+                dashboard.save()
+
             user.save()
 
-            expiration_date = timezone.now() + timedelta(days=30)
-            follow_expiration = FollowExpiration.objects.create(user=user, sharer=sharer, expiration_date=expiration_date)
-
-            # Update dashboard total earnings within a transaction block
-            try:
-                with transaction.atomic():
-                    dashboard, _ = Dashboard.objects.get_or_create(sharer=sharer)
-                    dashboard.total_earnings += amount_provided
-                    dashboard.save()
-            except AppUser.sharer.RelatedObjectDoesNotExist:
-                print("User does not have a sharer")
-            except Exception as e:
-                print(f"Error updating dashboard: {e}")
+            expiration_date = timezone.now() + timezone.timedelta(days=30)
+            manila_time = tz('Asia/Manila')
+            expiration_date_manila = expiration_date.astimezone(manila_time)
+            FollowExpiration.objects.create(user=user, sharer=sharer, expiration_date=expiration_date_manila)
 
             serializer = SharerSerializer(sharer)
 
-            print(f"Sharer {sharer_id} will expire at {expiration_date}")  
+            print(f"Sharer {sharer_id} will expire at {expiration_date}")
 
             return Response({'detail': f'Successfully followed sharer in {tier}', 'sharer': serializer.data}, status=status.HTTP_200_OK)
         except ValueError:
             return Response({'detail': 'Invalid sharer ID'}, status=status.HTTP_400_BAD_REQUEST)
 
+    def check_expired_follows(self):
+        expired_follows = FollowExpiration.objects.filter(expiration_date__lte=timezone.now())
+        for follow in expired_follows:
+            user = follow.user
+            user.follows_tier1.remove(follow.sharer)
+            user.follows_tier2.remove(follow.sharer)
+            user.follows_tier3.remove(follow.sharer)
+            user.save()
+            follow.delete()
+            
+
+
 
 class UnfollowSharer(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CanUnfollowSharer]
 
     def delete(self, request, *args, **kwargs):
         sharer_id = self.kwargs.get('sharer_id')
@@ -458,8 +475,7 @@ class UnfollowSharer(generics.GenericAPIView):
             return Response({'detail': 'Successfully unfollowed sharer', 'sharer': serializer.data}, status=status.HTTP_200_OK)
         except Sharer.DoesNotExist:
             return Response({'detail': 'Sharer not found'}, status=status.HTTP_404_NOT_FOUND)
-
-
+        
 
 class FollowedSharerList(generics.ListAPIView):
     serializer_class = SharerSerializer
@@ -477,10 +493,6 @@ class FollowedSharerList(generics.ListAPIView):
             return user.follows_tier3.all()
         else:
             return user.follows_tier1.all() | user.follows_tier2.all() | user.follows_tier3.all()
-
-    
-
-
 
 class UserView(APIView):
     authentication_classes = (JWTAuthentication,)

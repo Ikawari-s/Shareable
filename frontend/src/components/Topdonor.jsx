@@ -17,7 +17,7 @@ function TopDonor({ sharerId }) {
       <h1 className="top-donor-title">Top Donors</h1>
       {loading && <Spinner animation="border" role="status" />}
       {error && <p>No Donors yet.</p>}
-      {topDonorData && topDonorData.length > 0 && (
+      {topDonorData && topDonorData.length > 0 ? (
         <div className="row justify-content-center">
           {topDonorData.slice(0, 3).map((donor, index) => (
             <div key={index} className="col-md-4 mb-4">
@@ -29,6 +29,8 @@ function TopDonor({ sharerId }) {
             </div>
           ))}
         </div>
+      ) : (
+        <p>No donors yet.</p>
       )}
     </div>
   );

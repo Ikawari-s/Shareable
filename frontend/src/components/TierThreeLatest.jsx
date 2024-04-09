@@ -49,7 +49,7 @@ function TierThreeLatest({ sharerId }) {
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
-        <p>No Post yet.</p>
+        <p>{error}</p>
       ) : (
         <div>
           {Array.isArray(posts) && posts.length > 0 ? (
