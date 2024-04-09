@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { BsFillTrash3Fill, BiSolidUpvote, BiUpvote, BiSolidDownvote, BiDownvote } from "react-icons/bs";
+import { BsFillTrash3Fill} from "react-icons/bs";
+import { BiComment } from "react-icons/bi";
+import { GrAddCircle } from "react-icons/gr";
 import {
   listSharerPosts,
   profileSharers,
@@ -17,6 +19,8 @@ import "../designs/Profile.css";
 import axios from 'axios';
 
 function SharerPageScreen() {
+  const [showComment, setShowComment] = useState(false);
+  const [postId, setPostId] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
@@ -43,6 +47,9 @@ function SharerPageScreen() {
   const [showUpdateConfirmation, setShowUpdateConfirmation] = useState(false); // State for update confirmation modal
   const [editingPostId, setEditingPostId] = useState(null); // State to track the post being edited
   const userInfo = useSelector((state) => state.userInfo);
+  const handleButtonClick = (postId) => {
+    setShowComment((prevShowComment) => !prevShowComment); // Toggle the showComment state
+    };
 
   const CATEGORY_CHOICES = [
     { value: "", label: "Select a category" },
@@ -231,11 +238,11 @@ function SharerPageScreen() {
   };
 
   return (
-    <div className="brap">
+    <div className="brap" style={{paddingTop: '.2rem'}}>
       <div className="col-md-12 cover-stuff">
       <div className="d-flex">
       <div className="main">
-      <div className="d-flex">
+      <div className="d-flex" style={{borderBottom: '1px solid rgba(255,255,255,0.5)', paddingBottom:'3rem', width: '57rem'}}>
           <img
             src={userProfile.image}
             alt="Profile"
@@ -251,15 +258,19 @@ function SharerPageScreen() {
             <h1>{name}</h1>
             <h2>{username}</h2>
             <h4>{userProfile.email}</h4>
+            <button className="btn btn-primary create-post"><GrAddCircle style={{margin: '0.2rem 0.8rem 0.2rem', fontSize: '1.5rem', lineHeight:'0rem'}}/>Create Post</button>
           </div>
           </div>
+          <div>
+          <SharerPost />
+        </div>
           {sortedPosts.map((post) => (
         <div key={post.id}>
           <div className="d-flex rat">
             <h1>{post.title}</h1>
             <p style={{ margin: '1rem 0 0 1rem', color: 'rgba(255, 255, 255, 0.5)' }}>{post.created_at_formatted}</p>
             {post.edited && <p style={{ margin: '1rem 0 0 1rem', color: 'rgba(255, 255, 255, 0.5)' }}>Edited {post.edited_at_formatted}</p>}
-            <button button id="trash" onClick={() => handleDeletePostConfirmation(post.id)}><BsFillTrash3Fill /></button>
+            <button id="trash" onClick={() => handleDeletePostConfirmation(post.id)}><BsFillTrash3Fill /></button>
           </div>
           {showDeleteConfirmation && deletePostId === post.id && (
             <div className="confirmation-overlay">
@@ -335,8 +346,15 @@ function SharerPageScreen() {
             </button>
           </form> */}
           <div>
+          <div className="d-flex">
             <LikeComponent uploadId={post.id} />
-            <Comment uploadId={post.id} />
+            <div className="comment-icon">
+            <button onClick={() => handleButtonClick(post.id)}><BiComment /></button>
+            </div>
+          </div>  
+            <div className={`comment-section ${showComment ? 'expanded' : ''}`}>
+              {showComment && <Comment uploadId={post.id} />}
+            </div>
           </div>
         </div>
       ))} 
@@ -432,9 +450,7 @@ function SharerPageScreen() {
       </div>
       </div>
       </div>
-        {/* <div>
-          <SharerPost />
-        </div> */}
+        
 
       
       </div>

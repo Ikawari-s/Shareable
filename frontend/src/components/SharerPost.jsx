@@ -84,7 +84,7 @@ function SharerPost({ uploadSharer }) {
   
 
   return (
-    <div style={{position: 'absolute', top: '22rem', padding: '1rem'}}>
+    <div>
       <h1>Sharer Post</h1>
       <form onSubmit={handleSubmit}>
         <div>

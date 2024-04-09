@@ -43,8 +43,8 @@ function Homepage({ sharerList, listSharers }) {
     : [];
 
   return (
-    <div className="container">
-      <h1>HOMEPAGE NEW</h1>
+    <div className="container brap">
+      {/* <h1>HOMEPAGE NEW</h1> */}
 
       {/* Search Input */}
       <input
@@ -56,14 +56,16 @@ function Homepage({ sharerList, listSharers }) {
       />
 
       {/* Sorting Buttons */}
-      <div className="mb-3">
+      <div className="mb-3 d-flex" style={{justifyContent: 'space-between'}}>
         <Button
+          id="buttones"
           variant={currentSortBy === "all" ? "primary" : "outline-primary"}
           onClick={() => handleSpecialSort("all")}
         >
           All
         </Button>
         <Button
+          id="buttones"
           variant={
             currentSortBy === "total_followers_asc"
               ? "primary"
@@ -74,6 +76,7 @@ function Homepage({ sharerList, listSharers }) {
           Followers (Low to High)
         </Button>
         <Button
+          id="buttones"
           variant={
             currentSortBy === "total_followers_desc"
               ? "primary"
@@ -84,6 +87,7 @@ function Homepage({ sharerList, listSharers }) {
           Followers (High to Low)
         </Button>
         <Button
+          id="buttones"
           variant={
             currentSortBy === "average_rating_asc"
               ? "primary"
@@ -94,6 +98,7 @@ function Homepage({ sharerList, listSharers }) {
           Rating (Low to High)
         </Button>
         <Button
+          id="buttones"
           variant={
             currentSortBy === "average_rating_desc"
               ? "primary"
@@ -104,6 +109,7 @@ function Homepage({ sharerList, listSharers }) {
           Rating (High to Low)
         </Button>
         <Button
+          id="buttones"
           variant={currentSortBy === "latest" ? "primary" : "outline-primary"}
           onClick={() => handleSpecialSort("latest")}
         >
@@ -117,6 +123,7 @@ function Homepage({ sharerList, listSharers }) {
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
           className="form-control"
+          style={{color:'#777777'}}
         >
           <option value="all">All Categories</option>
           <option value="Art">Art</option>

@@ -52,7 +52,7 @@ const Settings = () => {
     <div className="waw">
       <form id="prof-info" className="settings-form">
         <div className="section-container">
-          <div id='titel' style={{borderBottom: 'solid rgba(255,255,255,0.5) 1px', paddingBottom: '1.5rem'}}>
+          <div style={{borderBottom: 'solid rgba(255,255,255,0.5) 1px', paddingBottom: '1.5rem'}}>
             <h1>Profile Information</h1>
             <p style={{width: '28rem'}}>Keep your personal details private. Information you add here is visible to anyone who can view your profile.</p>
             <div>
@@ -67,7 +67,7 @@ const Settings = () => {
               <label>Display name</label>
               <div><input type="text" className="form-control" id="displayName" value={username} onChange={(e) => setUsername(e.target.value)} /></div>
               <label>Email</label>
-              <div><input type="email" id="emal" value={email} disabled /></div>
+              <div><input type="email" id="email" value={email} disabled /></div>
               <Button className="save-btn" id='paw' variant="primary" onClick={handleSaveProfile}>Save</Button>
             </div>
           </div>
