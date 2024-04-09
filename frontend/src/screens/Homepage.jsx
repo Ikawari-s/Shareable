@@ -9,37 +9,23 @@ import "../designs/HomePage.css";
 
 function Homepage({ sharerList, listSharers }) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [currentSortBy, setCurrentSortBy] = useState("all"); // State to track current sort criteria
+  const [currentSortBy, setCurrentSortBy] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   const { loading, error, sharers } = sharerList;
 
   useEffect(() => {
-    // Fetch sharers when the component mounts or when the sort criteria changes
+    // Fetch sharers when the component mounts or when sorting criteria changes
     listSharers(currentSortBy);
   }, [currentSortBy, listSharers]); // Dependency on currentSortBy and listSharers
 
-  useEffect(() => {
-    listSharers(currentSortBy, selectedCategory);
-  }, [currentSortBy, selectedCategory, listSharers]);
-
   const handleSort = (sortField, sortOrder) => {
     const sortParam = `${sortField}_${sortOrder}`;
-    // Toggle between sorting options and "all" when clicking the same button twice
-    if (currentSortBy === sortParam) {
-      setCurrentSortBy("all");
-    } else {
-      setCurrentSortBy(sortParam);
-    }
+    setCurrentSortBy(sortParam === currentSortBy ? "all" : sortParam);
   };
 
   const handleSpecialSort = (specialSort) => {
-    // Toggle between "latest" and "all" when clicking the same button twice
-    if (currentSortBy === specialSort) {
-      setCurrentSortBy("all");
-    } else {
-      setCurrentSortBy(specialSort);
-    }
+    setCurrentSortBy(specialSort === currentSortBy ? "all" : specialSort);
   };
 
   const filteredSharers = Array.isArray(sharers)
@@ -56,17 +42,10 @@ function Homepage({ sharerList, listSharers }) {
       })
     : [];
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
   return (
     <div className="container">
       <h1>HOMEPAGE NEW</h1>
+
       {/* Search Input */}
       <input
         type="text"
@@ -211,7 +190,15 @@ function Homepage({ sharerList, listSharers }) {
           </div>
         ))}
       </div>
+
+      {/* Display followed sharers list */}
       <FollowedSharersList />
+
+      {/* Show loading state if data is being fetched */}
+      {loading && <div>Loading...</div>}
+
+      {/* Show error message if API request fails */}
+      {error && <div>Error: {error}</div>}
     </div>
   );
 }

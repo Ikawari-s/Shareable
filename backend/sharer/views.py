@@ -36,24 +36,30 @@ def SharerView(request):
 
     # Validate and apply sorting
     if sort_by:
-        if sort_by == 'total_followers_asc':
+        if sort_by == 'all':
+            # Return all sharers without sorting
+            serializer = SharerSerializer(queryset, many=True)
+            return Response(serializer.data)
+
+        elif sort_by == 'total_followers_asc':
             queryset = queryset.annotate(total_followers_count=Count('follower_tier1') + Count('follower_tier2') + Count('follower_tier3'))
             field_to_sort = 'total_followers_count'
+
         elif sort_by == 'total_followers_desc':
             queryset = queryset.annotate(total_followers_count=Count('follower_tier1') + Count('follower_tier2') + Count('follower_tier3'))
-            field_to_sort = '-total_followers_count'  # Use negative for descending order
+            field_to_sort = '-total_followers_count'
+
         elif sort_by == 'average_rating_asc':
             queryset = queryset.annotate(average_rating=Avg('ratings__rating'))
             field_to_sort = 'average_rating'
+
         elif sort_by == 'average_rating_desc':
             queryset = queryset.annotate(average_rating=Avg('ratings__rating'))
-            field_to_sort = '-average_rating'  # Use negative for descending order
+            field_to_sort = '-average_rating'
+
         elif sort_by == 'latest':
             field_to_sort = '-id'  # Sort by ID (latest first)
-        elif sort_by == 'all':
-            
-            serializer = SharerSerializer(queryset, many=True)
-            return Response(serializer.data)
+
         else:
             return Response({"error": "Invalid sort_by parameter"}, status=status.HTTP_400_BAD_REQUEST)
 
