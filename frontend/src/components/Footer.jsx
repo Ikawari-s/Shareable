@@ -13,7 +13,7 @@ function Footer() {
           <Col l={3}>
             <p className="wa">ABOUT</p>
             <p>Share something probably</p>
-            <img src={logotext} alt="Logo" />
+            <Link id="da-link" to="/"><img src={logotext} alt="Logo" /></Link>
           </Col>
           <Col l={3}>
             <p className="wa">Sharers</p>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { BsFillTrash3Fill, BiSolidUpvote, BiUpvote, BiSolidDownvote, BiDownvote } from "react-icons/bs";
 import {
   listSharerPosts,
   profileSharers,
@@ -12,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import LikeComponent from "../components/LikeComponents";
 import Comment from "../components/Comment";
 import "../designs/actionConfirmation.css";
+import "../designs/Profile.css";
 import axios from 'axios';
 
 function SharerPageScreen() {
@@ -229,15 +231,136 @@ function SharerPageScreen() {
   };
 
   return (
-    <div className="container brap">
-      <div className="col-md-3">
-        <div className="mb-4">
-          <h1>COVER PHOTO PAAYOS</h1>
+    <div className="brap">
+      <div className="col-md-12 cover-stuff">
+      <div className="d-flex">
+      <div className="main">
+      <div className="d-flex">
+          <img
+            src={userProfile.image}
+            alt="Profile"
+            id="profil"
+            onError={() => {
+              console.error(
+                "Error loading profile picture:",
+                userProfile.image
+              );
+            }}
+          />
+          <div className="names-and-shit"> 
+            <h1>{name}</h1>
+            <h2>{username}</h2>
+            <h4>{userProfile.email}</h4>
+          </div>
+          </div>
+          {sortedPosts.map((post) => (
+        <div key={post.id}>
+          <div className="d-flex rat">
+            <h1>{post.title}</h1>
+            <p style={{ margin: '1rem 0 0 1rem', color: 'rgba(255, 255, 255, 0.5)' }}>{post.created_at_formatted}</p>
+            {post.edited && <p style={{ margin: '1rem 0 0 1rem', color: 'rgba(255, 255, 255, 0.5)' }}>Edited {post.edited_at_formatted}</p>}
+            <button button id="trash" onClick={() => handleDeletePostConfirmation(post.id)}><BsFillTrash3Fill /></button>
+          </div>
+          {showDeleteConfirmation && deletePostId === post.id && (
+            <div className="confirmation-overlay">
+              <div className="confirmation-modal">
+                <p>Are you sure you want to delete this post?</p>
+                <button onClick={handleDeleteConfirmation}>Yes</button>
+                <button onClick={handleCancelDelete}>No</button>
+              </div>
+            </div>
+          )}
+          <p id="bubble"> {post.visibility}  </p>
+          <h3>{post.description}</h3>
+          {post.images.length > 0 && (
+            <div>
+              {post.images.map((image, index) => (
+                <img key={index} src={image.image} alt={`Image ${index + 1}`} style={{height:' auto', width:'57rem', objectFit: 'cover', borderRadius:'2rem' }}/>
+              ))}
+            </div>
+          )}
+          {post.videos.length > 0 && (
+            <div>
+              {post.videos.map((video, index) => (
+                <video key={index} style={{height:' auto', width:'57rem', objectFit: 'cover', borderRadius:'2rem' }} src={video.video} controls />
+              ))}
+            </div>
+          )}
+          {post.files.length > 0 && (
+            <div>
+              <h3>Files:</h3>
+              {post.files.map((file, index) => (
+      <button key={index} onClick={() => downloadFile(file.file)}>
+      Download File {index + 1}
+    </button>
+              ))}
+            </div>
+          )}
+          {/* <form onSubmit={(e) => handleUpdatePost(post.id, e)}>
+            <div>
+              <h9>New Title: </h9>
+              <input
+                type="text"
+                value={newTitle || post.title}
+                onChange={(e) => setNewTitle(e.target.value)}
+              />
+            </div>
+            <div>
+              <h9>New Description: </h9>
+              <textarea
+                value={newDescription || post.description}
+                onChange={(e) => setNewDescription(e.target.value)}
+              />
+            </div>
+            <div>
+              <label>New Visibility:</label>
+              <div>
+                {VISIBILITY_CHOICES.map((choice) => (
+                  <div key={choice[0]}>
+                    {" "}
+                    <input
+                      type="checkbox"
+                      name="visibility"
+                      value={choice[0]}
+                      onChange={handleVisibilityChange}
+                      checked={newVisibility.includes(choice[0])}
+                    />
+                    <label>{choice[1]}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <button type="submit" className="btn btn-primary mt-3">
+              Update Post
+            </button>
+          </form> */}
+          <div>
+            <LikeComponent uploadId={post.id} />
+            <Comment uploadId={post.id} />
+          </div>
+        </div>
+      ))} 
+        </div>    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div className="stuf">
           {userProfile.cover_photo && (
             <img
               src={userProfile.cover_photo}
               alt="Cover Photo"
-              className="img-fluid mb-4"
+              id="cover"
               onError={() => {
                 console.error(
                   "Error loading cover photo:",
@@ -246,27 +369,8 @@ function SharerPageScreen() {
               }}
             />
           )}
-
-          <h1>PROFILE: </h1>
-          <img
-            src={userProfile.image}
-            className="card-img-top rounded-circle"
-            alt="Profile"
-            id="profile-image"
-            onError={() => {
-              console.error(
-                "Error loading profile picture:",
-                userProfile.image
-              );
-            }}
-          />
-        </div>
-
-        <p className="mb-1">PAGE TITLE: {name}</p>
-        <p className="mb-1">User Email: {userProfile.email}</p>
-        <p className="mb-1">Username: {username}</p>
-        <div className="mb-4">
-          <label className="mb-0">Category:</label>
+<div className="sexy-texty">
+          <h2>Category:</h2>
           <select
             value={category}
             onChange={handleCategoryChange}
@@ -280,8 +384,8 @@ function SharerPageScreen() {
                 {option.label}
               </option>
             ))}
-          </select>
-        </div>
+          </select> <br />
+        
         <form onSubmit={handleUpdateProfile}>
           <div className="mb-3">
             <h2>Page Title</h2>
@@ -326,98 +430,15 @@ function SharerPageScreen() {
           </div>
         </form>
       </div>
-      <div>
-        <SharerPost />
       </div>
-      {sortedPosts.map((post) => (
-        <div key={post.id}>
-          <h2>{post.title}</h2>
-          <button onClick={() => handleDeletePostConfirmation(post.id)}>
-            DELETE POST
-          </button>
-          {showDeleteConfirmation && deletePostId === post.id && (
-            <div className="confirmation-overlay">
-              <div className="confirmation-modal">
-                <p>Are you sure you want to delete this post?</p>
-                <button onClick={handleDeleteConfirmation}>Yes</button>
-                <button onClick={handleCancelDelete}>No</button>
-              </div>
-            </div>
-          )}
-          <p>{post.description}</p>
-          <p>Time: {post.created_at_formatted}</p>
-          {post.edited && <p>Edited At: {post.edited_at_formatted}</p>}
-          <p>Visibility: {post.visibility}</p>
-          {post.images.length > 0 && (
-            <div>
-              {post.images.map((image, index) => (
-                <img key={index} src={image.image} alt={`Image ${index + 1}`} />
-              ))}
-            </div>
-          )}
-          {post.videos.length > 0 && (
-            <div>
-              {post.videos.map((video, index) => (
-                <video key={index} src={video.video} controls />
-              ))}
-            </div>
-          )}
-          {post.files.length > 0 && (
-            <div>
-              <h3>Files:</h3>
-              {post.files.map((file, index) => (
-      <button key={index} onClick={() => downloadFile(file.file)}>
-      Download File {index + 1}
-    </button>
-              ))}
-            </div>
-          )}
-          <form onSubmit={(e) => handleUpdatePost(post.id, e)}>
-            <div>
-              <h9>New Title: </h9>
-              <input
-                type="text"
-                value={newTitle || post.title}
-                onChange={(e) => setNewTitle(e.target.value)}
-              />
-            </div>
-            <div>
-              <h9>New Description: </h9>
-              <textarea
-                value={newDescription || post.description}
-                onChange={(e) => setNewDescription(e.target.value)}
-              />
-            </div>
-            <div>
-              {/* New visibility */}
-              <label>New Visibility:</label>
-              <div>
-                {VISIBILITY_CHOICES.map((choice) => (
-                  <div key={choice[0]}>
-                    {" "}
-                    {/* Ensure each key is unique */}
-                    <input
-                      type="checkbox"
-                      name="visibility"
-                      value={choice[0]}
-                      onChange={handleVisibilityChange}
-                      checked={newVisibility.includes(choice[0])} // Check if value is included in newVisibility array
-                    />
-                    <label>{choice[1]}</label>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <button type="submit" className="btn btn-primary mt-3">
-              Update Post
-            </button>
-          </form>
-          <div>
-            <LikeComponent uploadId={post.id} />
-            <Comment uploadId={post.id} />
-          </div>
-        </div>
-      ))}
+      </div>
+        {/* <div>
+          <SharerPost />
+        </div> */}
+
+      
+      </div>
+      
 
       {showUpdateConfirmation && (
         <div className="confirmation-overlay">

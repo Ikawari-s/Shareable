@@ -1,11 +1,9 @@
 import React from "react";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 const PrivacyPolicyScreen = () => {
   return (
     <>
-      <Header />
       <div
         style={{
           fontFamily: "Arial, sans-serif",
@@ -13,9 +11,9 @@ const PrivacyPolicyScreen = () => {
           margin: "0 auto",
         }}
       >
-        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
+        <h1 style={{ textAlign: "center", margin: "3rem" }}>
           Privacy Policy
-        </h2>
+        </h1>
         <p>
           Thank you for choosing to register with our website. This Privacy
           Policy outlines how we collect, use, and protect your personal

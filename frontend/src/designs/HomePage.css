@@ -6,11 +6,15 @@
     margin-bottom: -1rem;
     min-height: 100vh;
     padding: 2rem 0rem 2rem 0;
+    animation: slideAndFadeIn 1s ease forwards;
 }
 
 .brap{
-    padding-top: 3rem;
-    /* padding-left: 3rem; */
+    /* padding-top: 3rem; */
+    animation: slideAndFadeIn 1s ease forwards;
+    /* background-color: red !important; */
+    width: 90vw;
+    margin: 0 0 0 7.5vw;
 }
 
 #searc:hover{   
@@ -90,11 +94,22 @@
     letter-spacing: .02rem;
     background-color: white;
     border-radius: 20px;
+    margin-bottom: 2rem;
 }
 
 #displayName:not(:placeholder-shown){
     color: #333333;
 }
+
+#displayName:hover{
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+    transform: scale(1.005);
+}
+
+#displayName:focus{
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+    transform: scale(1.005);
+}  
 
 #emal{
     color: #747474;
@@ -106,6 +121,7 @@
     letter-spacing: .02rem;
     background-color: white;
     border-radius: 20px;
+    margin-bottom: 2rem;
 }
 
 #page-name{
@@ -127,6 +143,16 @@
     color: #333333;
 }
 
+#page-name:hover{
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+    transform: scale(1.005);
+}
+
+#page-name:focus{
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+    transform: scale(1.005);
+}
+
 #paswrd{
     color: #747474;
     padding: .6rem 1rem;
@@ -139,11 +165,22 @@
     border-radius: 20px;
     margin-bottom: 2rem;
     outline: none;
+    border: solid white .02rem;
 }
 
 #paswrd:not(:placeholder-shown){
     color: #333333;
 }
+
+#paswrd:hover{
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+    transform: scale(1.005);
+}
+
+#paswrd:focus{
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+    transform: scale(1.005);
+}  
 
 #country{
     margin: 0.4rem 0 1.5rem 0;
@@ -223,3 +260,13 @@
     outline: none;
     margin: 0;
 }
+
+.bar:hover{
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+    transform: scale(1.005);
+}
+
+.bar:focus{
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+    transform: scale(1.005);
+}  

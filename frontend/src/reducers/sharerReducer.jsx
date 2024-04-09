@@ -59,7 +59,10 @@ import {
   GET_DASHBOARD_FAILURE,
   GET_TOP_DONOR_REQUEST,
   GET_TOP_DONOR_SUCCESS,
-  GET_TOP_DONOR_FAILURE 
+  GET_TOP_DONOR_FAILURE,
+  SHARER_LIST_SORT_REQUEST,
+  SHARER_LIST_SORT_SUCCESS,
+  SHARER_LIST_SORT_FAIL, 
 } from "../constants/sharerConstants";
 
 export const SharerDetailReducer = (state = {}, action) => {
@@ -78,14 +81,20 @@ export const SharerDetailReducer = (state = {}, action) => {
   }
 };
 
-export const sharerListReducer = (state = { sharers: [] }, action) => {
+export const sharerListReducer = (
+  state = { loading: false, error: null, sharers: [] },
+  action
+) => {
   switch (action.type) {
     case SHARER_LIST_REQUEST:
-      return { loading: true, sharers: [] };
+    case SHARER_LIST_SORT_REQUEST:
+      return { ...state, loading: true, error: null };
     case SHARER_LIST_SUCCESS:
-      return { loading: false, sharers: action.payload };
+    case SHARER_LIST_SORT_SUCCESS:
+      return { ...state, loading: false, error: null, sharers: action.payload };
     case SHARER_LIST_FAIL:
-      return { loading: false, error: action.payload };
+    case SHARER_LIST_SORT_FAIL:
+      return { ...state, loading: false, error: action.payload, sharers: [] };
     default:
       return state;
   }

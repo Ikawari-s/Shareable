@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchLikesCount, likePost, unlikePost } from '../actions/userActions';
+import { BiSolidUpvote, BiUpvote, BiSolidDownvote, BiDownvote } from "react-icons/bi";
 
 function LikeComponent({ uploadId }) {
   const dispatch = useDispatch();
@@ -38,11 +39,15 @@ function LikeComponent({ uploadId }) {
   }
 
   return (
-    <div>
-      <p>Likes: {likesCount}</p>
-      <p>Unlikes: {unlikesCount}</p>
-      <button onClick={handleLike}>Like</button>
-      <button onClick={handleUnlike}>Unlike</button>
+    <div className='d-flex like'>
+      <button onClick={handleLike}>
+        {likesCount ? <BiSolidUpvote /> : <BiUpvote />}
+      </button>
+      <p >{likesCount}</p>
+      <button onClick={handleUnlike}>
+        {unlikesCount ? <BiSolidDownvote /> : <BiDownvote />}
+      </button>
+      <p>{unlikesCount}</p>
     </div>
   );
 }

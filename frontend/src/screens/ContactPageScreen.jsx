@@ -3,7 +3,9 @@ import { connect } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 import { submitContactRequest } from '../actions/contactActions'; 
 import '../designs/Contact.css';
-import GuestHeader from '../components/GuestHeader';
+import Footer from "../components/Footer";
+import { useNavigate } from 'react-router-dom';
+
 
 const ContactPageScreen = ({ submitContactRequest }) => {
   const [requestType, setRequestType] = useState('');
@@ -12,6 +14,8 @@ const ContactPageScreen = ({ submitContactRequest }) => {
   const [description, setDescription] = useState('');
   const [attachment, setAttachment] = useState(null);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const navigate = useNavigate();
+
 
   const clearForm = () => {
     setRequestType('');
@@ -65,13 +69,10 @@ const ContactPageScreen = ({ submitContactRequest }) => {
   
   
   return (
-
-
+<>
     <div className="bg">
-
-      <GuestHeader />
       <div className="image-container"></div>
-      <form style={{ marginTop: '5rem' }} onSubmit={handleSubmit}>
+      <form style={{ marginTop: '1rem' }} onSubmit={handleSubmit}>
       <h2>Submit a Request</h2>
       <label id='labl'>Providing as much information as possible in your request will allow us to help you faster.</label>
         <div className="form-group">
@@ -110,6 +111,7 @@ const ContactPageScreen = ({ submitContactRequest }) => {
 
         <Button id='fx' type="submit" variant="primary">Done</Button>
         <Button id='fk' type="button" variant="secondary" onClick={clearForm} style={{ marginLeft: '10px' }}>Clear Form</Button>
+        <Button id='fk' type="button" variant="secondary" onClick={() => navigate('/')} style={{ marginLeft: '10px' }}>Go Back</Button>
 
       </form>
       <div className="submit-status-container">
@@ -122,6 +124,8 @@ const ContactPageScreen = ({ submitContactRequest }) => {
   <div className="logo-contact"></div>
 
     </div>
+      <Footer />
+    </>
   );
 };
 

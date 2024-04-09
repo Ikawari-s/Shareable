@@ -490,7 +490,13 @@ class UserView(APIView):
         serializer = UserSerializer(user, many=False)
         return Response(serializer.data)
 
+# class UserProfile(APIView):
+#     permission_classes = [IsAuthenticated]
 
+#     def get(self, request, *args, **kwargs):
+#         user_profile = request.user.profile  # Assuming 'profile' is a related field in your User model
+#         serializer = UserSerializer(user_profile)  # Assuming UserProfileSerializer is defined
+#         return Response(serializer.data)
 
 
 class UserProfileView(generics.RetrieveUpdateAPIView):

@@ -323,12 +323,12 @@ export const updateUserProfile = ({ profile_picture, username }) => async (dispa
     const token = userInfo ? userInfo.access_token : null;
 
     const formData = new FormData();
-    
+
     // Append profile_picture only if it's present
     if (profile_picture) {
       formData.append('profile_picture', profile_picture);
     }
-    
+
     // Append username only if it's present
     if (username) {
       formData.append('username', username);
@@ -382,7 +382,7 @@ export const fetchUserProfile = () => async (dispatch) => {
         }
       : {};
 
-    const response = await instance.get('api/user-profile/', config);
+    const response = await instance.get('api/user/profile/', config);
 
     dispatch({ type: FETCH_USER_PROFILE_SUCCESS, payload: response.data });
   } catch (error) {
