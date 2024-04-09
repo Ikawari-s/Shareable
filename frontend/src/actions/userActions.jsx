@@ -362,6 +362,9 @@ export const updateUserProfile = ({ profile_picture, username }) => async (dispa
   }
 };
 
+
+
+
 export const fetchUserProfile = () => async (dispatch) => {
   try {
     dispatch({ type: FETCH_USER_PROFILE_REQUEST });

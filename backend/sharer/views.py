@@ -29,6 +29,49 @@ User = get_user_model()
 @permission_classes([IsAuthenticated])
 def SharerView(request):
     queryset = Sharer.objects.all()
+
+    # Get sorting parameters and category from query params
+    sort_by = request.query_params.get('sort_by', None)
+    order_by = request.query_params.get('order_by', 'desc')
+
+    # Validate and apply sorting
+    if sort_by:
+        if sort_by == 'all':
+            # Return all sharers without sorting
+            serializer = SharerSerializer(queryset, many=True)
+            return Response(serializer.data)
+
+        elif sort_by == 'total_followers_asc':
+            queryset = queryset.annotate(total_followers_count=Count('follower_tier1') + Count('follower_tier2') + Count('follower_tier3'))
+            field_to_sort = 'total_followers_count'
+
+        elif sort_by == 'total_followers_desc':
+            queryset = queryset.annotate(total_followers_count=Count('follower_tier1') + Count('follower_tier2') + Count('follower_tier3'))
+            field_to_sort = '-total_followers_count'
+
+        elif sort_by == 'average_rating_asc':
+            queryset = queryset.annotate(average_rating=Avg('ratings__rating'))
+            field_to_sort = 'average_rating'
+
+        elif sort_by == 'average_rating_desc':
+            queryset = queryset.annotate(average_rating=Avg('ratings__rating'))
+            field_to_sort = '-average_rating'
+
+        elif sort_by == 'latest':
+            field_to_sort = '-id'  # Sort by ID (latest first)
+
+        else:
+            return Response({"error": "Invalid sort_by parameter"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Apply ordering
+        if order_by == 'asc':
+            queryset = queryset.order_by(field_to_sort)
+        elif order_by == 'desc':
+            queryset = queryset.order_by(field_to_sort)
+        else:
+            return Response({"error": "Invalid order_by parameter"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Serialize queryset
     serializer = SharerSerializer(queryset, many=True)
     return Response(serializer.data)
 

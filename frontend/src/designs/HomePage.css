@@ -10,8 +10,11 @@
 }
 
 .brap{
-    padding-top: 3rem;
-    /* padding-left: 3rem; */
+    /* padding-top: 3rem; */
+    animation: slideAndFadeIn 1s ease forwards;
+    /* background-color: red !important; */
+    width: 90vw;
+    margin: 0 0 0 7.5vw;
 }
 
 #searc:hover{   
