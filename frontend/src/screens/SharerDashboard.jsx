@@ -18,7 +18,7 @@ function SharerDashboard() {
   }, [dispatch, navigate]);
 
   return (
-    <div className="container brap">
+    <div className="container waw">
       <h2>Sharer Dashboard</h2>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
