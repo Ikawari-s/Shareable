@@ -95,7 +95,7 @@ function Comment({ uploadId }) {
                 }}>
                   <div className="d-flex">
                   {comment.profile_picture && (
-                    <img src={comment.profile_picture} alt="Profile" style={{ width: 'auto', height: 40, borderRadius: "50%", marginRight: '0.6rem', marginBottom: '1rem' }} />
+                    <img src={comment.profile_picture} alt="Profile" style={{ width: '2.5rem', height: '2.5rem', borderRadius: "50%", marginRight: '0.6rem', marginBottom: '1rem' }} />
                   )}
                   <strong style={{color: "black", fontSize: '2rem', lineHeight: '2.4rem'}}>{comment.username}
                   </strong> 
