@@ -22,7 +22,7 @@ import json
 logger = logging.getLogger(__name__)
 
 User = get_user_model()
-
+from django.db.models import Q
 
 # ISAUTH
 @api_view(['GET'])
@@ -33,6 +33,13 @@ def SharerView(request):
     # Get sorting parameters and category from query params
     sort_by = request.query_params.get('sort_by', None)
     order_by = request.query_params.get('order_by', 'desc')
+    search_term = request.query_params.get('search', None)
+
+    # Filter queryset based on search term
+    if search_term:
+        queryset = queryset.filter(
+            Q(name__icontains=search_term)
+        )
 
     # Validate and apply sorting
     if sort_by:

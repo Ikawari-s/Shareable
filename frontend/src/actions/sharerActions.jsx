@@ -106,60 +106,45 @@ export const DetailSharers = (id) => async (dispatch) => {
 
 
 
-export const listSharers =
-  (sort_by = "all", order_by = "desc") =>
-  async (dispatch) => {
-    try {
-      dispatch({
-        type:
-          sort_by !== "all" ? SHARER_LIST_SORT_REQUEST : SHARER_LIST_REQUEST,
-      });
+export const listSharers = (sort_by = 'all', order_by = 'desc', searchTerm = '') => async (dispatch) => {
+  try {
+    dispatch({
+      type: sort_by !== 'all' ? SHARER_LIST_SORT_REQUEST : SHARER_LIST_REQUEST,
+    });
 
-      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-      const token = userInfo ? userInfo.access_token : null;
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const token = userInfo ? userInfo.access_token : null;
 
-      const config = token
-        ? {
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        : {};
-
-      let url = `http://127.0.0.1:8000/api/sharer/`;
-
-      // Adjust URL and sorting parameters based on selected sort_by criteria
-      if (sort_by !== "all") {
-        url += `?sort_by=${sort_by}`;
-        if (
-          sort_by === "total_followers_asc" ||
-          sort_by === "average_rating_asc"
-        ) {
-          url += `&order_by=asc`;
-        } else {
-          url += `&order_by=desc`;
+    const config = token
+      ? {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
         }
-      }
+      : {};
 
-      const { data } = await instance.get(url, config);
+    let url = `http://127.0.0.1:8000/api/sharer/?sort_by=${sort_by}&order_by=${order_by}`;
 
-      dispatch({
-        type:
-          sort_by !== "all" ? SHARER_LIST_SORT_SUCCESS : SHARER_LIST_SUCCESS,
-        payload: data,
-      });
-    } catch (error) {
-      dispatch({
-        type: sort_by !== "all" ? SHARER_LIST_SORT_FAIL : SHARER_LIST_FAIL,
-        payload:
-          error.response && error.response.data.detail
-            ? error.response.data.detail
-            : error.message,
-      });
+    // Include search term in the request
+    if (searchTerm) {
+      url += `&search=${encodeURIComponent(searchTerm)}`;
     }
-  };
+
+    const { data } = await instance.get(url, config);
+
+    dispatch({
+      type: sort_by !== 'all' ? SHARER_LIST_SORT_SUCCESS : SHARER_LIST_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: sort_by !== 'all' ? SHARER_LIST_SORT_FAIL : SHARER_LIST_FAIL,
+      payload: error.response && error.response.data.detail ? error.response.data.detail : error.message,
+    });
+  }
+};
 
 export const beSharer = (page_name) => async (dispatch) => {
   try {
