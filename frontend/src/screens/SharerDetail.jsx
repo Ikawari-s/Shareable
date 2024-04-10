@@ -4,7 +4,6 @@ import { connect, useDispatch } from "react-redux";
 import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 import { DetailSharers, getSharerPostCount } from "../actions/sharerActions";
-import SharerLatestPost from "./SharerLatestPost";
 import { followSharer, unfollowSharer } from "../actions/followActions"; // Import the followSharer action creator
 import {
   FetchSharerRatingsComponent,
@@ -39,7 +38,11 @@ const SharerDetail = ({
   const [selectedAmount, setSelectedAmount] = useState(0); 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const onError = (err) => {
+    console.error("PayPal SDK error:", err);
+  };
 
+  
   useEffect(() => {
     if (
       userInfo &&
@@ -51,19 +54,23 @@ const SharerDetail = ({
   }, [userInfo, id, navigate]);
 
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src =
-      "https://www.paypal.com/sdk/js?client-id=ATyV_k4Cl0uXb3m5rslF-APNEeMSqlO2xp42GOJoMOb7mzeguFi2028uPwa5UOTSbN8U7rjnKpOYFQT8&currency=USD";
-    script.async = true;
-    script.onload = () => setPaypalLoaded(true);
-    document.body.appendChild(script);
-
+    let script;
+    if (!paypalLoaded) {
+      script = document.createElement("script");
+      script.src =
+        "https://www.paypal.com/sdk/js?client-id=ATyV_k4Cl0uXb3m5rslF-APNEeMSqlO2xp42GOJoMOb7mzeguFi2028uPwa5UOTSbN8U7rjnKpOYFQT8&currency=USD";
+      script.async = true;
+      script.onload = () => setPaypalLoaded(true);
+      document.body.appendChild(script);
+    }
+  
     return () => {
-      if (script.parentNode === document.body) {
-        document.body.removeChild(script);
+      if (script && script.parentNode === document.body && !paypalLoaded) {
+        script.parentNode.removeChild(script);
       }
     };
-  }, []);
+  }, [paypalLoaded]);
+  
 
   const createOrder = (data, actions) => {
     const amount = selectedAmount;
@@ -261,6 +268,7 @@ const SharerDetail = ({
                   <Button
                     variant="success"
                     onClick={() => handleTierButtonClick("tier1", 5)}
+                    style={{ backgroundColor: "green"}}
                   >
                     Tier 1
                   </Button>
@@ -270,6 +278,7 @@ const SharerDetail = ({
                   <Button
                     variant="success"
                     onClick={() => handleTierButtonClick("tier2", 10)}
+                    style={{ backgroundColor: "red"}}
                   >
                     Tier 2
                   </Button>
@@ -279,6 +288,7 @@ const SharerDetail = ({
                   <Button
                     variant="success"
                     onClick={() => handleTierButtonClick("tier3", 20)}
+                    style={{ backgroundColor: "blue"}}
                   >
                     Tier 3
                   </Button>
@@ -299,6 +309,7 @@ const SharerDetail = ({
                     style={{ layout: "horizontal" }}
                     createOrder={createOrder}
                     onApprove={onApprove}
+                    onError={onError}
                   />
                 </div>
               </PayPalScriptProvider>

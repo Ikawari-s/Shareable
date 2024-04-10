@@ -169,18 +169,18 @@ export const myProfileReducer = (state = {}, action) => {
   }
 };
 
-export const SharerLatestPostReducer = (state = { posts: [], loading: false, error: null }, action) => {
-  switch (action.type) {
-    case SHARER_LATEST_POST_REQUEST:
-      return { ...state, loading: true, error: null };
-    case SHARER_LATEST_POST_SUCCESS:
-      return { ...state, loading: false, posts: action.payload, error: null };
-    case SHARER_LATEST_POST_FAIL:
-      return { ...state, loading: false, posts: [], error: action.payload };
-    default:
-      return state;
-  }
-};
+// export const SharerLatestPostReducer = (state = { posts: [], loading: false, error: null }, action) => {
+//   switch (action.type) {
+//     case SHARER_LATEST_POST_REQUEST:
+//       return { ...state, loading: true, error: null };
+//     case SHARER_LATEST_POST_SUCCESS:
+//       return { ...state, loading: false, posts: action.payload, error: null };
+//     case SHARER_LATEST_POST_FAIL:
+//       return { ...state, loading: false, posts: [], error: action.payload };
+//     default:
+//       return state;
+//   }
+// };
 
 // PANG CHECK IF SHARER DI NA GAMIT PERO WAG NIYO MUNA ALISIN
 export const CheckSharerReducer = (state = {}, action) => {

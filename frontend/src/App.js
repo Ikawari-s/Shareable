@@ -26,6 +26,7 @@ import ChangePassword from './screens/ChangePassword';
 import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
 import AdminSharerDashboard from './screens/AdminSharerDashboard';
 import AdminUserDashboard from './screens/AdminUserDashboard';
+import AdminContact from './screens/AdminContact';
 
 
 
@@ -66,6 +67,7 @@ function App() {
           {/* ADMIN  */}
           <Route path="/adminsharer-dashboard" element={<ProtectedRoute><AdminSharerDashboard /></ProtectedRoute>} />  
           <Route path="/adminuser-dashboard" element={<ProtectedRoute><AdminUserDashboard /></ProtectedRoute>} />  
+          <Route path="/admin-contacts" element={<ProtectedRoute><AdminContact /></ProtectedRoute>} /> 
           {/* ADMIN  */}
 
 

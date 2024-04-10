@@ -22,7 +22,7 @@ import json
 logger = logging.getLogger(__name__)
 
 User = get_user_model()
-
+from django.db.models import Q
 
 # ISAUTH
 @api_view(['GET'])
@@ -33,6 +33,13 @@ def SharerView(request):
     # Get sorting parameters and category from query params
     sort_by = request.query_params.get('sort_by', None)
     order_by = request.query_params.get('order_by', 'desc')
+    search_term = request.query_params.get('search', None)
+
+    # Filter queryset based on search term
+    if search_term:
+        queryset = queryset.filter(
+            Q(name__icontains=search_term)
+        )
 
     # Validate and apply sorting
     if sort_by:
@@ -76,26 +83,26 @@ def SharerView(request):
     return Response(serializer.data)
 
 #IS FOLLOW // okay
-@api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
-def SharerlatestPost(request, sharer_id):  
-    try:
-        sharer = Sharer.objects.get(pk=sharer_id)
-    except Sharer.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+# @api_view(['GET'])
+# @permission_classes([permissions.IsAuthenticated])
+# def SharerlatestPost(request, sharer_id):  
+#     try:
+#         sharer = Sharer.objects.get(pk=sharer_id)
+#     except Sharer.DoesNotExist:
+#         return Response(status=status.HTTP_404_NOT_FOUND)
     
-    user = request.user
-    if not is_follow(user, sharer_id):
-        return Response({"detail": "You are not following this sharer."}, status=status.HTTP_403_FORBIDDEN)
+#     user = request.user
+#     if not is_follow(user, sharer_id):
+#         return Response({"detail": "You are not following this sharer."}, status=status.HTTP_403_FORBIDDEN)
     
-    uploads = SharerUpload.objects.filter(uploaded_by=sharer).order_by('-created_at') 
+#     uploads = SharerUpload.objects.filter(uploaded_by=sharer).order_by('-created_at') 
     
-    sharer_data = SharerProfileSerializer(sharer).data
-    upload_data = SharerUploadSerializer(uploads, many=True, context={'request': request}).data
+#     sharer_data = SharerProfileSerializer(sharer).data
+#     upload_data = SharerUploadSerializer(uploads, many=True, context={'request': request}).data
     
-    sharer_data['uploads'] = upload_data
+#     sharer_data['uploads'] = upload_data
     
-    return Response(sharer_data)
+#     return Response(sharer_data)
 
 class Tier1FollowedSharers(generics.ListAPIView):
     serializer_class = SharerUploadListSerializer
@@ -491,6 +498,8 @@ class TipBoxCreateView(generics.CreateAPIView):
 
 
 class TopDonorView(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request, sharer_id):
         top_donor = get_top_donors(sharer_id)
         if top_donor:
@@ -1154,3 +1163,4 @@ class CommentListView(generics.ListCreateAPIView):
         except SharerUpload.DoesNotExist:
             context['top_donors'] = []
         return context
+

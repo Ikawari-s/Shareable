@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { listAdminUsers } from "../actions/adminActions";
+import { listAdminUsers, searchUser } from "../actions/adminActions"; 
 import { BsCheck, BsX } from "react-icons/bs";
 import AdminCreateUser from "../components/AdminCreateUser";
 import AdminUpdateUser from "../components/AdminUpdateUser";
@@ -22,8 +22,17 @@ function AdminUserDashboard() {
     }
   }, [dispatch, navigate]);
 
+  useEffect(() => {
+    dispatch(searchUser(searchQuery));
+  }, [dispatch, searchQuery]);
+
   const handleUpdateUser = (userId) => {
     console.log("Update user with ID:", userId);
+  };
+
+  const handleDeleteUser = (userId) => {
+    // Function to delete user
+    console.log("Delete user with ID:", userId);
   };
 
   const filteredUsers = usersData.filter(
@@ -31,6 +40,7 @@ function AdminUserDashboard() {
       user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
 
   return (
     <div
@@ -45,7 +55,7 @@ function AdminUserDashboard() {
       <div
         style={{ overflowY: "scroll", maxHeight: "100vh", maxWidth: "300vw" }}
       >
-        <h1>AdminUserDashboard</h1>
+        <h1>Admin User Dashboard</h1>
         <input
           type="text"
           placeholder="Search by username or email"
@@ -75,10 +85,7 @@ function AdminUserDashboard() {
                   <p>Is Active: {user.is_active ? <BsCheck /> : <BsX />}</p>
                   <p>Is Staff: {user.is_staff ? <BsCheck /> : <BsX />}</p>
                   <p>Is Sharer: {user.is_sharer ? <BsCheck /> : <BsX />}</p>
-                  <p>
-                    Is Superuser: {user.is_superuser ? <BsCheck /> : <BsX />}
-                  </p>{" "}
-                  {/* Display is_superuser */}
+                  <p>Is Superuser: {user.is_superuser ? <BsCheck /> : <BsX />}</p>
                   <p>Badge: {user.badge}</p>
                   <div style={{ marginBottom: "10px" }}>
                     <AdminUpdateUser
@@ -91,6 +98,7 @@ function AdminUserDashboard() {
                     />
                   </div>
                   <div style={{ marginBottom: "10px" }}>
+                    <AdminDeleteUser userId={user.id} />
                   </div>
                 </div>
                 <div>

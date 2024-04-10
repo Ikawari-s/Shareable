@@ -130,9 +130,20 @@ class ResetPasswordEmailRequestSerializer(serializers.Serializer):
 
 
 class SetNewPasswordSerializer(serializers.Serializer):
-    password = serializers.CharField(min_length=8, max_length=68, write_only=True)
+    password = serializers.CharField(write_only=True)
     token = serializers.CharField(min_length=1, write_only=True)
     uidb64 = serializers.CharField(min_length=1, write_only=True)
+
+    def validate_password(self, value):
+        if len(value) < 8:
+            raise serializers.ValidationError("Password must be at least 8 characters long.")
+        if not re.search(r'[a-zA-Z]', value):
+            raise serializers.ValidationError("Password must contain at least one letter.")
+        if not re.search(r'[0-9]', value):
+            raise serializers.ValidationError("Password must contain at least one digit.")
+        if not re.search(r'[!@#$%^&*()_+{}|:"<>?]', value):
+            raise serializers.ValidationError("Password must contain at least one special character.")
+        return value
 
     def validate(self, attrs):
         try:
@@ -154,6 +165,7 @@ class SetNewPasswordSerializer(serializers.Serializer):
             return attrs
         except Exception as e:
             raise AuthenticationFailed('The reset link is invalid', 401)
+
 
 
 class SendOTPSerializer(serializers.Serializer):    

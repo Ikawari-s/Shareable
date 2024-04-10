@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getSharerIncomeAdmin } from '../actions/adminActions';
+import { getSharerIncomeAdmin, searchSharer } from '../actions/adminActions';
 import AdminPatchSharer from '../components/AdminPatchSharer';
 import AdminSendIncome from '../components/AdminSendIncome';
 
@@ -20,7 +20,12 @@ function AdminSharerDashboard() {
     }
   }, [dispatch, navigate]);
 
+  useEffect(() => {
+    dispatch(searchSharer(searchQuery));
+  }, [dispatch, searchQuery]);
+
   const filteredSharerData = sharerData ? sharerData.filter(sharer => sharer[0].name.toLowerCase().includes(searchQuery.toLowerCase())) : [];
+
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>

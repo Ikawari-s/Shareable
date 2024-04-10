@@ -44,7 +44,7 @@ function HomeScreen() {
     password: "",
     retypePassword: "",
   });
-  const [error, setError] = useState(""); 
+  const [error, setError] = useState("");
 
   const handleLoginChange = (e) => {
     setLoginFormData({ ...loginFormData, [e.target.name]: e.target.value });
@@ -72,14 +72,29 @@ function HomeScreen() {
 
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (registerFormData.password !== registerFormData.retypePassword) {
       setError("Password and retype password don't match");
       return;
     }
-
+  
+    if (registerFormData.password.length < 8) {
+      setError("Password must be at least 8 characters long");
+      return;
+    }
+  
+    if (!/(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/.test(registerFormData.password)) {
+      setError("Password must contain at least one letter, one number, and one special character");
+      return;
+    }
+  
+    if (registerFormData.username.length < 4) {
+      setError("Username must be at least 4 characters long");
+      return;
+    }
+  
     setIsLoading(true);
-
+  
     try {
       const data = await dispatch(
         register(
@@ -88,7 +103,7 @@ function HomeScreen() {
           registerFormData.username
         )
       );
-
+  
       if (data.userId) {
         navigate(`/otp/${data.userId}/${data.otpId}`);
       } else {
@@ -96,9 +111,16 @@ function HomeScreen() {
       }
     } catch (error) {
       console.error("Registration failed:", error);
-      setError(
-        "Registration failed. Please check your information and try again."
-      );
+      let errorMessage = "Registration failed. User might exist or username is already taken";
+
+      if (error.response && error.response.data) {
+   
+        if (error.response.data.error === "Username already exists") {
+          errorMessage = "User already exists";
+        }
+      }
+  
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -245,7 +267,18 @@ function HomeScreen() {
                   </Button>
                 </div>
               </Form>
-              {registerError && <Alert variant="danger">{registerError}</Alert>}
+              {error && (
+                <Alert
+                  variant="primary"
+                  style={{
+                    backgroundColor: "#52c7b8",
+                    color: "white",
+                    textAlign: "center",
+                  }}
+                >
+                  {error}
+                </Alert>
+              )}
             </div>
             <p className="text-center texto">Shareable Copyright ©</p>
           </div>
@@ -310,6 +343,13 @@ function HomeScreen() {
               <Link id="da-link" to="/reset-password">
                 Forgot Password?{" "}
               </Link>
+              {loginError && (
+                <Alert
+                  variant="primary"
+                >
+                  {loginError}
+                </Alert>
+              )}
             </div>
           </div>
         </div>

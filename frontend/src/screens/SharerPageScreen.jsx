@@ -419,6 +419,7 @@
               <option value="" disabled>
                 Select a category
               </option>
+<<<<<<< HEAD
               {CATEGORY_CHOICES.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
@@ -469,6 +470,80 @@
               </button>
             </div>
           </form>
+=======
+            ))}
+          </select> <br />
+        
+        <form onSubmit={handleUpdateProfile}>
+          <div className="mb-3">
+            <h2>Page Title</h2>
+            <input
+              type="text"
+              value={newName}
+              placeholder={name}
+              onChange={(e) => setNewName(e.target.value)}
+              className="form-control mb-2"
+            />
+            <h2> New Username</h2>
+            <input
+              type="text"
+              value={newUsername}
+              placeholder={username}
+              onChange={(e) => setNewUsername(e.target.value)}
+              className="form-control mb-2"
+            />
+            <h2> Description </h2>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="form-control mb-2"
+            />
+            <h3>Change Profile Photo</h3>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setNewProfilePicture(e.target.files[0])}
+              className="form-control mb-2"
+            />
+            <h3>Change Cover Photo</h3>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setCoverPhoto(e.target.files[0])} // Set cover photo state
+              className="form-control mb-2"
+            />
+            <button type="submit" className="btn btn-primary">
+              Update Profile
+            </button>
+          </div>
+        </form>
+      </div>
+      </div>
+      </div>
+<<<<<<< HEAD
+<<<<<<< HEAD
+        <div>
+          <SharerPost />
+        </div>
+=======
+        
+>>>>>>> bb486b4d826fa9bceede0a1467e733cf001ff7aa
+=======
+        
+>>>>>>> bb486b4d826fa9bceede0a1467e733cf001ff7aa
+
+      
+      </div>
+      
+
+      {showUpdateConfirmation && (
+        <div className="confirmation-overlay">
+          <div className="confirmation-modal">
+            <p>Are you sure you want to update this post?</p>
+            <button onClick={handleConfirmUpdate}>Yes</button>
+            <button onClick={handleCancelUpdate}>No</button>
+          </div>
+>>>>>>> b5a52fda1bca1e0f300c30d8ce263641ff4897a9
         </div>
         </div>
         </div>

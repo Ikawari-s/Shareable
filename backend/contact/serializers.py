@@ -5,8 +5,9 @@ import os
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
-        fields = ['request_type', 'email', 'subject', 'description', 'attachment']
+        fields = ['id','request_type', 'email', 'subject', 'description', 'attachment', 'created_at']
 
+        
     # def validate_attachment(self, value):
     #     if value:
     #         # Get the file extension

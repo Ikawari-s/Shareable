@@ -6,6 +6,12 @@ import {
   deleteSharerRatings,
   patchSharerRatings,
 } from "../actions/sharerActions";
+import red from '../designs/images/red.png';
+import blue from '../designs/images/blue.png'
+import green from '../designs/images/green.png'
+import gold from '../designs/images/gold.png'
+import silver from '../designs/images/silver.png'
+import bronze  from '../designs/images/bronze.png'
 
 
 const FetchSharerRatingsComponent = ({ sharerId }) => {
@@ -115,7 +121,7 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
       </div>
       <ul>
         {ratings.map((rating) => (
-          <li key={rating.id}>
+          <li key={rating.id} style={{ listStyle: 'none'}}>
             <div style={{ background: "green" }}>
               {rating.profile_picture && (
                 <img
@@ -127,38 +133,38 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
               : {rating.username}{" "}
               {rating.user_tier === "tier3" && (
                 <img
-                  src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630188.png?imwidth=1040&imheight=760"
-                  style={{ maxWidth: "3rem" }}
+                  src={blue}
+                  style={{ maxWidth: "5rem" }}
                 />
               )}
               {rating.user_tier === "tier2" && (
                 <img
-                  src="https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/4871145.png"
-                  style={{ maxWidth: "3rem" }}
+                  src={red}
+                  style={{ maxWidth: "5rem" }}
                 />
               )}
               {rating.user_tier === "tier1" && (
                 <img
-                  src="https://cdn.nba.com/headshots/nba/latest/1040x760/1628970.png"
-                  style={{ maxWidth: "3rem" }}
+                  src={green}
+                  style={{ maxWidth: "5rem" }}
                 />
               )}
               {rating.badge === "Gold" && (
                 <img
-                  src="https://cdn.nba.com/headshots/nba/latest/1040x760/252.png"
-                  style={{ maxWidth: "3rem" }}
+                  src={gold}
+                  style={{ maxWidth: "2rem" }}
                 />
               )}
               {rating.badge === "Silver" && (
                 <img
-                  src="https://cdn.nba.com/headshots/nba/latest/1040x760/2544.png"
-                  style={{ maxWidth: "3rem" }}
+                  src={silver}
+                  style={{ maxWidth: "2rem" }}
                 />
               )}
               {rating.badge === "Bronze" && (
                 <img
-                  src="https://cdn.nba.com/headshots/nba/latest/1040x760/201939.png"
-                  style={{ maxWidth: "3rem" }}
+                  src={bronze}
+                  style={{ maxWidth: "2rem" }}
                 />
               )}
               {rating.badge === "None" && null}, Rating: {rating.rating},

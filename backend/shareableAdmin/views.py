@@ -4,8 +4,11 @@ from rest_framework import status
 from rest_framework.views import APIView
 from accounts.serializers import *
 from sharer.serializers import *
+from contact.models import Contact
+from contact.serializers import ContactSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
 User = get_user_model()
 
 def get_users_with_status():
@@ -141,3 +144,61 @@ class AdminPatchSharer(APIView):
                 return Response(sharer_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Sharer.DoesNotExist:
             return Response({'error': 'Sharer data not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+class SearchUser(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get(self, request):
+        query = request.query_params.get('query', None)
+        if not query:
+            return Response({'error': 'Query parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+       
+            user = User.objects.get(email=query)
+        except User.DoesNotExist:
+            try:
+                user = User.objects.get(username=query)
+            except User.DoesNotExist:
+                return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class SearchSharer(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get(self, request):
+        query = request.query_params.get('query', None)
+        if not query:
+            return Response({'error': 'Query parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            sharer = Sharer.objects.get(email=query)
+        except Sharer.DoesNotExist:
+            try:
+                sharer = Sharer.objects.get(name=query)
+            except Sharer.DoesNotExist:
+                return Response({'error': 'Sharer not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = SharerSerializer(sharer)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+class UserContacts(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get(self, request):
+        contacts = Contact.objects.order_by('-created_at') 
+        serializer = ContactSerializer(contacts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+class DeleteContacts(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+    def delete(self, request, pk):
+        contact = get_object_or_404(Contact, pk=pk)
+        contact.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

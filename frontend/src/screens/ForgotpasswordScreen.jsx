@@ -10,7 +10,7 @@ function ForgotPasswordScreen() {
   const [message, setMessage] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const sendPasswordError = useSelector(state => state.sendPasswordError);
+  const sendPasswordError = useSelector(state => state.userSendPassword.error);
 
   useEffect(() => {
     const userInfo = localStorage.getItem("userInfo");
