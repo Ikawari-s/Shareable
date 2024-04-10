@@ -261,6 +261,7 @@ const SharerDetail = ({
                   <Button
                     variant="success"
                     onClick={() => handleTierButtonClick("tier1", 5)}
+                    style={{ backgroundColor: "green"}}
                   >
                     Tier 1
                   </Button>
@@ -270,6 +271,7 @@ const SharerDetail = ({
                   <Button
                     variant="success"
                     onClick={() => handleTierButtonClick("tier2", 10)}
+                    style={{ backgroundColor: "red"}}
                   >
                     Tier 2
                   </Button>
@@ -279,6 +281,7 @@ const SharerDetail = ({
                   <Button
                     variant="success"
                     onClick={() => handleTierButtonClick("tier3", 20)}
+                    style={{ backgroundColor: "blue"}}
                   >
                     Tier 3
                   </Button>
