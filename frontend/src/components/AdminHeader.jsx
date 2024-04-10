@@ -17,8 +17,9 @@ import {
   FaUserAlt,
   FaUserCheck,
   FaUserCog,
-  FaUserTie
+  FaUserTie,
 } from "react-icons/fa";
+import { AiOutlineMail } from "react-icons/ai";
 
 function AdminHeader() {
   const dispatch = useDispatch();
@@ -70,6 +71,16 @@ function AdminHeader() {
                 <FaUserTie />
               </span>
               <span class="nav-text">Sharers</span>
+            </span>
+          </Nav.Link>
+        </li>
+        <li>
+          <Nav.Link id="pluh" as={Link} to="/admin-contacts">
+            <span class="nav-item">
+              <span className="special-icon">
+                <AiOutlineMail />
+              </span>
+              <span class="nav-text">Contacts</span>
             </span>
           </Nav.Link>
         </li>

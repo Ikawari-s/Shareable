@@ -52,11 +52,13 @@ const Settings = () => {
     <div className="waw">
       <form id="prof-info" className="settings-form">
         <div className="section-container">
-<<<<<<< HEAD
           <div style={{borderBottom: 'solid rgba(255,255,255,0.5) 1px', paddingBottom: '1.5rem'}}>
-=======
+<<<<<<< HEAD
+
           <div id='titel' style={{borderBottom: 'solid rgba(255,255,255,0.5) 1px', paddingBottom: '1.5rem'}}>
->>>>>>> bf75d7074feeafd0e89f536c38d83d43ccfca557
+
+=======
+>>>>>>> bb486b4d826fa9bceede0a1467e733cf001ff7aa
             <h1>Profile Information</h1>
             <p style={{width: '28rem'}}>Keep your personal details private. Information you add here is visible to anyone who can view your profile.</p>
             <div>
@@ -72,10 +74,11 @@ const Settings = () => {
               <div><input type="text" className="form-control" id="displayName" value={username} onChange={(e) => setUsername(e.target.value)} /></div>
               <label>Email</label>
 <<<<<<< HEAD
-              <div><input type="email" id="email" value={email} disabled /></div>
-=======
+
               <div><input type="email" id="emal" value={email} disabled /></div>
->>>>>>> bf75d7074feeafd0e89f536c38d83d43ccfca557
+=======
+              <div><input type="email" id="email" value={email} disabled /></div>
+>>>>>>> bb486b4d826fa9bceede0a1467e733cf001ff7aa
               <Button className="save-btn" id='paw' variant="primary" onClick={handleSaveProfile}>Save</Button>
             </div>
           </div>
@@ -91,6 +94,7 @@ const Settings = () => {
             </ol>
           </div>
         </div>
+      </div>  
       </form>
       <UserProfileAccount />
     </div>    

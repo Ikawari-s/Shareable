@@ -4,20 +4,21 @@ import {
     USER_PROFILE_FAIL
   } from '../constants/profileConstants';
 <<<<<<< HEAD
-  
-=======
 
->>>>>>> bf75d7074feeafd0e89f536c38d83d43ccfca557
+=======
+  
+>>>>>>> bb486b4d826fa9bceede0a1467e733cf001ff7aa
   const initialState = {
     loading: false,
     userData: null,
     error: null
   };
 <<<<<<< HEAD
-  
-=======
 
->>>>>>> bf75d7074feeafd0e89f536c38d83d43ccfca557
+
+=======
+  
+>>>>>>> bb486b4d826fa9bceede0a1467e733cf001ff7aa
   export const userProfileReducer = (state = initialState, action) => {
     switch (action.type) {
       case USER_PROFILE_REQUEST:
@@ -29,9 +30,10 @@ import {
       default:
         return state;
     }
-<<<<<<< HEAD
   };
   
+<<<<<<< HEAD
+
+
 =======
-  };
->>>>>>> bf75d7074feeafd0e89f536c38d83d43ccfca557
+>>>>>>> bb486b4d826fa9bceede0a1467e733cf001ff7aa

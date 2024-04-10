@@ -122,7 +122,7 @@
 
 .rat{
     margin-top: 2rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.5);;
+    /* border-top: 1px solid rgba(255, 255, 255, 0.5); */
     width: 57rem;
     padding-top: 2rem;
 }
@@ -139,6 +139,7 @@
 .like p{
     margin: 0.2rem 0.6rem 0.3rem 0rem;    
 }
+
 .like button{
     background: none;
     color: white;
@@ -146,3 +147,77 @@
     margin-bottom: 0.3rem; 
     font-size: large;
 }
+
+.textarea-container {
+    position: relative;
+    width: 57rem; /* Adjust width as needed */
+  }
+
+#write-comment{
+    border-radius: 1rem;
+    padding: 1rem;
+    width: 100%;
+    outline: none;
+}
+
+#comment-button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 2rem;
+    color: #0071bd;
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 0;
+    line-height: 0;
+}
+
+.comment-section {
+    overflow: hidden;
+    max-height: 0;
+    transition: all 0.4s ease-in-out;
+}
+
+.comment-section.expanded {
+    max-height: 100rem; /* Adjust this value to fit your content */
+    transition: all 0.4s ease-in-out;
+}
+
+.comment-icon{
+    height: fit-content;
+    width: fit-content; 
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 0.1rem 0.5rem;
+    border-radius: 2rem;
+    margin: 1rem 0rem;
+}
+
+.comment-icon button{
+    background: none;
+    color: white;
+    border: none;
+    margin-bottom: 0.3rem; 
+    font-size: large;
+}
+
+.create-post{
+    height: fit-content;
+    max-width: fit-content; 
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 0rem 1.4rem 0rem 0rem;
+    border-radius: 2rem;
+    white-space: nowrap;
+    color: white;
+    top: 2rem;
+    left: 28rem;
+    position: relative;
+    border-color: #084d6e;
+    background-color: #084d6e;
+}
+
+.create-post:hover{
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+    border-color: #0071bd;
+    background-color: #0071bd;
+ } 

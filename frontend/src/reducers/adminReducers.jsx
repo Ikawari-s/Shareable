@@ -19,7 +19,19 @@ import {
   INCOME_SENT_ADMIN_FAIL,
   PATCH_SHARER_ADMIN_REQUEST, 
   PATCH_SHARER_ADMIN_SUCCESS,
-  PATCH_SHARER_ADMIN_FAIL
+  PATCH_SHARER_ADMIN_FAIL,
+  SEARCH_USER_REQUEST,
+  SEARCH_USER_SUCCESS,
+  SEARCH_USER_FAIL,
+  SEARCH_SHARER_REQUEST,
+  SEARCH_SHARER_SUCCESS,
+  SEARCH_SHARER_FAIL,
+  CONTACTS_ADMIN_REQUEST,
+  CONTACTS_ADMIN_SUCCESS,
+  CONTACTS_ADMIN_FAIL,
+  DELETE_CONTACT_REQUEST,
+  DELETE_CONTACT_SUCCESS,
+  DELETE_CONTACT_FAIL,
 } from "../constants/adminConstants";
 
 const initialState = {
@@ -119,6 +131,61 @@ export const patchSharerAdminReducer = (state = initialState, action) => {
       return { ...state, loading: false, message: action.payload, error: null };
     case PATCH_SHARER_ADMIN_FAIL:
       return { ...state, loading: false, message: null, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const searchUserReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case SEARCH_USER_REQUEST:
+      return { ...state, loading: true, error: null };
+    case SEARCH_USER_SUCCESS:
+      return { ...state, loading: false, userData: action.payload, error: null };
+    case SEARCH_USER_FAIL:
+      return { ...state, loading: false, userData: null, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+
+export const searchSharerReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case SEARCH_SHARER_REQUEST:
+      return { ...state, loading: true, error: null };
+    case SEARCH_SHARER_SUCCESS:
+      return { ...state, loading: false, sharerData: action.payload, error: null }; // Update sharerData with fetched data
+    case SEARCH_SHARER_FAIL:
+      return { ...state, loading: false, sharerData: [], error: action.payload }; // Reset sharerData to an empty array on failure
+    default:
+      return state;
+  }
+};
+
+
+export const adminContactsReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case CONTACTS_ADMIN_REQUEST:
+      return { ...state, loading: true, error: null };
+    case CONTACTS_ADMIN_SUCCESS:
+      return { ...state, loading: false, contactsData: action.payload, error: null }; 
+    case CONTACTS_ADMIN_FAIL:
+      return { ...state, loading: false, contactsData: [], error: action.payload }; 
+    default:
+      return state;
+  }
+};
+
+
+export const adminDeleteContactsReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case DELETE_CONTACT_REQUEST:
+      return { ...state, loading: true, error: null };
+      case DELETE_CONTACT_SUCCESS:
+      return { ...state, loading: false, contactsData: action.payload, error: null }; 
+      case DELETE_CONTACT_FAIL:
+      return { ...state, loading: false, contactsData: [], error: action.payload }; 
     default:
       return state;
   }

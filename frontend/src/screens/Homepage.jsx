@@ -6,7 +6,7 @@ import Button from "react-bootstrap/Button";
 import FollowedSharersList from "../components/FollowedSharersList";
 import { Link } from "react-router-dom";
 import "../designs/HomePage.css";
-
+import {Row, Col} from 'react-bootstrap'
 function Homepage({ sharerList, listSharers }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentSortBy, setCurrentSortBy] = useState("all");
@@ -15,9 +15,9 @@ function Homepage({ sharerList, listSharers }) {
   const { loading, error, sharers } = sharerList;
 
   useEffect(() => {
-    // Fetch sharers when the component mounts or when sorting criteria changes
-    listSharers(currentSortBy);
-  }, [currentSortBy, listSharers]); // Dependency on currentSortBy and listSharers
+    // Fetch sharers when the component mounts or when sorting criteria or search term changes
+    listSharers(currentSortBy, 'desc', searchTerm);
+  }, [currentSortBy, listSharers, searchTerm]); // Dependency on currentSortBy, listSharers, and searchTerm
 
   const handleSort = (sortField, sortOrder) => {
     const sortParam = `${sortField}_${sortOrder}`;
@@ -43,27 +43,29 @@ function Homepage({ sharerList, listSharers }) {
     : [];
 
   return (
-    <div className="container">
-      <h1>HOMEPAGE NEW</h1>
+    <div className="container brap">
+      {/* <h1>HOMEPAGE NEW</h1> */}
 
       {/* Search Input */}
       <input
         type="text"
-        placeholder="Search Sharer name or category..."
+        placeholder="Search a Sharer"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className="form-control mb-3"
       />
 
       {/* Sorting Buttons */}
-      <div className="mb-3">
+      <div className="mb-3 d-flex" style={{justifyContent: 'space-between'}}>
         <Button
+          id="buttones"
           variant={currentSortBy === "all" ? "primary" : "outline-primary"}
           onClick={() => handleSpecialSort("all")}
         >
           All
         </Button>
         <Button
+          id="buttones"
           variant={
             currentSortBy === "total_followers_asc"
               ? "primary"
@@ -74,6 +76,7 @@ function Homepage({ sharerList, listSharers }) {
           Followers (Low to High)
         </Button>
         <Button
+          id="buttones"
           variant={
             currentSortBy === "total_followers_desc"
               ? "primary"
@@ -84,6 +87,7 @@ function Homepage({ sharerList, listSharers }) {
           Followers (High to Low)
         </Button>
         <Button
+          id="buttones"
           variant={
             currentSortBy === "average_rating_asc"
               ? "primary"
@@ -94,6 +98,7 @@ function Homepage({ sharerList, listSharers }) {
           Rating (Low to High)
         </Button>
         <Button
+          id="buttones"
           variant={
             currentSortBy === "average_rating_desc"
               ? "primary"
@@ -104,6 +109,7 @@ function Homepage({ sharerList, listSharers }) {
           Rating (High to Low)
         </Button>
         <Button
+          id="buttones"
           variant={currentSortBy === "latest" ? "primary" : "outline-primary"}
           onClick={() => handleSpecialSort("latest")}
         >
@@ -117,6 +123,7 @@ function Homepage({ sharerList, listSharers }) {
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
           className="form-control"
+          style={{color:'#777777'}}
         >
           <option value="all">All Categories</option>
           <option value="Art">Art</option>
@@ -145,11 +152,16 @@ function Homepage({ sharerList, listSharers }) {
         </select>
       </div>
 
-      {/* Display Sharers */}
+       {/* Display Sharers */}
       <div className="row">
-        {filteredSharers.map((sharer) => (
-          <div className="col-md-3 mb-3" key={sharer.id}>
-            <Link
+        {filteredSharers.length === 0 ? (
+          <div className="col-md-12 text-center">
+            <h1>No results found.</h1>
+          </div>
+        ) : (
+          filteredSharers.map((sharer) => (
+            <div className="col-md-3 mb-3" key={sharer.id}>
+              <Link
               to={`/homepage/sharers/${sharer.id}`}
               style={{
                 textDecoration: "none",
@@ -187,12 +199,15 @@ function Homepage({ sharerList, listSharers }) {
                 </Card.Body>
               </Card>
             </Link>
-          </div>
-        ))}
+            </div>
+          ))
+        )}
       </div>
 
       {/* Display followed sharers list */}
+      
       <FollowedSharersList />
+      
 
       {/* Show loading state if data is being fetched */}
       {loading && <div>Loading...</div>}

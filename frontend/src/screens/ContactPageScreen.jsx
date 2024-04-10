@@ -14,6 +14,7 @@ const ContactPageScreen = ({ submitContactRequest }) => {
   const [description, setDescription] = useState('');
   const [attachment, setAttachment] = useState(null);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
 
@@ -33,18 +34,21 @@ const ContactPageScreen = ({ submitContactRequest }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+    setIsLoading(true); 
+
     const supportedTypes = ['pdf', 'jpeg', 'jpg', 'png', 'doc', 'docx'];
     if (attachment) {
       const fileExtension = attachment.name.split('.').pop().toLowerCase();
       if (!supportedTypes.includes(fileExtension)) {
         setSubmitStatus('unsupported');
+        setIsLoading(false);
         return; 
       }
     }
   
     if (attachment && attachment.size > 1024 * 1024) {
       setSubmitStatus('fileTooLarge');
+      setIsLoading(false); 
       return; 
     }
   
@@ -61,9 +65,12 @@ const ContactPageScreen = ({ submitContactRequest }) => {
     try {
       await submitContactRequest(formData);
       setSubmitStatus('success');
+      clearForm();
     } catch (error) {
       console.error('Error:', error);
       setSubmitStatus('error');
+    } finally {
+      setIsLoading(false); 
     }
   };
   
@@ -109,7 +116,10 @@ const ContactPageScreen = ({ submitContactRequest }) => {
           <label id='labl'>Supported file types are: .pdf, .jpeg, .jpg, .png, .doc, .docx. Filesize must not exceed 1 MB.</label>
         </div>
 
-        <Button id='fx' type="submit" variant="primary">Done</Button>
+
+        <Button id='fx' type="submit" variant="primary" disabled={isLoading}>
+        {isLoading ? 'Submitting' : 'Done'}
+      </Button>
         <Button id='fk' type="button" variant="secondary" onClick={clearForm} style={{ marginLeft: '10px' }}>Clear Form</Button>
         <Button id='fk' type="button" variant="secondary" onClick={() => navigate('/')} style={{ marginLeft: '10px' }}>Go Back</Button>
 

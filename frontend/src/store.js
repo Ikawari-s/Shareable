@@ -1,6 +1,6 @@
 import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import {thunk} from 'redux-thunk'; // Correct import statement for thunk middleware
-import { CommentPostReducer, DeleteCommentPostReducer, LikeCountReducer, LikePostReducer, ListCommentPostReducer, UnlikePostReducer, UserProfileUpdateReducer, likesCountReducer, userChangePasswordReducer, userLoginReducer, } from './reducers/userReducer';
+import { CommentPostReducer, DeleteCommentPostReducer, LikeCountReducer, LikePostReducer, ListCommentPostReducer, UnlikePostReducer, UserProfileUpdateReducer, likesCountReducer, userChangePasswordReducer, userLoginReducer, userSendPasswordReducer, } from './reducers/userReducer';
 import { userRegisterReducer, userResendOTPReducer, userSentOTPReducer, userVerifyOTPReducer } from './reducers/registerReducer';
 import {sharerListReducer, myProfileReducer, CheckSharerReducer, SharerDetailReducer, userSharerBeReducer, userSharerPostReducer, SharerLatestPostReducer, SharerUserProfileUpdateReducer, sharerRatingsReducer, sharerEditPostReducer, sharerPostCountReducer, sharerPreviewReducer, sharerPreviewListReducer, userTipBoxReducer, dashboardReducer, topDonorReducer} from './reducers/sharerReducer';
 import { sharerPostListReducer } from './reducers/sharerReducer';
@@ -8,7 +8,7 @@ import { followReducer, unfollowReducer, followedSharerListReducer } from './red
 import { SharerUpdateProfile, deleteSharerRatings, fetchSharerRatings, patchSharerRatings, sharerDeletePost } from './actions/sharerActions';
 import { tier1FollowedSharersReducer, tier2FollowedSharersReducer, tier3FollowedSharersReducer } from './reducers/subscriptionReducer';
 import {contactReducers} from './reducers/contactReducers'; 
-import { adminUserReducer, createUserAdminReducer, sentSharerIncomeAdminReducer, sharerIncomeAdminReducer, updateUserAdminReducer } from './reducers/adminReducers';
+import { adminContactsReducer, adminDeleteContactsReducer, adminUserReducer, createUserAdminReducer, searchSharerReducer, searchUserReducer, sentSharerIncomeAdminReducer, sharerIncomeAdminReducer, updateUserAdminReducer } from './reducers/adminReducers';
 import { userProfileReducer } from './reducers/profileReducer';
 
 
@@ -29,7 +29,6 @@ const reducer = combineReducers({
   UserSharerPost : userSharerPostReducer,
   SharerPostList : sharerPostListReducer,
   MyProfile : myProfileReducer,
-  SharerLatestPost : SharerLatestPostReducer,
   followSharer : followReducer,
   // unfollowSharer :unfollowReducer,
   followedSharerList: followedSharerListReducer,
@@ -63,7 +62,12 @@ const reducer = combineReducers({
   sharerIncomeAdmin : sharerIncomeAdminReducer,
   sentSharerIncome : sentSharerIncomeAdminReducer,
   userProfile : userProfileReducer,
-
+  userSendPassword :userSendPasswordReducer,
+  searchUser : searchUserReducer,
+  searchSharer : searchSharerReducer,
+  contact : contactReducers,
+  adminContacts : adminContactsReducer,
+  adminDeleteContacts : adminDeleteContactsReducer
 
 });
 
@@ -81,7 +85,7 @@ const initialState = {
 const store = configureStore({
   reducer,
   preloadedState: initialState,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({serializableCheck: false,}).concat(thunk),
 });
 
 export default store;

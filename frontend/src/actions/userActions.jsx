@@ -67,7 +67,7 @@ export const login = (email, password) => async (dispatch) => {
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
-          : "An error occurred during login.",
+          : "Incorrect email or password. Please try again.",
     });
   }
 };

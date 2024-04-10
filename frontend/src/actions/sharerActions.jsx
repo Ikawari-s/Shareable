@@ -22,9 +22,9 @@ import {
   SHARER_DETAIL_REQUEST,
   SHARER_DETAIL_SUCCESS,
   SHARER_DETAIL_FAIL,
-  SHARER_LATEST_POST_REQUEST,
-  SHARER_LATEST_POST_SUCCESS,
-  SHARER_LATEST_POST_FAIL,
+  // SHARER_LATEST_POST_REQUEST,
+  // SHARER_LATEST_POST_SUCCESS,
+  // SHARER_LATEST_POST_FAIL,
   SHARER_UPDATE_PROFILE_REQUEST,
   SHARER_UPDATE_PROFILE_SUCCESS,
   SHARER_UPDATE_PROFILE_FAILURE,
@@ -106,60 +106,45 @@ export const DetailSharers = (id) => async (dispatch) => {
 
 
 
-export const listSharers =
-  (sort_by = "all", order_by = "desc") =>
-  async (dispatch) => {
-    try {
-      dispatch({
-        type:
-          sort_by !== "all" ? SHARER_LIST_SORT_REQUEST : SHARER_LIST_REQUEST,
-      });
+export const listSharers = (sort_by = 'all', order_by = 'desc', searchTerm = '') => async (dispatch) => {
+  try {
+    dispatch({
+      type: sort_by !== 'all' ? SHARER_LIST_SORT_REQUEST : SHARER_LIST_REQUEST,
+    });
 
-      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-      const token = userInfo ? userInfo.access_token : null;
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const token = userInfo ? userInfo.access_token : null;
 
-      const config = token
-        ? {
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        : {};
-
-      let url = `http://127.0.0.1:8000/api/sharer/`;
-
-      // Adjust URL and sorting parameters based on selected sort_by criteria
-      if (sort_by !== "all") {
-        url += `?sort_by=${sort_by}`;
-        if (
-          sort_by === "total_followers_asc" ||
-          sort_by === "average_rating_asc"
-        ) {
-          url += `&order_by=asc`;
-        } else {
-          url += `&order_by=desc`;
+    const config = token
+      ? {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
         }
-      }
+      : {};
 
-      const { data } = await instance.get(url, config);
+    let url = `http://127.0.0.1:8000/api/sharer/?sort_by=${sort_by}&order_by=${order_by}`;
 
-      dispatch({
-        type:
-          sort_by !== "all" ? SHARER_LIST_SORT_SUCCESS : SHARER_LIST_SUCCESS,
-        payload: data,
-      });
-    } catch (error) {
-      dispatch({
-        type: sort_by !== "all" ? SHARER_LIST_SORT_FAIL : SHARER_LIST_FAIL,
-        payload:
-          error.response && error.response.data.detail
-            ? error.response.data.detail
-            : error.message,
-      });
+    // Include search term in the request
+    if (searchTerm) {
+      url += `&search=${encodeURIComponent(searchTerm)}`;
     }
-  };
+
+    const { data } = await instance.get(url, config);
+
+    dispatch({
+      type: sort_by !== 'all' ? SHARER_LIST_SORT_SUCCESS : SHARER_LIST_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: sort_by !== 'all' ? SHARER_LIST_SORT_FAIL : SHARER_LIST_FAIL,
+      payload: error.response && error.response.data.detail ? error.response.data.detail : error.message,
+    });
+  }
+};
 
 export const beSharer = (page_name) => async (dispatch) => {
   try {
@@ -387,51 +372,51 @@ export const profileSharers = (userEmail) => async (dispatch) => {
 };
 
 
-export const FetchSharerLatestPost = (id) => async (dispatch) => { 
-  try {
-    console.log("Fetching latest post for sharer with id:", id);
+// export const FetchSharerLatestPost = (id) => async (dispatch) => { 
+//   try {
+//     console.log("Fetching latest post for sharer with id:", id);
     
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    const token = userInfo ? userInfo.access_token : null;
+//     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+//     const token = userInfo ? userInfo.access_token : null;
 
-    const config = token
-      ? {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      : {};
+//     const config = token
+//       ? {
+//           headers: {
+//             "Content-Type": "application/json",
+//             Accept: "application/json",
+//             Authorization: `Bearer ${token}`,
+//           },
+//         }
+//       : {};
       
-    dispatch({ type: SHARER_LATEST_POST_REQUEST });
+//     dispatch({ type: SHARER_LATEST_POST_REQUEST });
     
-    const response = await instance.get(
-      `api/sharer/sharer-latest-post/${id}/`, 
-      config
-    );
+//     const response = await instance.get(
+//       `api/sharer/sharer-latest-post/${id}/`, 
+//       config
+//     );
     
-    console.log("Latest post response:", response.data);
+//     console.log("Latest post response:", response.data);
     
     
-    const postsWithCreatedAt = response.data.uploads.map(post => ({
-      ...post,
-      created_at: new Date(post.created_at).toLocaleString() 
-    }));
+//     const postsWithCreatedAt = response.data.uploads.map(post => ({
+//       ...post,
+//       created_at: new Date(post.created_at).toLocaleString() 
+//     }));
 
-    dispatch({ type: SHARER_LATEST_POST_SUCCESS, payload: postsWithCreatedAt });
-  } catch (error) {
-    console.error("Error fetching latest post:", error);
+//     dispatch({ type: SHARER_LATEST_POST_SUCCESS, payload: postsWithCreatedAt });
+//   } catch (error) {
+//     console.error("Error fetching latest post:", error);
     
-    dispatch({
-      type: SHARER_LATEST_POST_FAIL,
-      payload:
-        error.response && error.response.data.detail
-          ? error.response.data.detail
-          : error.message,
-    });
-  }
-};
+//     dispatch({
+//       type: SHARER_LATEST_POST_FAIL,
+//       payload:
+//         error.response && error.response.data.detail
+//           ? error.response.data.detail
+//           : error.message,
+//     });
+//   }
+// };
 
   
 export const CheckerSharer = () => async (dispatch) => {

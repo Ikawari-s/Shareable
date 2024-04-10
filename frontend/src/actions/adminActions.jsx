@@ -20,7 +20,19 @@ import {
   INCOME_SENT_ADMIN_FAIL,
   PATCH_SHARER_ADMIN_REQUEST,
   PATCH_SHARER_ADMIN_SUCCESS,
-  PATCH_SHARER_ADMIN_FAIL
+  PATCH_SHARER_ADMIN_FAIL,
+  SEARCH_USER_REQUEST,
+  SEARCH_USER_SUCCESS,
+  SEARCH_USER_FAIL,
+  SEARCH_SHARER_REQUEST,
+  SEARCH_SHARER_SUCCESS,
+  SEARCH_SHARER_FAIL,
+  CONTACTS_ADMIN_REQUEST,
+  CONTACTS_ADMIN_SUCCESS,
+  CONTACTS_ADMIN_FAIL,
+  DELETE_CONTACT_REQUEST,
+  DELETE_CONTACT_SUCCESS,
+  DELETE_CONTACT_FAIL,
 } from "../constants/adminConstants";
 
 const instance = axios.create({
@@ -278,6 +290,124 @@ export const patchSharerAdmin = (sharerId, formData) => async (dispatch) => {
         error.message && error.response.data.message
           ? error.response.data.message
           : error.message,
+    });
+  }
+};
+
+export const searchUser = (query) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: SEARCH_USER_REQUEST });
+
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
+
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
+
+    const { data } = await instance.get(`api/admin/search-user/?query=${query}`, config);
+
+    dispatch({ type: SEARCH_USER_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: SEARCH_USER_FAIL,
+      payload:
+        error.message && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const searchSharer = (query) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: SEARCH_SHARER_REQUEST });
+
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
+
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
+
+    const { data } = await instance.get(`api/admin/search-sharer/?query=${query}`, config);
+
+    dispatch({ type: SEARCH_SHARER_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: SEARCH_SHARER_FAIL,
+      payload:
+        error.message && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const fetchAdminContacts = () => async (dispatch) => {
+  try {
+    dispatch({ type: CONTACTS_ADMIN_REQUEST });
+
+    const token = JSON.parse(localStorage.getItem('userInfo')).access_token;
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: token ? `Bearer ${token}` : '',
+      },
+    };
+
+    const { data } = await instance.get('api/admin/user-contacts/', config);
+
+    dispatch({
+      type: CONTACTS_ADMIN_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: CONTACTS_ADMIN_FAIL,
+      payload: error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message,
+    });
+  }
+};
+
+
+export const deleteAdminContact = (contactId) => async (dispatch) => {
+  try {
+    dispatch({ type: DELETE_CONTACT_REQUEST });
+
+    const token = JSON.parse(localStorage.getItem('userInfo')).access_token;
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: token ? `Bearer ${token}` : '',
+      },
+    };
+
+    await instance.delete(`api/admin/delete-contact/${contactId}/`, config);
+
+    dispatch({ type: DELETE_CONTACT_SUCCESS, payload: contactId });
+  } catch (error) {
+    dispatch({
+      type: DELETE_CONTACT_FAIL,
+      payload: error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message,
     });
   }
 };

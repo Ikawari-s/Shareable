@@ -61,7 +61,9 @@ class Contact(models.Model):
     subject = models.CharField(max_length=255)
     description = models.TextField()
     attachment = models.FileField(upload_to='contact_attachments', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True) 
 
+    
     def __str__(self):
         return self.email
 

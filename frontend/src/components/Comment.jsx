@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { BsFillTrash3Fill} from "react-icons/bs";
+import { IoMdSend } from "react-icons/io";
 import {
   listComments,
   postComment,
@@ -68,7 +70,7 @@ function Comment({ uploadId }) {
 
   return (
     <div>
-      <h2>Comments</h2>
+      {/* <h2>Comments</h2> */}
       {loading ? (
         <p>Loading comments...</p>
       ) : error ? (
@@ -81,29 +83,32 @@ function Comment({ uploadId }) {
             comments[uploadId].map((comment) => (
               <li key={comment.id} style={{ listStyle: 'none', marginBottom: '1rem'}}>
                 <div style={{ backgroundColor: 'white',
-                  padding: '10px',
+                  padding: '6px 10px 15px',
                   marginBottom: '20rem',
                   borderRadius: '1rem',
-                  maxWidth: '60rem',
+                  width: '57rem',
                   overflow: 'auto',
                   borderRadius: '1rem',
                   textAlign: 'left',
                   justifyContent: 'center',
-                  margin: '0 auto',
+                  margin: '0',
                 }}>
+                  <div className="d-flex">
                   {comment.profile_picture && (
-                    <img src={comment.profile_picture} alt="Profile" style={{ width: 50, height: 50, borderRadius: "50%" }} />
+                    <img src={comment.profile_picture} alt="Profile" style={{ width: 'auto', height: 40, borderRadius: "50%", marginRight: '0.6rem', marginBottom: '1rem' }} />
                   )}
-                  <strong style={{color: "black", fontSize: '2rem'}}>{comment.username}
+                  <strong style={{color: "black", fontSize: '2rem', lineHeight: '2.4rem'}}>{comment.username}
                   </strong> 
+                  <button style={{margin: '0 0 1rem .2rem'}} id="trash" onClick={() => handleDelete(comment.id)}><BsFillTrash3Fill /></button>
                   {comment.badge === 'Gold' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/252.png" style={{maxWidth: '3rem'}} />}
                   {comment.badge === 'Silver' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/2544.png" style={{maxWidth: '3rem'}} />}
                   {comment.badge === 'Bronze' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/201939.png" style={{maxWidth: '3rem'}} />}
                   {comment.badge === 'None' && null}
-                  <div style={{ marginTop: '0.1rem', color: 'black'}}>{comment.comments}</div>
+                  </div>
+                  <div style={{ marginLeft: '1rem', color: 'black'}}>{comment.comments}</div>
                   {(userInfo.user_id === comment.user || isAdmin) && (
                     <>
-                      <button onClick={() => handleDelete(comment.id)}>Delete</button>
+                      
                       {deletingCommentId === comment.id && (
                         <div className="confirmation-overlay">
                           <div className="confirmation-modal">
@@ -125,15 +130,17 @@ function Comment({ uploadId }) {
           )}
         </>
       )}
+      <div className="textarea-container">
       <textarea
         rows="4"
         cols="50"
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="Write your comment here..."
+        id="write-comment"
       ></textarea>
-      <br />
-      <button onClick={handleSubmit}>Submit Comment</button>
+      <button id="comment-button" onClick={handleSubmit}><IoMdSend /></button>
+      </div>
     </div>
   );
 }

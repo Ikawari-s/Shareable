@@ -63,6 +63,15 @@ function NewPasswordScreen() {
       setMessage('Passwords do not match.');
       return;
     }
+
+    const charRegex = /[a-zA-Z]/;
+    const specialCharRegex = /[!@#$%^&*()_+{}|:"<>?]/;
+    const numRegex = /[0-9]/;
+  
+    if (!charRegex.test(password) || !specialCharRegex.test(password) || !numRegex.test(password)) {
+      setMessage('Password needs characters, special characters, and numbers.');
+      return;
+    }
   
     setLoading(true);
   
@@ -70,7 +79,7 @@ function NewPasswordScreen() {
       const success = await dispatch(userNewPasswordReducer(uidb64, token, password));
       setLoading(false);
       if (success) {
-        navigate("/"); // Redirect to homepage upon success
+        navigate("/"); 
       }
     } catch (error) {
       setLoading(false);
