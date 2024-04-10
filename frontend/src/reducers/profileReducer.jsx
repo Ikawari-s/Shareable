@@ -4,7 +4,11 @@ import {
     USER_PROFILE_FAIL
   } from '../constants/profileConstants';
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> bb486b4d826fa9bceede0a1467e733cf001ff7aa
 =======
   
 >>>>>>> bb486b4d826fa9bceede0a1467e733cf001ff7aa
@@ -14,8 +18,12 @@ import {
     error: null
   };
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
+=======
+  
+>>>>>>> bb486b4d826fa9bceede0a1467e733cf001ff7aa
 =======
   
 >>>>>>> bb486b4d826fa9bceede0a1467e733cf001ff7aa
@@ -33,7 +41,10 @@ import {
   };
   
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> bb486b4d826fa9bceede0a1467e733cf001ff7aa
 =======
 >>>>>>> bb486b4d826fa9bceede0a1467e733cf001ff7aa

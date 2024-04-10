@@ -451,9 +451,13 @@ function SharerPageScreen() {
       </div>
       </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <div>
           <SharerPost />
         </div>
+=======
+        
+>>>>>>> bb486b4d826fa9bceede0a1467e733cf001ff7aa
 =======
         
 >>>>>>> bb486b4d826fa9bceede0a1467e733cf001ff7aa
