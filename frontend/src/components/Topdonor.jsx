@@ -1,16 +1,31 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTopDonor } from '../actions/sharerActions'; 
-import { Spinner } from 'react-bootstrap'; 
+import { getTopDonor } from '../actions/sharerActions';
+import { Spinner } from 'react-bootstrap';
+import gold from '../designs/images/gold.png';
+import silver from '../designs/images/silver.png';
+import bronze from '../designs/images/bronze.png';
 
 function TopDonor({ sharerId }) {
   const dispatch = useDispatch();
-  const { loading, error, topDonorData } = useSelector(state => state.topDonor); 
+  const { loading, error, topDonorData } = useSelector(state => state.topDonor);
 
   useEffect(() => {
-    console.log("Current sharerId in TopDonor component:", sharerId); 
+    console.log("Current sharerId in TopDonor component:", sharerId);
     dispatch(getTopDonor(sharerId));
-  }, [dispatch, sharerId]); 
+  }, [dispatch, sharerId]);
+
+  const renderBadge = (index) => {
+    if (index === 0) {
+      return <img src={gold} alt="Gold Badge" className="badge-image" />;
+    } else if (index === 1) {
+      return <img src={silver} alt="Silver Badge" className="badge-image" />;
+    } else if (index === 2) {
+      return <img src={bronze} alt="Bronze Badge" className="badge-image" />;
+    } else {
+      return null; // No badge for other positions
+    }
+  };
 
   return (
     <div className="top-donor-container text-center">
@@ -26,6 +41,7 @@ function TopDonor({ sharerId }) {
               </div>
               <p className="username">{donor.username}</p>
               <p className="total-amount">Total Amount: ${donor.total_amount}</p>
+              {renderBadge(index)} {/* Render the badge based on the index */}
             </div>
           ))}
         </div>
