@@ -13,6 +13,7 @@ function AdminContact() {
   const loading = useSelector((state) => state.adminContacts.loading);
   const error = useSelector((state) => state.adminContacts.error);
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -23,6 +24,14 @@ function AdminContact() {
     }
   }, [dispatch, navigate]);
 
+  useEffect(() => {
+    dispatch(fetchAdminContacts(searchTerm));
+  }, [dispatch, searchTerm]);
+
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
   const [zoomedImage, setZoomedImage] = useState(null);
 
   const renderAttachment = (attachment, contactId) => {
@@ -91,6 +100,13 @@ function AdminContact() {
   return (
     <div className="container">
       <h1 className="display-4 mb-4">Admin Contacts</h1>
+      <input
+        type="text"
+        placeholder="Search by Email"
+        value={searchTerm}
+        onChange={handleSearch}
+        className="form-control mb-3"
+      />
       {loading ? (
         <p>Loading...</p>
       ) : error ? (

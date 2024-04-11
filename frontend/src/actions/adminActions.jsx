@@ -356,11 +356,12 @@ export const searchSharer = (query) => async (dispatch, getState) => {
   }
 };
 
-export const fetchAdminContacts = () => async (dispatch) => {
+export const fetchAdminContacts = (searchTerm = '') => async (dispatch) => {
   try {
     dispatch({ type: CONTACTS_ADMIN_REQUEST });
 
-    const token = JSON.parse(localStorage.getItem('userInfo')).access_token;
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const token = userInfo ? userInfo.access_token : null;
     const config = {
       headers: {
         'Content-Type': 'application/json',
@@ -369,7 +370,12 @@ export const fetchAdminContacts = () => async (dispatch) => {
       },
     };
 
-    const { data } = await instance.get('api/admin/user-contacts/', config);
+    let url = 'api/admin/user-contacts/';
+    if (searchTerm) {
+      url += `?search=${encodeURIComponent(searchTerm)}`;
+    }
+
+    const { data } = await instance.get(url, config);
 
     dispatch({
       type: CONTACTS_ADMIN_SUCCESS,

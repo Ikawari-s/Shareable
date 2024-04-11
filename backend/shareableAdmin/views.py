@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 User = get_user_model()
+from rest_framework import generics
 
 def get_users_with_status():
     return UserModel.objects.all()
@@ -187,13 +188,16 @@ class SearchSharer(APIView):
 
 
 
-class UserContacts(APIView):
+class UserContacts(generics.ListAPIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
+    serializer_class = ContactSerializer
 
-    def get(self, request):
-        contacts = Contact.objects.order_by('-created_at') 
-        serializer = ContactSerializer(contacts, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get_queryset(self):
+        queryset = Contact.objects.all()
+        search_term = self.request.query_params.get('search', None)
+        if search_term:
+            queryset = queryset.filter(email__icontains=search_term)
+        return queryset.order_by('-created_at')
     
     
 class DeleteContacts(APIView):
