@@ -103,9 +103,9 @@ function Comment({ uploadId }) {
                   <strong style={{color: "black", fontSize: '2rem', lineHeight: '2.4rem'}}>{comment.username}
                   </strong> 
                   <button style={{margin: '0 0 1rem .2rem'}} id="trash" onClick={() => handleDelete(comment.id)}><BsFillTrash3Fill /></button>
-                  {comment.badge === 'Gold' && <img src={gold} style={{maxWidth: '2rem'}} />}
-                  {comment.badge === 'Silver' && <img src={silver} style={{maxWidth: '2rem'}} />}
-                  {comment.badge === 'Bronze' && <img src={bronze} style={{maxWidth: '2rem'}} />}
+                  {comment.badge === 'Gold' && <img src={gold} style={{maxWidth: '2rem', maxHeight: '2rem'}} />}
+                  {comment.badge === 'Silver' && <img src={silver} style={{maxWidth: '2rem', maxHeight: '2rem'}} />}
+                  {comment.badge === 'Bronze' && <img src={bronze} style={{maxWidth: '2rem', maxHeight: '2rem'}} />}
                   {comment.badge === 'None' && null}
                   </div>
                   <div style={{ marginLeft: '1rem', color: 'black'}}>{comment.comments}</div>
