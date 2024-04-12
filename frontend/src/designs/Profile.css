@@ -6,8 +6,11 @@
 }
 
 #profil{
-    height: 15rem;
-    width: auto;
+    min-height: 15rem;
+    min-width: 15rem;
+    max-height: 15rem;
+    max-width: 15rem;
+    object-fit: cover;
     border-radius: 50%;
 }
 
@@ -63,7 +66,6 @@
 }
 
 .stuf input, .stuf select{
-    /* color: #333333 !important; */
     border: solid 0.5px;
     border-radius: 2rem;
 }
@@ -124,7 +126,7 @@
     margin-top: 2rem;
     /* border-top: 1px solid rgba(255, 255, 255, 0.5); */
     width: 57rem;
-    padding-top: 2rem;
+    padding-bottom: 2rem;
 }
 
 .like{
@@ -180,7 +182,7 @@
 }
 
 .comment-section.expanded {
-    max-height: 100rem; /* Adjust this value to fit your content */
+    max-height: fit-content; /* Adjust this value to fit your content */
     transition: all 0.4s ease-in-out;
 }
 
@@ -220,4 +222,128 @@
     box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
     border-color: #0071bd;
     background-color: #0071bd;
- } 
+} 
+
+.transition {
+    overflow: hidden;
+    transition: height 0.4s ease-in-out;
+    height: 0;
+}
+
+.transition.show {
+    height: 53.4rem;
+}
+
+.creat{
+    /* background: red; */
+    padding: 2rem 2rem 2rem 0rem;
+}
+
+.creat input, .creat select{
+    border: solid 0.5px;
+    border-radius: 2rem;
+}
+
+.creat textarea{
+    border-radius: 1rem;
+    border: solid 0.5px;
+}
+
+.creat label{
+    padding-bottom: 0.2rem;
+    padding-left: 0.2rem;
+}
+
+.creat input:focus, 
+.creat select:focus {
+    border: 1px solid white;
+}
+
+.creat button{
+    margin-top: 1rem;
+    padding: .8rem 0rem;
+    width: 100%; 
+    border-radius: 6.25rem;
+    border-color: #084d6e;
+    background-color: #084d6e;
+    color: white;
+    border: none ;
+}
+
+.creat button:hover{
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+    border-color: #0071bd;
+    background-color: #0071bd;
+    transition: all 0.1s ease-in-out;
+ }
+
+ .update-icon{
+    height: fit-content;
+    width: fit-content; 
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 0.1rem 0.5rem;
+    border-radius: 2rem;
+    margin: 1rem 1rem;
+}
+
+.update-icon button{
+    background: none;
+    color: white;
+    border: none;
+    margin-bottom: 0.3rem; 
+    font-size: large;
+}
+
+.update-icon text{
+    font-size: .9rem;
+    padding-left: 0.5rem;
+}
+
+.update-trans {
+    overflow: hidden;
+    transition: height 0.4s ease-in-out;
+    height: 0;
+    padding: 2rem 2rem 0rem 0rem;
+}
+
+.update-trans input{
+    border: solid 0.5px;
+    border-radius: 2rem;
+}
+
+.update-trans textarea{
+    border-radius: 1rem;
+    border: solid 0.5px;
+}
+
+.update-trans label{
+    padding-bottom: 0.2rem;
+    padding-left: 0.2rem;
+}
+
+.update-trans input:focus {
+    border: 1px solid white;
+}
+
+.update-trans button{
+    margin-top: 1rem;
+    padding: .8rem 0rem;
+    width: 100%; 
+    border-radius: 6.25rem;
+    border-color: #084d6e;
+    background-color: #084d6e;
+    color: white;
+    border: none ;
+}
+
+.update-trans button:hover{
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+    border-color: #0071bd;
+    background-color: #0071bd;
+    transition: all 0.1s ease-in-out;
+ }
+
+.update-trans.show {
+    height: 29rem;
+    /* background-color: red; */
+}

@@ -84,28 +84,28 @@ function SharerPost({ uploadSharer }) {
   
 
   return (
-    <div>
-      <h1>Sharer Post</h1>
+    <div className='creat'>
+      <h1>Create a Post</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Title:</label>
-          <input type="text" name="title" value={formData.title} onChange={handleChange} />
+          <h2>Title:</h2>
+          <input className="form-control mb-2" type="text" placeholder='Title' name="title" value={formData.title} onChange={handleChange} />
         </div>
         <div>
-          <label>Description:</label>
-          <input type="text" name="description" value={formData.description} onChange={handleChange} />
+          <h2>Description:</h2>
+          <textarea className="form-control mb-2" type="text" placeholder='Description' name="description" value={formData.description} onChange={handleChange} />
         </div>
         <div>
           <label>Upload Image:</label>
-          <input type="file" name="images" onChange={handleFileChange} multiple accept="image/*" />
+          <input className="form-control mb-2" type="file" name="images" onChange={handleFileChange} multiple accept="image/*" />
         </div>
         <div>
           <label>Upload Video:</label>
-          <input type="file" name="videos" onChange={handleFileChange} multiple accept="video/*" />
+          <input className="form-control mb-2" type="file" name="videos" onChange={handleFileChange} multiple accept="video/*" />
         </div>
         <div>
           <label>Upload File:</label>
-          <input type="file" name="files" onChange={handleFileChange} multiple />
+          <input className="form-control mb-2" type="file" name="files" onChange={handleFileChange} multiple />
         </div>
         <div>
           <label>Visibility:</label>
@@ -124,7 +124,7 @@ function SharerPost({ uploadSharer }) {
             ))}
           </div>
         </div>
-        <button type="submit" disabled={loading}>Upload</button>
+        <button className="btn btn-primary" type="submit" disabled={loading}>Upload</button>
       </form>
     </div>
   );

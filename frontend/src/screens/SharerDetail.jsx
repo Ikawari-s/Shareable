@@ -23,7 +23,7 @@ const SharerDetail = ({
   loading,
   error,
   DetailSharers,
-  followSharer, 
+  followSharer,
   unfollowSharer,
   getSharerPostCount,
 }) => {
@@ -35,14 +35,14 @@ const SharerDetail = ({
   const [paypalLoaded, setPaypalLoaded] = useState(false);
   const [followTier, setFollowTier] = useState(null);
   const [showPaypalModal, setShowPaypalModal] = useState(false);
-  const [selectedAmount, setSelectedAmount] = useState(0); 
+  const [selectedAmount, setSelectedAmount] = useState(0);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const onError = (err) => {
     console.error("PayPal SDK error:", err);
   };
 
-  
   useEffect(() => {
     if (
       userInfo &&
@@ -63,14 +63,13 @@ const SharerDetail = ({
       script.onload = () => setPaypalLoaded(true);
       document.body.appendChild(script);
     }
-  
+
     return () => {
       if (script && script.parentNode === document.body && !paypalLoaded) {
         script.parentNode.removeChild(script);
       }
     };
   }, [paypalLoaded]);
-  
 
   const createOrder = (data, actions) => {
     const amount = selectedAmount;
@@ -119,23 +118,23 @@ const SharerDetail = ({
     const checkAndRefresh = () => {
       const expirationDates = userInfo?.expiration_dates || {};
       const currentDateTime = new Date();
-  
+
       const isExpired = Object.entries(expirationDates).some(
         ([sharerId, expirationDate]) => {
           return new Date(expirationDate) <= currentDateTime;
         }
       );
-  
+
       if (isExpired) {
         window.location.reload();
       }
     };
-  
+
     const interval = setInterval(checkAndRefresh, 20 * 60 * 60 * 1000);
-  
+
     return () => clearInterval(interval);
   }, [userInfo]);
-  
+
   const handleCreateOrder = (data, actions) => {
     return createOrder(data, actions);
   };
@@ -157,8 +156,6 @@ const SharerDetail = ({
         });
     });
   };
-  
-
 
   useEffect(() => {
     DetailSharers(id);
@@ -182,7 +179,7 @@ const SharerDetail = ({
     console.log("Selected Amount:", amount);
     console.log("Tier:", tier);
     console.log("Sharer ID:", id);
-    setCurrentTier(tier); 
+    setCurrentTier(tier);
     setFollowTier(tier);
     setSelectedAmount(amount);
     setShowPaypalModal(true);
@@ -220,6 +217,16 @@ const SharerDetail = ({
 
     delete updatedUserInfo.expiration_dates[id];
     localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
+  };
+
+  const handleConfirmUnfollow = () => {
+    setShowConfirmation(false); // Hide the confirmation modal
+    handleUnfollow(); // Call the existing unfollow function
+  };
+
+  const handleCancelUnfollow = () => {
+    setShowConfirmation(false); // Hide the confirmation modal
+    // You can add any additional cancel logic here if needed
   };
 
   return (
@@ -260,7 +267,9 @@ const SharerDetail = ({
           <PostCount sharerId={id} />
           <div>
             {isFollowing ? (
-              <Button onClick={handleUnfollow}>Unfollow Sharer</Button>
+              <Button onClick={() => setShowConfirmation(true)}>
+                Unfollow Sharer
+              </Button>
             ) : (
               <>
                 <div>
@@ -268,7 +277,7 @@ const SharerDetail = ({
                   <Button
                     variant="success"
                     onClick={() => handleTierButtonClick("tier1", 5)}
-                    style={{ backgroundColor: "green"}}
+                    style={{ backgroundColor: "green" }}
                   >
                     Tier 1
                   </Button>
@@ -278,7 +287,7 @@ const SharerDetail = ({
                   <Button
                     variant="success"
                     onClick={() => handleTierButtonClick("tier2", 10)}
-                    style={{ backgroundColor: "red"}}
+                    style={{ backgroundColor: "red" }}
                   >
                     Tier 2
                   </Button>
@@ -288,7 +297,7 @@ const SharerDetail = ({
                   <Button
                     variant="success"
                     onClick={() => handleTierButtonClick("tier3", 20)}
-                    style={{ backgroundColor: "blue"}}
+                    style={{ backgroundColor: "blue" }}
                   >
                     Tier 3
                   </Button>
@@ -313,6 +322,15 @@ const SharerDetail = ({
                   />
                 </div>
               </PayPalScriptProvider>
+            )}
+            {showConfirmation && (
+              <div className="confirmation-overlay">
+                <div className="confirmation-modal">
+                  <p>Are you sure you want to unfollow?</p>
+                  <button onClick={handleConfirmUnfollow}>Yes</button>
+                  <button onClick={handleCancelUnfollow}>No</button>
+                </div>
+              </div>
             )}
           </div>
 

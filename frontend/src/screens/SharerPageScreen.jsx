@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BsFillTrash3Fill } from "react-icons/bs";
 import { BiComment } from "react-icons/bi";
 import { GrAddCircle } from "react-icons/gr";
+import { FiEdit2 } from "react-icons/fi";
 import {
   listSharerPosts,
   profileSharers,
@@ -21,6 +22,12 @@ import axios from "axios";
 function SharerPageScreen() {
   const [showComment, setShowComment] = useState(false);
   const [postId, setPostId] = useState(null);
+  const [showPost, setShowPost] = useState(false);
+  const togglePostVisibility = () => {
+  setShowPost(!showPost);}
+  const [showUpdate, setShowUpdate] = useState(false);
+  const toggleUpdateVisibility = () => {
+  setShowUpdate(!showUpdate);}
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
@@ -267,6 +274,7 @@ function SharerPageScreen() {
   return (
     <div className="brap" style={{ paddingTop: ".2rem" }}>
       <div className="col-md-12 cover-stuff">
+<<<<<<< HEAD
         <div className="d-flex">
           <div className="main">
             <div
@@ -394,6 +402,234 @@ function SharerPageScreen() {
                     ))}
                   </div>
                 )}
+=======
+      <div className="d-flex">
+      <div className="main">
+      <div className="d-flex" style={{borderBottom: '1px solid rgba(255,255,255,0.5)', paddingBottom:'3rem', width: '57rem'}}>
+          <img
+            src={userProfile.image}
+            alt="Profile"
+            id="profil"
+            onError={() => {
+              console.error(
+                "Error loading profile picture:",
+                userProfile.image
+              );
+            }}
+          />
+          <div className="names-and-shit"> 
+            <h1>{name}</h1>
+            <h2>{username}</h2>
+            <h4>{userProfile.email}</h4>
+            <button className="btn btn-primary create-post" onClick={togglePostVisibility}>
+      <GrAddCircle style={{ margin: '0.2rem 0.8rem 0.2rem', fontSize: '1.5rem', lineHeight: '0rem' }} />
+      {showPost ? 'Hide Post' : 'Create Post'}
+    </button>
+          </div>
+          </div>
+          <div className={`transition ${showPost ? 'show' : ''}`}>
+      {showPost && <SharerPost />}
+    </div>
+          {sortedPosts.map((post) => (
+        <div key={post.id}>
+          <div className="d-flex rat">
+            <h1>{post.title}</h1>
+            <p style={{ margin: '1rem 0 0 1rem', color: 'rgba(255, 255, 255, 0.5)' }}>{post.created_at_formatted}</p>
+            {post.edited && <p style={{ margin: '1rem 0 0 1rem', color: 'rgba(255, 255, 255, 0.5)' }}>Edited {post.edited_at_formatted}</p>}
+            <button id="trash" onClick={() => handleDeletePostConfirmation(post.id)}><BsFillTrash3Fill /></button>
+          </div>
+          {showDeleteConfirmation && deletePostId === post.id && (
+            <div className="confirmation-overlay">
+              <div className="confirmation-modal">
+                <p>Are you sure you want to delete this post?</p>
+                <button onClick={handleDeleteConfirmation}>Yes</button>
+                <button onClick={handleCancelDelete}>No</button>
+              </div>
+            </div>
+          )}
+          <p id="bubble"> {post.visibility}  </p>
+          <h3>{post.description}</h3>
+          {post.images.length > 0 && (
+            <div>
+              {post.images.map((image, index) => (
+                <img key={index} src={image.image} alt={`Image ${index + 1}`} style={{height:' auto', width:'57rem', objectFit: 'cover', borderRadius:'2rem' }}/>
+              ))}
+            </div>
+          )}
+          {post.videos.length > 0 && (
+            <div>
+              {post.videos.map((video, index) => (
+                <video key={index} style={{height:' auto', width:'57rem', objectFit: 'cover', borderRadius:'2rem' }} src={video.video} controls />
+              ))}
+            </div>
+          )}
+          {post.files.length > 0 && (
+            <div>
+              <h3>Files:</h3>
+              {post.files.map((file, index) => (
+      <button key={index} onClick={() => downloadFile(file.file)}>
+      Download File {index + 1}
+    </button>
+              ))}
+            </div>
+          )}
+          
+          <div>
+          <div className="d-flex">
+            <LikeComponent uploadId={post.id} />
+            <div className="comment-icon">
+            <button onClick={() => handleButtonClick(post.id)}><BiComment /></button>
+            </div>
+            <div className="update-icon">
+            <button onClick={toggleUpdateVisibility}>
+            <FiEdit2 />
+            <text>Edit Post</text>
+            </button>
+            </div>
+          </div>
+          <div className={`update-trans ${showUpdate ? 'show' : ''}`}>
+
+          <form onSubmit={(e) => handleUpdatePost(post.id, e)}>
+            <div>
+              <h9>New Title: </h9>
+              <input
+                type="text"
+                value={newTitle || post.title}
+                onChange={(e) => setNewTitle(e.target.value)}
+                className="form-control mb-2" 
+              />
+            </div>
+            <div>
+              <h9>New Description: </h9>
+              <textarea
+                value={newDescription || post.description}
+                onChange={(e) => setNewDescription(e.target.value)}
+                className="form-control mb-2"
+              />
+            </div>
+            <div>
+              <label>New Visibility:</label>
+              <div>
+                {VISIBILITY_CHOICES.map((choice) => (
+                  <div key={choice[0]}>
+                    {" "}
+                    <input
+                      type="checkbox"
+                      name="visibility"
+                      value={choice[0]}
+                      onChange={handleVisibilityChange}
+                      checked={newVisibility.includes(choice[0])}
+                    />
+                    <label>{choice[1]}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <button type="submit" className="btn btn-primary mt-3">
+              Update Post
+            </button>
+          </form>
+          </div>  
+            <div className={`comment-section ${showComment ? 'expanded' : ''}`}>
+              {showComment && <Comment uploadId={post.id} />}
+            </div>
+          </div>
+        </div>
+      ))} 
+        </div>    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div className="stuf">
+          {userProfile.cover_photo && (
+            <img
+              src={userProfile.cover_photo}
+              alt="Cover Photo"
+              id="cover"
+              onError={() => {
+                console.error(
+                  "Error loading cover photo:",
+                  userProfile.cover_photo
+                );
+              }}
+            />
+          )}
+<div className="sexy-texty">
+          <h2>Category:</h2>
+          <select
+            value={category}
+            onChange={handleCategoryChange}
+            className="form-control"
+          >
+            <option value="" disabled>
+              Select a category
+            </option>
+            {CATEGORY_CHOICES.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select> <br />
+        
+        <form onSubmit={handleUpdateProfile}>
+          <div className="mb-3">
+            <h2>Page Title</h2>
+            <input
+              type="text"
+              value={newName}
+              placeholder={name}
+              onChange={(e) => setNewName(e.target.value)}
+              className="form-control mb-2"
+            />
+            <h2> New Username</h2>
+            <input
+              type="text"
+              value={newUsername}
+              placeholder={username}
+              onChange={(e) => setNewUsername(e.target.value)}
+              className="form-control mb-2"
+            />
+            <h2> Description </h2>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="form-control mb-2"
+            />
+            <h3>Change Profile Photo</h3>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setNewProfilePicture(e.target.files[0])}
+              className="form-control mb-2"
+            />
+            <h3>Change Cover Photo</h3>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setCoverPhoto(e.target.files[0])} // Set cover photo state
+              className="form-control mb-2"
+            />
+            <button type="submit" className="btn btn-primary">
+              Update Profile
+            </button>
+          </div>
+        </form>
+      </div>
+      </div>
+      </div>
+        
+>>>>>>> 83e53c8324ce41d826660b7ab45948661995f296
 
                 <form onSubmit={(e) => handleUpdatePost(post.id, e)}>
                   <div>
