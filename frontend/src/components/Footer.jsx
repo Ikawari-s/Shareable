@@ -21,23 +21,19 @@ function Footer() {
             <p>Make</p>
             <p>Content</p>
           </Col>
-          <Col l={3}>
-            <p className="wa">Community</p>
-            <p>Shareable Community</p>
-            <p>Shareable for Sharers</p>
-            <p>Shareable for Users</p>
-            <p>Become a Sharer</p>
-          </Col>
+          
           <Col l={3}>
             <p className="wa">Menu</p>
-            <p>Cookies</p>
+            
             <Link to="/contact" style={{ textDecoration: "none" }}>
               <p>Contact</p>
             </Link>
             <Link to="/privacy-policy" style={{ textDecoration: "none" }}>
               <p>Privacy Policy</p>
             </Link>
-            <p>Terms of use</p>
+            <Link to="/terms-of-use-and-policies" style={{ textDecoration: "none" }}> 
+            <p>Terms of use & policies</p>
+            </Link>
           </Col>
         </Row>
         <Row >

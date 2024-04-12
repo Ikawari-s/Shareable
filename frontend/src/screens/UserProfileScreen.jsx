@@ -53,7 +53,7 @@ const Settings = () => {
       <form id="prof-info" className="settings-form">
         <div className="section-container">
           <div style={{borderBottom: 'solid rgba(255,255,255,0.5) 1px', paddingBottom: '1.5rem'}}>
-<<<<<<< HEAD
+
 
 
           <div id='titel' style={{borderBottom: 'solid rgba(255,255,255,0.5) 1px', paddingBottom: '1.5rem'}}>
@@ -61,10 +61,8 @@ const Settings = () => {
 
 
 
-
-=======
           <div id='titel' style={{borderBottom: 'solid rgba(255,255,255,0.5) 1px', paddingBottom: '1.5rem'}}>
->>>>>>> 83e53c8324ce41d826660b7ab45948661995f296
+
             <h1>Profile Information</h1>
             <p style={{width: '28rem'}}>Keep your personal details private. Information you add here is visible to anyone who can view your profile.</p>
             <div>
@@ -82,6 +80,7 @@ const Settings = () => {
               <div><input type="email" id="emal" value={email} disabled /></div>
               <Button className="save-btn" id='paw' variant="primary" onClick={handleSaveProfile}>Save</Button>
             </div>
+          </div>
           </div>
         </div>
         <br />
