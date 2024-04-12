@@ -7,6 +7,9 @@ import {
   postComment,
   deleteComments,
 } from "../actions/userActions";
+import gold from '../designs/images/gold.png'
+import silver from '../designs/images/silver.png'
+import bronze  from '../designs/images/bronze.png'
 
 function Comment({ uploadId }) {
   const dispatch = useDispatch();
@@ -100,9 +103,9 @@ function Comment({ uploadId }) {
                   <strong style={{color: "black", fontSize: '2rem', lineHeight: '2.4rem'}}>{comment.username}
                   </strong> 
                   <button style={{margin: '0 0 1rem .2rem'}} id="trash" onClick={() => handleDelete(comment.id)}><BsFillTrash3Fill /></button>
-                  {comment.badge === 'Gold' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/252.png" style={{maxWidth: '3rem'}} />}
-                  {comment.badge === 'Silver' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/2544.png" style={{maxWidth: '3rem'}} />}
-                  {comment.badge === 'Bronze' && <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/201939.png" style={{maxWidth: '3rem'}} />}
+                  {comment.badge === 'Gold' && <img src={gold} style={{maxWidth: '2rem'}} />}
+                  {comment.badge === 'Silver' && <img src={silver} style={{maxWidth: '2rem'}} />}
+                  {comment.badge === 'Bronze' && <img src={bronze} style={{maxWidth: '2rem'}} />}
                   {comment.badge === 'None' && null}
                   </div>
                   <div style={{ marginLeft: '1rem', color: 'black'}}>{comment.comments}</div>
