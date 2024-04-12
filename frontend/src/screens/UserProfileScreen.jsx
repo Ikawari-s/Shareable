@@ -41,10 +41,10 @@ const Settings = () => {
   };
 
   const handleSaveProfile = () => {
-    // Dispatch update only if either newProfilePicture or username is present
     if (newProfilePicture || username) {
       dispatch(updateUserProfile({ profile_picture: newProfilePicture, username }));
       setNewProfilePicture(null);
+      window.location.reload()
     }
   };
 
@@ -53,15 +53,14 @@ const Settings = () => {
       <form id="prof-info" className="settings-form">
         <div className="section-container">
           <div style={{borderBottom: 'solid rgba(255,255,255,0.5) 1px', paddingBottom: '1.5rem'}}>
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 
           <div id='titel' style={{borderBottom: 'solid rgba(255,255,255,0.5) 1px', paddingBottom: '1.5rem'}}>
 
-=======
->>>>>>> bb486b4d826fa9bceede0a1467e733cf001ff7aa
-=======
->>>>>>> bb486b4d826fa9bceede0a1467e733cf001ff7aa
+
+
+
+
             <h1>Profile Information</h1>
             <p style={{width: '28rem'}}>Keep your personal details private. Information you add here is visible to anyone who can view your profile.</p>
             <div>
@@ -76,16 +75,7 @@ const Settings = () => {
               <label>Display name</label>
               <div><input type="text" className="form-control" id="displayName" value={username} onChange={(e) => setUsername(e.target.value)} /></div>
               <label>Email</label>
-<<<<<<< HEAD
-<<<<<<< HEAD
-
               <div><input type="email" id="emal" value={email} disabled /></div>
-=======
-              <div><input type="email" id="email" value={email} disabled /></div>
->>>>>>> bb486b4d826fa9bceede0a1467e733cf001ff7aa
-=======
-              <div><input type="email" id="email" value={email} disabled /></div>
->>>>>>> bb486b4d826fa9bceede0a1467e733cf001ff7aa
               <Button className="save-btn" id='paw' variant="primary" onClick={handleSaveProfile}>Save</Button>
             </div>
           </div>

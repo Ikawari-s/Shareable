@@ -8,6 +8,7 @@ import banner from '../designs/images/banner.png'
 import logotext from '../designs/images/logotext.png'
 import whitelogo from '../designs/images/whitelogo.png'
 import { FaExchangeAlt, FaHome, FaIconName, FaLongArrowAltUp, FaSearch, FaUser, FaUserAlt, FaUserCheck, FaUserCog } from "react-icons/fa";
+import { AiOutlineMail } from "react-icons/ai";
 function SharerHeader() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -63,7 +64,8 @@ function SharerHeader() {
       <li><Nav.Link id="pluh" as={Link} to="/homepage"><span class="nav-item"><img src={whitelogo} alt="Logo" id='logo' /></span><span class="nav-text">Shareable</span></Nav.Link></li>
       <li><Nav.Link id="pluh" as={Link} to="/sharer-page"><span class="nav-item"><span className="special-icon" ><FaUserCheck/></span><span class="nav-text">Sharer Page</span></span></Nav.Link></li>  
       <li><Nav.Link id="pluh" as={Link} to="/dashboard"><span class="nav-item"><span className="nav-icon"><FaUser/></span><span class="nav-text">Dashboard</span></span></Nav.Link></li>   
-      <li><Nav.Link id="pluh" as={Link} to="/AccountSettings"><span class="nav-item"><span className="special-icon"><FaUserCog /></span><span class="nav-text">Account Settings</span></span></Nav.Link></li>   
+      <li><Nav.Link id="pluh" as={Link} to="/AccountSettings"><span class="nav-item"><span className="special-icon"><FaUserCog /></span><span class="nav-text">Account Settings</span></span></Nav.Link></li> 
+      <li><Nav.Link id="pluh" as={Link} to="/contact"><span class="nav-item"><span className="special-icon"><AiOutlineMail /></span><span class="nav-text">Contact Us</span></span></Nav.Link></li>  
       <li><Nav.Link id="logot" onClick={handleLogout}><span class="nav-item"><span className="nav-icon"><FaExchangeAlt/></span><span class="nav-text">Log Out</span></span></Nav.Link></li>
     </nave>
     </>

@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import banner from '../designs/images/banner.png'
 import logotext from '../designs/images/logotext.png'
 import whitelogo from '../designs/images/whitelogo.png'
+import { AiOutlineMail } from "react-icons/ai";
 
 
 
@@ -75,7 +76,8 @@ function Header({ sharerList, listSharers,}) {
       </span></li> */}
       <li><Nav.Link id="pluh" as={Link} to="/homepage"><span class="nav-item"><img src={whitelogo} alt="Logo" id='logo' /></span><span class="nav-text">Shareable</span></Nav.Link></li>
       <li><Nav.Link id="pluh" as={Link} to="/userprofile"><span class="nav-item"><span className="nav-icon"><FaUser/></span><span class="nav-text">User</span></span></Nav.Link></li>   
-      <li><Nav.Link id="pluh" as={Link} to="/be-sharer"><span class="nav-item"><span className="special-icon"><FaUserPlus/></span><span class="nav-text">Be a Sharer!</span></span></Nav.Link></li>  
+      <li><Nav.Link id="pluh" as={Link} to="/be-sharer"><span class="nav-item"><span className="special-icon"><FaUserPlus/></span><span class="nav-text">Be a Sharer!</span></span></Nav.Link></li>
+      <li><Nav.Link id="pluh" as={Link} to="/contact"><span class="nav-item"><span className="special-icon"><AiOutlineMail /></span><span class="nav-text">Contact Us</span></span></Nav.Link></li>  
       <li><Nav.Link id="logut" onClick={handleLogout}><span class="nav-item"><span className="nav-icon"><FaExchangeAlt/></span><span class="nav-text">Log Out</span></span></Nav.Link></li>
     </nave>
     </>
