@@ -50,7 +50,7 @@ function Homepage({ sharerList, listSharers }) {
   : [];
 
   return (
-    <div className="container brap">
+    <div className="brap" style={{width:'90vw'}}>
       {/* <h1>HOMEPAGE NEW</h1> */}
 
       {/* Search Input */}

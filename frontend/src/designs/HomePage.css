@@ -13,7 +13,7 @@
     padding-top: 3rem;
     animation: slideAndFadeIn 1s ease forwards;
     /* background-color: red !important; */
-    width: 90vw;
+    width: 92vw;
     margin: 0 0 0 7.5vw;
 }
 
@@ -47,7 +47,7 @@
 }
 
 #buttones{
-    padding: 0.7rem 2.5rem;
+    padding: 0.7rem 3rem;
     border: none;
     color: white;
     max-height: 30rem !important;
@@ -166,6 +166,7 @@
     margin-bottom: 2rem;
     outline: none;
     border: solid white .02rem;
+    transition: all 0.2s ease-in-out;
 }
 
 #paswrd:not(:placeholder-shown){
@@ -259,6 +260,7 @@
     border-radius: 1.25rem; 
     outline: none;
     margin: 0;
+    transition: all 0.2s ease-in-out;
 }
 
 .bar:hover{

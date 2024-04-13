@@ -21,12 +21,14 @@ function SharerDashboard() {
   }, [dispatch, navigate]);
 
   return (
-    <div className="container waw">
-      <h2>Sharer Dashboard</h2>
+    <div className="container brap" style={{paddingTop: '4rem'}}>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
       {dashboardData && (
-        <div>
+        <div
+        style={{ backgroundColor: "transparent", width: "35rem", margin: "auto", border: 'solid rgba(255,255,255,0.5) 1px', borderRadius: '.5rem', padding: '2rem' }}
+        >
+          <h1>Sharer Dashboard</h1>
           <p>Total Earnings: ${dashboardData.twenty_percent_less_earning_send}</p>
           <p>Total Post Count: {dashboardData.total_post_count}</p>
           <p>Total Rating: {dashboardData.average_rating || 0}/5</p>

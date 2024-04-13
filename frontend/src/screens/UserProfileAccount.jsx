@@ -40,18 +40,6 @@ function UserProfileAccount() {
   return (
     <form id='titel' className="settings-form" onSubmit={handleSave}>
         <div className="section-container" style={{position: 'absolute', left: '50rem', top: '3.6rem'}}>
-          {/* <div className="d-flex justify-content-around">
-            <Nav.Link id="itaas" as={Link} to="/userprofile">
-              Profile Information
-            </Nav.Link>
-            <Nav.Link id="itaas" as={Link} to="/userprofileaccount">
-              Account
-            </Nav.Link>
-          </div> */}
-          {/* <div
-            className="card custom-card-background text-white card h-10 h5-1 mb-1"
-            style={{ backgroundColor: "black", width: "50rem", margin: "auto" }}
-          > */}
             <h1 style={{lineHeight: '2.5rem'}} className="profInfo">Change Password</h1>
             <div style={{ width: "31.3rem", margin: "20px", }}>
               <div>

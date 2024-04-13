@@ -9,6 +9,7 @@ nave {
     box-shadow: 0 0.25rem .5rem 0 rgba(0, 0, 0, 0.2), 0 0.375rem 1.25rem 0 rgba(0, 0, 0, 0.19);
     list-style: none;
     padding-top: 20px;
+    overflow: scroll;
 }
 
 #logo{
@@ -57,7 +58,7 @@ nave {
 #logut{
     font-size: 2rem;
     position: relative;
-    margin-top: 20rem;
+    margin-top: 14.25rem;
     color: white;
     display: table;
     width: 20rem;
@@ -73,7 +74,7 @@ nave {
 #logot{
     font-size: 2rem;
     position: relative;
-    margin-top: 14.25rem;
+    margin-top: 8.25rem;
     color: white;
     display: table;
     width: 20rem;
