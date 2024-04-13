@@ -3,11 +3,7 @@ import {
     USER_PROFILE_SUCCESS,
     USER_PROFILE_FAIL
   } from '../constants/profileConstants';
-<<<<<<< HEAD
-  
-=======
 
->>>>>>> edc0d0b3519fbf2bac49f51ac85718f5246c4793
   const initialState = {
     loading: false,
     userData: null,

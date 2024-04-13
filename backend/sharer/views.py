@@ -93,7 +93,7 @@ def SharerView(request):
     
 #     user = request.user
 #     if not is_follow(user, sharer_id):
-#         return Response({"detail": "You are not following this sharer."}, status=status.HTTP_403_FORBIDDEN)
+#         return Response({"detail": "You are not followed in this tier, or your subscription has expired."}, status=status.HTTP_403_FORBIDDEN)
     
 #     uploads = SharerUpload.objects.filter(uploaded_by=sharer).order_by('-created_at') 
     
@@ -138,7 +138,7 @@ class Tier1FollowedSharers(generics.ListAPIView):
                 message = f"No posts yet from this sharer in {self.tier.capitalize()} tier."
                 return Response({"message": message}, status=status.HTTP_204_NO_CONTENT)
             else:
-                return Response({"detail": "You are not followed in this tier."}, status=status.HTTP_403_FORBIDDEN)
+                return Response({"detail": "You are not followed in this tier, or your subscription has expired."}, status=status.HTTP_403_FORBIDDEN)
         
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
@@ -178,7 +178,7 @@ class Tier2FollowedSharers(generics.ListAPIView):
                 message = f"No posts yet from this sharer in {self.tier.capitalize()} tier."
                 return Response({"message": message}, status=status.HTTP_204_NO_CONTENT)
             else:
-                return Response({"detail": "You are not followed in this tier."}, status=status.HTTP_403_FORBIDDEN)
+                return Response({"detail": "You are not followed in this tier, or your subscription has expired."}, status=status.HTTP_403_FORBIDDEN)
         
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
@@ -218,7 +218,7 @@ class Tier3FollowedSharers(generics.ListAPIView):
                 message = f"No posts yet from this sharer in {self.tier.capitalize()} tier."
                 return Response({"message": message}, status=status.HTTP_204_NO_CONTENT)
             else:
-                return Response({"detail": "You are not followed in this tier."}, status=status.HTTP_403_FORBIDDEN)
+                return Response({"detail": "You are not followed in this tier, or your subscription has expired."}, status=status.HTTP_403_FORBIDDEN)
         
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)

@@ -402,10 +402,7 @@ function SharerPageScreen() {
                     ))}
                   </div>
                 )}
-<<<<<<< HEAD
 
-=======
->>>>>>> edc0d0b3519fbf2bac49f51ac85718f5246c4793
                 <form onSubmit={(e) => handleUpdatePost(post.id, e)}>
                   <div>
                     <h9>New Title: </h9>
