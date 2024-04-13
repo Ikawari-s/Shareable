@@ -60,7 +60,7 @@ function AdminContact() {
     } else {
       return (
         <button
-          className="btn btn-primary"
+          className="btn btn-danger"
           onClick={() => downloadFile(attachment)}
         >
           Download File

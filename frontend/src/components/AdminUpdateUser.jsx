@@ -81,6 +81,7 @@ function AdminUpdateUser({ userId, isActive, isStaff, isSharer, isSuperuser }) {
           <Form.Label>Profile Picture</Form.Label>
           <Form.Control type="file" accept="image/*" onChange={handleProfilePictureChange} />
         </Form.Group>
+        <p>{" "}</p>
         <Button variant="primary" type="submit">
           Update User
         </Button>

@@ -21,18 +21,14 @@ function AdminPatchSharer({ sharerId }) {
     if (name.trim() !== '') formData.append('name', name);
     if (coverImage !== null) formData.append('cover_photo', coverImage);
     if (profileImage !== null) formData.append('image', profileImage); // Corrected field name
-
+  
     console.log('FormData:', formData);
     console.log('Name:', name);
     console.log('Cover Image:', coverImage);
     console.log('Profile Image:', profileImage);
-
-    const response = await dispatch(patchSharerAdmin(sharerId, formData));
-    if (response && response.status === 200) {
-      window.location.reload();
-    } else {
-      console.error("Failed to update sharer.");
-    }
+  
+    await dispatch(patchSharerAdmin(sharerId, formData));
+    window.location.reload();
   };
 
   return (

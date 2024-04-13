@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { getSharerIncomeAdmin, searchSharer } from '../actions/adminActions';
 import AdminPatchSharer from '../components/AdminPatchSharer';
 import AdminSendIncome from '../components/AdminSendIncome';
+import { Card, Button } from 'react-bootstrap';
 
 function AdminSharerDashboard() {
   const dispatch = useDispatch();
@@ -24,7 +25,11 @@ function AdminSharerDashboard() {
     dispatch(searchSharer(searchQuery));
   }, [dispatch, searchQuery]);
 
-  const filteredSharerData = sharerData ? sharerData.filter(sharer => sharer[0].name.toLowerCase().includes(searchQuery.toLowerCase())) : [];
+  const filteredSharerData = sharerData ? sharerData.filter(sharer => 
+    sharer[0].name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    sharer[0].email.toLowerCase().includes(searchQuery.toLowerCase())
+) : [];
+
 
 
   return (
@@ -51,24 +56,26 @@ function AdminSharerDashboard() {
             <div>
               {filteredSharerData.length > 0 ? (
                 filteredSharerData.map((sharer, index) => (
-                  <div key={index} id={`sharer-${sharer[0].id}`} style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '20px' }}>
-                    <p>ID: {sharer[0].id}</p>
-                    <p>Email: {sharer[0].email}</p>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <img src={sharer[0].image} alt={sharer[0].username} style={{ width: '100px', height: '100px', borderRadius: '50%', marginRight: '20px' }} />
-                      <div>
-                        <h3>{sharer[0].name}</h3>
-                        <p>{sharer[0].description}</p>
+                  <Card key={index} id={`sharer-${sharer[0].id}`} style={{ marginBottom: '20px' }}>
+                    <Card.Body>
+                      <Card.Title>ID: {sharer[0].id}</Card.Title>
+                      <Card.Text>Email: {sharer[0].email}</Card.Text>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <Card.Img src={sharer[0].image} alt={sharer[0].username} style={{ width: '100px', height: '100px', borderRadius: '50%', marginRight: '20px' }} />
+                        <div>
+                          <Card.Title>{sharer[0].name}</Card.Title>
+                          <Card.Text>{sharer[0].description}</Card.Text>
+                        </div>
                       </div>
-                    </div>
-                    <div>
-                      <p>Total Earnings: ${sharer[1].total_earnings}</p>
-                      <p>Twenty Percent Less Earning Send: ${sharer[1].twenty_percent_less_earning_send}</p>
-                      <p>Twenty Percent Cut: ${sharer[1].twenty_percent_cut}</p>
-                    </div>
-                    <AdminPatchSharer sharerId={sharer[0].id} />
-                    {sharer[1].total_earnings > 0 && <AdminSendIncome sharerId={sharer[0].id} />}
-                  </div>
+                      <div>
+                        <Card.Text>Total Earnings: ${sharer[1].total_earnings}</Card.Text>
+                        <Card.Text>Twenty Percent Less Earning Send: ${sharer[1].twenty_percent_less_earning_send}</Card.Text>
+                        <Card.Text>Twenty Percent Cut: ${sharer[1].twenty_percent_cut}</Card.Text>
+                      </div>
+                      <AdminPatchSharer sharerId={sharer[0].id} />
+                      {sharer[1].total_earnings > 0 && <AdminSendIncome sharerId={sharer[0].id} />}
+                    </Card.Body>
+                  </Card>
                 ))
               ) : (
                 <p>No matching data found</p>

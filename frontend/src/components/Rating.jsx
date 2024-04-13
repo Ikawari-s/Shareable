@@ -179,6 +179,7 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
                   followedSharers.tier1.includes(rating.sharer) ||
                   followedSharers.tier2.includes(rating.sharer) ||
                   followedSharers.tier3.includes(rating.sharer)
+                  && rating.user === userId
                 ) ? (
                 <>
                   <button onClick={() => handleDeleteRating(rating.id)}>

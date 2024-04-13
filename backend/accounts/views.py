@@ -37,6 +37,7 @@ from threading import Timer
 from django.shortcuts import get_object_or_404
 from django.db import transaction
 from pytz import timezone as tz
+import pytz
 User = get_user_model()
 
 
@@ -193,7 +194,6 @@ class UserLogin(APIView):
                     'user_id': user.id,
                     'is_sharer': is_sharer,
                     'sharer_id': sharer_id,
-                    'sharer_category': sharer.category if is_sharer else None,
                     'name': name,
                     'followed_sharers': followed_sharers,
                     'user_info': {
@@ -201,7 +201,6 @@ class UserLogin(APIView):
                         'username': user.username,
                         'is_admin': user.is_staff  
                     },
-                    'rating_id': rating_id,
                 }
 
 
@@ -456,19 +455,23 @@ class FollowSharer(generics.GenericAPIView):
 
 
 
+
 class UnfollowSharer(generics.GenericAPIView):
     permission_classes = [IsAuthenticated, CanUnfollowSharer]
 
+    @transaction.atomic
     def delete(self, request, *args, **kwargs):
         sharer_id = self.kwargs.get('sharer_id')
         try:
             sharer = Sharer.objects.get(pk=sharer_id)
-
-            # Remove user from all tiers for the sharer
             request.user.follows_tier1.remove(sharer)
             request.user.follows_tier2.remove(sharer)
             request.user.follows_tier3.remove(sharer)
             request.user.save()
+
+            expiration = FollowExpiration.objects.filter(user=request.user, sharer=sharer).first()
+            if expiration:
+                expiration.delete()  
 
             serializer = SharerSerializer(sharer)
 
@@ -571,3 +574,24 @@ def change_password(request):
         user.save()
         return Response({"message": "Password changed successfully"}, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class GetExpiration(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        expiration_instances = FollowExpiration.objects.filter(user=user)
+        
+        if expiration_instances.exists():
+            user_timezone = timezone.get_current_timezone() 
+            expiration_dates = {}
+            for instance in expiration_instances:
+                expiration_date = instance.expiration_date.astimezone(user_timezone).strftime("%Y-%m-%dT%H:%M:%S.%f%z")
+                expiration_dates[instance.sharer_id] = expiration_date
+
+            return JsonResponse(expiration_dates, status=200)  
+        else:
+            return JsonResponse({"error": "User is not following any sharers"}, status=404)

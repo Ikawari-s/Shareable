@@ -53,13 +53,27 @@ class UserSerializer(serializers.ModelSerializer):
         model = AppUser 
         fields = ['id', 'email', 'username', 'password', 'is_active', 'is_staff', 'is_sharer', 'is_superuser', 'profile_picture', 'profile_picture_url', 'badge' ]  
 
+
+    def validate_password(self, value):
+        if len(value) < 8:
+            raise serializers.ValidationError("Password must be at least 8 characters long.")
+        if not re.search(r'[a-zA-Z]', value):
+            raise serializers.ValidationError("Password must contain at least one letter.")
+        if not re.search(r'[!@#$%^&*()_+{}|:"<>?]', value):
+            raise serializers.ValidationError("Password must contain at least one special character.")
+        if not re.search(r'\d', value):
+            raise serializers.ValidationError("Password must contain at least one digit.")
+        return value
+    
     def create(self, validated_data):
         password = validated_data.pop('password', None)  
         user = super().create(validated_data)
         if password is not None:
+            self.validate_password(password)  
             user.set_password(password)  
             user.save()  
         return user
+
 
     def get_profile_picture_url(self, obj):
         if obj.profile_picture:

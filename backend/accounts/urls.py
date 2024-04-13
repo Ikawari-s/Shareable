@@ -28,6 +28,8 @@ urlpatterns = [
 
 
      path('checker/', views.SharerChecker.as_view(), name='sharer-checker'),
+
+     path('follow-checker/', GetExpiration.as_view(), name='follow-checker'),
 ]
 
 

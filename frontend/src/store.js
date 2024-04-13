@@ -4,7 +4,7 @@ import { CommentPostReducer, DeleteCommentPostReducer, LikeCountReducer, LikePos
 import { userRegisterReducer, userResendOTPReducer, userSentOTPReducer, userVerifyOTPReducer } from './reducers/registerReducer';
 import {sharerListReducer, myProfileReducer, CheckSharerReducer, SharerDetailReducer, userSharerBeReducer, userSharerPostReducer, SharerLatestPostReducer, SharerUserProfileUpdateReducer, sharerRatingsReducer, sharerEditPostReducer, sharerPostCountReducer, sharerPreviewReducer, sharerPreviewListReducer, userTipBoxReducer, dashboardReducer, topDonorReducer} from './reducers/sharerReducer';
 import { sharerPostListReducer } from './reducers/sharerReducer';
-import { followReducer, unfollowReducer, followedSharerListReducer } from './reducers/followReducer';
+import { followReducer, unfollowReducer, followedSharerListReducer, followExpirationReducer } from './reducers/followReducer';
 import { SharerUpdateProfile, deleteSharerRatings, fetchSharerRatings, patchSharerRatings, sharerDeletePost } from './actions/sharerActions';
 import { tier1FollowedSharersReducer, tier2FollowedSharersReducer, tier3FollowedSharersReducer } from './reducers/subscriptionReducer';
 import {contactReducers} from './reducers/contactReducers'; 
@@ -67,7 +67,8 @@ const reducer = combineReducers({
   searchSharer : searchSharerReducer,
   contact : contactReducers,
   adminContacts : adminContactsReducer,
-  adminDeleteContacts : adminDeleteContactsReducer
+  adminDeleteContacts : adminDeleteContactsReducer,
+  followExpiration : followExpirationReducer
 
 });
 

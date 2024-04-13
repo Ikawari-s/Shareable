@@ -166,7 +166,6 @@ class SearchUser(APIView):
         serializer = UserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
 class SearchSharer(APIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
 
@@ -176,12 +175,14 @@ class SearchSharer(APIView):
             return Response({'error': 'Query parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
+
             sharer = Sharer.objects.get(email=query)
         except Sharer.DoesNotExist:
             try:
+
                 sharer = Sharer.objects.get(name=query)
             except Sharer.DoesNotExist:
-                return Response({'error': 'Sharer not found'}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'error': 'Sharer not found'}, status=status.HTTP_404_NOT_FOUND) 
 
         serializer = SharerSerializer(sharer)
         return Response(serializer.data, status=status.HTTP_200_OK)

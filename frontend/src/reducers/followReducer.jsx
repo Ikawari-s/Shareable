@@ -1,4 +1,17 @@
-import {SHARER_FOLLOW_FAIL, SHARER_FOLLOW_REQUEST, SHARER_FOLLOW_SUCCESS, SHARER_UNFOLLOW_FAIL, SHARER_UNFOLLOW_REQUEST, SHARER_UNFOLLOW_SUCCESS, FOLLOWED_SHARER_LIST_REQUEST, FOLLOWED_SHARER_LIST_SUCCESS, FOLLOWED_SHARER_LIST_FAIL} from "../constants/followConstants"
+import {
+  SHARER_FOLLOW_FAIL,
+  SHARER_FOLLOW_REQUEST,
+  SHARER_FOLLOW_SUCCESS,
+  SHARER_UNFOLLOW_FAIL,
+  SHARER_UNFOLLOW_REQUEST,
+  SHARER_UNFOLLOW_SUCCESS,
+  FOLLOWED_SHARER_LIST_REQUEST,
+  FOLLOWED_SHARER_LIST_SUCCESS,
+  FOLLOWED_SHARER_LIST_FAIL,
+  GET_EXPIRATION_REQUEST,
+  GET_EXPIRATION_SUCCESS,
+  GET_EXPIRATION_FAIL,
+} from "../constants/followConstants";
 
 const initialState = {
   loading: false,
@@ -40,15 +53,35 @@ export const unfollowReducer = (state = initialState, action) => {
   }
 };
 
-
-
-export const followedSharerListReducer = (state = { loading: true, followedSharers: [], error: null }, action) => {
+export const followedSharerListReducer = (
+  state = { loading: true, followedSharers: [], error: null },
+  action
+) => {
   switch (action.type) {
     case FOLLOWED_SHARER_LIST_REQUEST:
       return { ...state, loading: true, error: null };
     case FOLLOWED_SHARER_LIST_SUCCESS:
-      return { ...state, loading: false, followedSharers: action.payload, error: null };
+      return {
+        ...state,
+        loading: false,
+        followedSharers: action.payload,
+        error: null,
+      };
     case FOLLOWED_SHARER_LIST_FAIL:
+      return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+
+export const followExpirationReducer = (state = { loading: true, followExpirations: [], error: null }, action) => {
+  switch (action.type) {
+    case GET_EXPIRATION_REQUEST:
+      return { ...state, loading: true, error: null };
+    case GET_EXPIRATION_SUCCESS:
+      return { ...state, loading: false, followExpirations: action.payload, error: null };
+    case GET_EXPIRATION_FAIL:
       return { ...state, loading: false, error: action.payload };
     default:
       return state;

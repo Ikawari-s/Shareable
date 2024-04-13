@@ -188,7 +188,11 @@ function Homepage({ sharerList, listSharers }) {
                     </Card.Title>
                     <Card.Text>{sharer.description}</Card.Text>
                     <Card.Text style={{ lineHeight: "0.4rem" }}>
-                      <small className="text-muted">{sharer.category}</small>
+
+
+                      <small className="text-muted"> {sharer.category ? sharer.category : "No category"}</small>
+
+
                     </Card.Text>
                     <Card.Text style={{ lineHeight: "0.4rem" }}>
                       <small className="text-muted">

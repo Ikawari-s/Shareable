@@ -4,7 +4,7 @@ import { connect, useDispatch } from "react-redux";
 import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 import { DetailSharers, getSharerPostCount } from "../actions/sharerActions";
-import { followSharer, unfollowSharer } from "../actions/followActions"; // Import the followSharer action creator
+import { followSharer, unfollowSharer, getExpiration } from "../actions/followActions"; // Import the followSharer action creator
 import {
   FetchSharerRatingsComponent,
   PostSharerRatingsComponent,
@@ -108,8 +108,6 @@ const SharerDetail = ({
         }
         delete updatedUserInfo.expiration_dates[sharerId];
         localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
-
-        unfollowSharer(sharerId);
       }
     });
   }, [userInfo, unfollowSharer]);
@@ -139,23 +137,23 @@ const SharerDetail = ({
     return createOrder(data, actions);
   };
 
-  const onApprove = (data, actions) => {
-    return actions.order.capture().then(() => {
-      followSharer(id, followTier, selectedAmount)
-        .then(() => {
-          const updatedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
-          updatedUserInfo.followed_sharers[followTier].push(parseInt(id));
-          const expirationDate = new Date();
-          expirationDate.setDate(expirationDate.getDate() + 30);
-          updatedUserInfo.expiration_dates[id] = expirationDate;
-          localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
+const onApprove = (data, actions) => {
+  return actions.order.capture().then(() => {
+    followSharer(id, followTier, selectedAmount)
+      .then(() => {
+        const updatedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
+        updatedUserInfo.followed_sharers[followTier].push(parseInt(id));
+        localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
+        dispatch(getExpiration()).then(() => {
           window.location.reload();
-        })
-        .catch((error) => {
-          console.error("Error following sharer:", error);
         });
-    });
-  };
+      })  
+      .catch((error) => {
+        console.error("Error following sharer:", error);
+      });
+  });
+};
+
 
   useEffect(() => {
     DetailSharers(id);
@@ -175,6 +173,12 @@ const SharerDetail = ({
     setIsFollowing(followedSharers.includes(parseInt(id)));
   }, [id, userInfo]);
 
+  const updateSelectedTierAndAmount = (tier, amount) => {
+    setCurrentTier(tier);
+    setFollowTier(tier);
+    setSelectedAmount(amount);
+  };
+
   const handleTierButtonClick = (tier, amount) => {
     console.log("Selected Amount:", amount);
     console.log("Tier:", tier);
@@ -182,7 +186,8 @@ const SharerDetail = ({
     setCurrentTier(tier);
     setFollowTier(tier);
     setSelectedAmount(amount);
-    setShowPaypalModal(true);
+    setShowPaypalModal(false); 
+    setTimeout(() => setShowPaypalModal(true), 100); 
   };
 
   const handleUnfollow = () => {
@@ -262,6 +267,7 @@ const SharerDetail = ({
             />
           )}
           <h2>{sharer.name}</h2>
+          <p>@{sharer.username}</p>
           <p>{sharer.description}</p>
           <p>Category: {sharer.category ? sharer.category : "Not Specified"}</p>
           <PostCount sharerId={id} />
@@ -319,6 +325,7 @@ const SharerDetail = ({
                     createOrder={createOrder}
                     onApprove={onApprove}
                     onError={onError}
+                    amount={selectedAmount}
                   />
                 </div>
               </PayPalScriptProvider>

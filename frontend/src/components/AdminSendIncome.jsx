@@ -12,9 +12,22 @@ function AdminSendIncome({ sharerId }) {
 
   return (
     <div>
-      <h2>Admin Send Income</h2>
-      <p>Sharer ID: {sharerId}</p>
-      <button onClick={handleSendIncome}>Send Income</button>
+      <h1>{" "}</h1>
+
+      <h3>Send Sharer Income</h3>
+      <button 
+        onClick={handleSendIncome} 
+        style={{
+          backgroundColor: '#2ecc71', 
+          color: 'white',
+          padding: '10px 20px',
+          borderRadius: '5px',
+          border: 'none',
+          cursor: 'pointer'
+        }}
+      >
+        Send Income
+      </button>
     </div>
   );
 }

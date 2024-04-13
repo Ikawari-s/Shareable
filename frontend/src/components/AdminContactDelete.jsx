@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { deleteAdminContact } from '../actions/adminActions';
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { deleteAdminContact } from "../actions/adminActions";
 
 function AdminContactDelete(props) {
   const { contactId } = props; // Destructure the props to get the contactId
@@ -20,9 +20,14 @@ function AdminContactDelete(props) {
 
   return (
     <div>
-      <button className="btn btn-danger" onClick={handleDelete}>
+      <button
+        className="btn"
+        style={{ backgroundColor: "red", color: "white" }}
+        onClick={handleDelete}
+      >
         Delete Contact
       </button>
+
       {showConfirmation && (
         <div className="confirmation-overlay">
           <div className="confirmation-modal">

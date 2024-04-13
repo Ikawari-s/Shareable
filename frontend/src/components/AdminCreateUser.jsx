@@ -74,10 +74,17 @@ function AdminCreateUser() {
         <Form.Group controlId="formIsSuperuser">
           <Form.Check type="checkbox" label="Is Superuser" name="is_superuser" checked={formData.is_superuser} onChange={handleChange} />
         </Form.Group>
-        <Button variant="primary" type="submit" disabled={loading}>Create User</Button>
-        {loading && <Spinner animation="border" role="status">
-          <span className="sr-only">Loading...</span>
-        </Spinner>}
+        <Button variant="primary" type="submit" disabled={loading}>
+  {loading ? (
+    <>
+      <span className="sr-only"></span>
+      <Spinner animation="border" role="status" className="ml-2" />
+    </>
+  ) : (
+    "Create User"
+  )}
+</Button>
+
       </Form>
     </div>
   );
