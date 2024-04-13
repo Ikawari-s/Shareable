@@ -27,7 +27,7 @@ import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
 import AdminSharerDashboard from './screens/AdminSharerDashboard';
 import AdminUserDashboard from './screens/AdminUserDashboard';
 import AdminContact from './screens/AdminContact';
-
+import TermsofUsePolicies from './screens/TermsofUsePolicies';
 
 
 function App() {
@@ -45,6 +45,7 @@ function App() {
           <Route path="/new-password" element= {<NewpasswordScreen />} />
           <Route path="/contact" element={<ContactPageScreen />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyScreen />} />
+          <Route path="/terms-of-use-and-policies" element={<TermsofUsePolicies />} />
 
           <Route path="/about" element={<AboutScreen />} />
           <Route path="/invalid" element={<InvalidScreen/>}/> 

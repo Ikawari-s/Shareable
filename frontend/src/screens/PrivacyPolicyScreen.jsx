@@ -51,25 +51,7 @@ const PrivacyPolicyScreen = () => {
               </li>
             </ul>
           </li>
-          <li>
-            <h3>PayPal Integration</h3>
-            <p>
-              Users who wish to earn money (referred to as "Sharers") on our
-              platform must provide their PayPal email address during
-              registration. Similarly, users who want to purchase content from
-              Sharers must also use the email associated with their PayPal
-              account.
-            </p>
-          </li>
-          <li>
-            <h3>Refund Policy</h3>
-            <p>
-              Please note that all transactions made on our platform are final.
-              We do not offer refunds for purchases made. Users are encouraged
-              to review the content and terms carefully before making a
-              purchase.
-            </p>
-          </li>
+         
 
           <li>
             <h3>Third-Party Links</h3>

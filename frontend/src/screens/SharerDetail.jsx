@@ -285,7 +285,7 @@ const onApprove = (data, actions) => {
                     onClick={() => handleTierButtonClick("tier1", 5)}
                     style={{ backgroundColor: "green" }}
                   >
-                    Tier 1
+                    Tier 1 - 5$
                   </Button>
                 </div>
                 <div>
@@ -295,7 +295,7 @@ const onApprove = (data, actions) => {
                     onClick={() => handleTierButtonClick("tier2", 10)}
                     style={{ backgroundColor: "red" }}
                   >
-                    Tier 2
+                    Tier 2 - 10$
                   </Button>
                 </div>
                 <div>
@@ -305,7 +305,7 @@ const onApprove = (data, actions) => {
                     onClick={() => handleTierButtonClick("tier3", 20)}
                     style={{ backgroundColor: "blue" }}
                   >
-                    Tier 3
+                    Tier 3 - 20$
                   </Button>
                 </div>
               </>

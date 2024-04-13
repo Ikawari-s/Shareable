@@ -38,7 +38,7 @@ def SharerView(request):
     # Filter queryset based on search term
     if search_term:
         queryset = queryset.filter(
-            Q(name__icontains=search_term)
+            Q(name__icontains=search_term) | Q(category__icontains=search_term) | Q(description__icontains=search_term)
         )
 
     # Validate and apply sorting

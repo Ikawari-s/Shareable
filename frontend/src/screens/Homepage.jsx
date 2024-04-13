@@ -29,18 +29,25 @@ function Homepage({ sharerList, listSharers }) {
   };
 
   const filteredSharers = Array.isArray(sharers)
-    ? sharers.filter((sharer) => {
-        const matchNameOrCategory =
-          sharer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (sharer.category &&
-            sharer.category.toLowerCase().includes(searchTerm.toLowerCase()));
-        const matchCategory =
-          selectedCategory === "all" ||
-          (sharer.category &&
-            sharer.category.toLowerCase() === selectedCategory.toLowerCase());
-        return matchNameOrCategory && matchCategory;
-      })
-    : [];
+  ? sharers.filter((sharer) => {
+      const matchNameOrCategory =
+        sharer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (sharer.category &&
+          sharer.category.toLowerCase().includes(searchTerm.toLowerCase()));
+      const matchDescription =
+        sharer.description &&
+        sharer.description.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchCategory =
+        selectedCategory === "all" ||
+        (sharer.category &&
+          sharer.category.toLowerCase() === selectedCategory.toLowerCase());
+
+      return (
+        (matchNameOrCategory || matchDescription) && // Match by name, category, or description
+        matchCategory
+      );
+    })
+  : [];
 
   return (
     <div className="container brap">
@@ -49,7 +56,7 @@ function Homepage({ sharerList, listSharers }) {
       {/* Search Input */}
       <input
         type="text"
-        placeholder="Search a Sharer"
+        placeholder="Search"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className="form-control mb-3"
