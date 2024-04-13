@@ -268,6 +268,7 @@ const onApprove = (data, actions) => {
           )}
           <h2>{sharer.name}</h2>
           <p>@{sharer.username}</p>
+          <p>Followers : {sharer.total_followers}</p>
           <p>{sharer.description}</p>
           <p>Category: {sharer.category ? sharer.category : "Not Specified"}</p>
           <PostCount sharerId={id} />

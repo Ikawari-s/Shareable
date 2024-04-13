@@ -68,6 +68,12 @@ import {
   SHARER_LIST_SORT_REQUEST,
   SHARER_LIST_SORT_SUCCESS,
   SHARER_LIST_SORT_FAIL,
+  SHARER_FEEDBACK_REQUEST,
+  SHARER_FEEDBACK_SUCCESS,
+  SHARER_FEEDBACK_FAIL,
+  TOTAL_FOLLOWER_REQUEST,
+  TOTAL_FOLLOWER_SUCCESS,
+  TOTAL_FOLLOWER_FAIL
 } from "../constants/sharerConstants";
 
 const instance = axios.create({
@@ -873,6 +879,72 @@ export const getTopDonor = (sharerId) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: GET_TOP_DONOR_FAILURE,
+      payload:
+        error.message && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+
+export const getSharerFeedback = () => async (dispatch) => {
+  try {
+    dispatch({ type: SHARER_FEEDBACK_REQUEST });
+
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
+
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
+
+    const response = await fetch(`api/sharer/sharerfeedback/`, config);
+    const data = await response.json();
+    
+    dispatch({ type: SHARER_FEEDBACK_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: SHARER_FEEDBACK_FAIL,
+      payload:
+        error.message && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+
+export const getTotalFollowers = () => async (dispatch) => {
+  try {
+    dispatch({ type: TOTAL_FOLLOWER_REQUEST });
+
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.access_token : null;
+
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
+
+    const response = await fetch(`api/sharer/totalfollowers/`, config);
+    const data = await response.json();
+    
+    dispatch({ type: TOTAL_FOLLOWER_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: TOTAL_FOLLOWER_FAIL,
       payload:
         error.message && error.response.data.message
           ? error.response.data.message

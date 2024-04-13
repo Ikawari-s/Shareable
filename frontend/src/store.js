@@ -2,7 +2,7 @@ import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/
 import {thunk} from 'redux-thunk'; // Correct import statement for thunk middleware
 import { CommentPostReducer, DeleteCommentPostReducer, LikeCountReducer, LikePostReducer, ListCommentPostReducer, UnlikePostReducer, UserProfileUpdateReducer, likesCountReducer, userChangePasswordReducer, userLoginReducer, userSendPasswordReducer, } from './reducers/userReducer';
 import { userRegisterReducer, userResendOTPReducer, userSentOTPReducer, userVerifyOTPReducer } from './reducers/registerReducer';
-import {sharerListReducer, myProfileReducer, CheckSharerReducer, SharerDetailReducer, userSharerBeReducer, userSharerPostReducer, SharerLatestPostReducer, SharerUserProfileUpdateReducer, sharerRatingsReducer, sharerEditPostReducer, sharerPostCountReducer, sharerPreviewReducer, sharerPreviewListReducer, userTipBoxReducer, dashboardReducer, topDonorReducer} from './reducers/sharerReducer';
+import {sharerListReducer, myProfileReducer, CheckSharerReducer, SharerDetailReducer, userSharerBeReducer, userSharerPostReducer, SharerLatestPostReducer, SharerUserProfileUpdateReducer, sharerRatingsReducer, sharerEditPostReducer, sharerPostCountReducer, sharerPreviewReducer, sharerPreviewListReducer, userTipBoxReducer, dashboardReducer, topDonorReducer, sharerFeedbackReducer, totalFollowerReducer} from './reducers/sharerReducer';
 import { sharerPostListReducer } from './reducers/sharerReducer';
 import { followReducer, unfollowReducer, followedSharerListReducer, followExpirationReducer } from './reducers/followReducer';
 import { SharerUpdateProfile, deleteSharerRatings, fetchSharerRatings, patchSharerRatings, sharerDeletePost } from './actions/sharerActions';
@@ -68,7 +68,9 @@ const reducer = combineReducers({
   contact : contactReducers,
   adminContacts : adminContactsReducer,
   adminDeleteContacts : adminDeleteContactsReducer,
-  followExpiration : followExpirationReducer
+  followExpiration : followExpirationReducer,
+  sharerfeedback : sharerFeedbackReducer,
+  totalFollower : totalFollowerReducer
 
 });
 

@@ -63,6 +63,12 @@ import {
   SHARER_LIST_SORT_REQUEST,
   SHARER_LIST_SORT_SUCCESS,
   SHARER_LIST_SORT_FAIL, 
+  SHARER_FEEDBACK_REQUEST,
+  SHARER_FEEDBACK_SUCCESS,
+  SHARER_FEEDBACK_FAIL,
+  TOTAL_FOLLOWER_REQUEST,
+  TOTAL_FOLLOWER_SUCCESS,
+  TOTAL_FOLLOWER_FAIL,
 } from "../constants/sharerConstants";
 
 export const SharerDetailReducer = (state = {}, action) => {
@@ -429,6 +435,38 @@ export const topDonorReducer = (state = initialState, action) => {
       return { ...state, loading: false, topDonorData: action.payload }; 
     case GET_TOP_DONOR_FAILURE:
       return { ...state, loading: false, error: action.payload }; 
+    default:
+      return state;
+  }
+};
+
+export const sharerFeedbackReducer = (state = {}, action) => {
+  switch (action.type) {
+    case SHARER_FEEDBACK_REQUEST:
+      return { loading: true };
+
+    case SHARER_FEEDBACK_SUCCESS:
+      return { loading: false, feedback: action.payload };
+
+    case SHARER_FEEDBACK_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const totalFollowerReducer = (state = {}, action) => {
+  switch (action.type) {
+    case TOTAL_FOLLOWER_REQUEST:
+      return { loading: true };
+
+    case TOTAL_FOLLOWER_SUCCESS:
+      return { loading: false, totalFollowers: action.payload };
+
+    case TOTAL_FOLLOWER_FAIL:
+      return { loading: false, error: action.payload };
+
     default:
       return state;
   }

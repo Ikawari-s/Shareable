@@ -192,11 +192,12 @@ class RatingSerializer(serializers.ModelSerializer):
     user_tier = serializers.SerializerMethodField()
     edited = serializers.SerializerMethodField()
     last_edit_date = serializers.SerializerMethodField()
+    time_posted = serializers.DateTimeField(source='created_at', format="%Y-%m-%d")
 
 
     class Meta:
         model = Rating
-        fields = ['id', 'sharer', 'user', 'rating', 'comment', 'username', 'profile_picture', 'user_rated', 'already_rated', 'average_rating', 'badge', 'user_tier','edited', 'last_edit_date']
+        fields = ['id', 'sharer', 'user', 'rating', 'comment', 'username', 'profile_picture', 'user_rated', 'already_rated', 'average_rating', 'badge', 'user_tier','edited', 'last_edit_date', 'time_posted']
 
     def get_edited(self, obj):
         # Check if the rating has been edited

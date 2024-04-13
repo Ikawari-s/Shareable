@@ -6,13 +6,12 @@ import {
   deleteSharerRatings,
   patchSharerRatings,
 } from "../actions/sharerActions";
-import red from '../designs/images/red.png';
-import blue from '../designs/images/blue.png'
-import green from '../designs/images/green.png'
-import gold from '../designs/images/gold.png'
-import silver from '../designs/images/silver.png'
-import bronze  from '../designs/images/bronze.png'
-
+import red from "../designs/images/red.png";
+import blue from "../designs/images/blue.png";
+import green from "../designs/images/green.png";
+import gold from "../designs/images/gold.png";
+import silver from "../designs/images/silver.png";
+import bronze from "../designs/images/bronze.png";
 
 const FetchSharerRatingsComponent = ({ sharerId }) => {
   const dispatch = useDispatch();
@@ -83,7 +82,6 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
     }
   };
 
-
   // DI NA GAMIT, get ko nalang from backend
   // const calculateAverageRating = () => {
   //   if (!ratings || ratings.length === 0) {
@@ -121,7 +119,7 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
       </div>
       <ul>
         {ratings.map((rating) => (
-          <li key={rating.id} style={{ listStyle: 'none'}}>
+          <li key={rating.id} style={{ listStyle: "none" }}>
             <div style={{ background: "green" }}>
               {rating.profile_picture && (
                 <img
@@ -132,55 +130,36 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
               )}
               : {rating.username}{" "}
               {rating.user_tier === "tier3" && (
-                <img
-                  src={blue}
-                  style={{ maxWidth: "5rem" }}
-                />
+                <img src={blue} style={{ maxWidth: "5rem" }} />
               )}
               {rating.user_tier === "tier2" && (
-                <img
-                  src={red}
-                  style={{ maxWidth: "5rem" }}
-                />
+                <img src={red} style={{ maxWidth: "5rem" }} />
               )}
               {rating.user_tier === "tier1" && (
-                <img
-                  src={green}
-                  style={{ maxWidth: "5rem" }}
-                />
+                <img src={green} style={{ maxWidth: "5rem" }} />
               )}
               {rating.badge === "Gold" && (
-                <img
-                  src={gold}
-                  style={{ maxWidth: "2rem" }}
-                />
+                <img src={gold} style={{ maxWidth: "2rem" }} />
               )}
               {rating.badge === "Silver" && (
-                <img
-                  src={silver}
-                  style={{ maxWidth: "2rem" }}
-                />
+                <img src={silver} style={{ maxWidth: "2rem" }} />
               )}
               {rating.badge === "Bronze" && (
-                <img
-                  src={bronze}
-                  style={{ maxWidth: "2rem" }}
-                />
+                <img src={bronze} style={{ maxWidth: "2rem" }} />
               )}
               {rating.badge === "None" && null}, Rating: {rating.rating},
               Comment: {rating.comment}
-              <div style={{ background: "green" }}>
-                {rating.edited && rating.last_edit_date && (
-                  <>Last Edit Date: {rating.last_edit_date}</>
-                )}
-              </div>
-              {isAdmin || // Admin can always see delete button
-                ( // Other users need to be following
-                  followedSharers.tier1.includes(rating.sharer) ||
-                  followedSharers.tier2.includes(rating.sharer) ||
-                  followedSharers.tier3.includes(rating.sharer)
-                  && rating.user === userId
-                ) ? (
+              {!rating.edited && rating.time_posted && (
+                <div>Post Time: {rating.time_posted}</div>
+              )}
+              {rating.edited && (
+                <div>
+                  Last Edit Date: {rating.last_edit_date}
+                  {", "}
+                  Edited
+                </div>
+              )}
+              {isAdmin || rating.user === userId ? (
                 <>
                   <button onClick={() => handleDeleteRating(rating.id)}>
                     Delete
@@ -199,7 +178,9 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
                   <div>
                     Are you sure you want to delete this rating?
                     <button onClick={confirmDeleteRating}>Yes</button>
-                    <button onClick={() => setDeletingRatingId(null)}>No</button>
+                    <button onClick={() => setDeletingRatingId(null)}>
+                      No
+                    </button>
                   </div>
                 </div>
               </div>
@@ -258,6 +239,7 @@ const PostSharerRatingsComponent = ({ sharerId }) => {
         comment: comment,
         user: userId,
         sharer: sharerId,
+        time_posted: new Date().toISOString(),
       };
 
       await dispatch(postSharerRatings(sharerId, ratingData));

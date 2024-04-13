@@ -552,9 +552,9 @@ class RatingViews(APIView):
                 return Response({"error": "Invalid Sharer ID"}, status=status.HTTP_400_BAD_REQUEST)
 
         if sharer_id is not None:
-            ratings = Rating.objects.filter(sharer=sharer_id, rating__in=[i * 0.1 for i in range(1, 51)])  
+            ratings = Rating.objects.filter(sharer=sharer_id, rating__in=[i * 0.1 for i in range(1, 51)]).order_by('-created_at')  
         else:
-            ratings = Rating.objects.filter(rating__in=[i * 0.1 for i in range(1, 51)])  
+            ratings = Rating.objects.filter(sharer=user.sharer, rating__in=[i * 0.1 for i in range(1, 51)]).order_by('-created_at')  
 
         serialized_data = []
         for rating in ratings:
@@ -1164,3 +1164,34 @@ class CommentListView(generics.ListCreateAPIView):
             context['top_donors'] = []
         return context
 
+
+
+class SharerFeedback(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsSharerPermission)
+    
+    def get(self, request):
+        user = request.user
+
+        ratings = Rating.objects.filter(sharer=user.sharer, rating__in=[i * 0.1 for i in range(1, 51)]).order_by('-created_at')
+
+        serialized_data = []
+        for rating in ratings:
+            serializer = RatingSerializer(rating, context={'user': user})
+            serialized_data.append(serializer.data)
+
+        return Response(serialized_data)
+
+
+
+
+class TotalFollowers(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsSharerPermission)
+
+    def get(self, request):
+        try:
+            user = request.user
+            sharer = Sharer.objects.get(user=user)
+            total_followers = sharer.total_followers
+            return Response({'total_followers': total_followers}, status=status.HTTP_200_OK)
+        except Sharer.DoesNotExist:
+            return Response({'error': 'Sharer not found'}, status=status.HTTP_404_NOT_FOUND)
