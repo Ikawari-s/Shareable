@@ -284,7 +284,7 @@ const onApprove = (data, actions) => {
                   <Button
                     variant="success"
                     onClick={() => handleTierButtonClick("tier1", 5)}
-                    style={{ backgroundColor: "green" }}
+                    style={{ backgroundColor: "#FF5733" }}
                   >
                     Tier 1 - 5$
                   </Button>
@@ -294,7 +294,7 @@ const onApprove = (data, actions) => {
                   <Button
                     variant="success"
                     onClick={() => handleTierButtonClick("tier2", 10)}
-                    style={{ backgroundColor: "red" }}
+                    style={{ backgroundColor: "#C0C0C0" }}
                   >
                     Tier 2 - 10$
                   </Button>
@@ -304,7 +304,7 @@ const onApprove = (data, actions) => {
                   <Button
                     variant="success"
                     onClick={() => handleTierButtonClick("tier3", 20)}
-                    style={{ backgroundColor: "blue" }}
+                    style={{ backgroundColor: "#FFD700" }}
                   >
                     Tier 3 - 20$
                   </Button>

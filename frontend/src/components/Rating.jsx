@@ -6,9 +6,9 @@ import {
   deleteSharerRatings,
   patchSharerRatings,
 } from "../actions/sharerActions";
-import red from "../designs/images/red.png";
-import blue from "../designs/images/blue.png";
-import green from "../designs/images/green.png";
+import silvertier from "../designs/images/red.png";
+import goldtier from "../designs/images/goldtier.png";
+import bronzetier from "../designs/images/bronzetier.png";
 import gold from "../designs/images/gold.png";
 import silver from "../designs/images/silver.png";
 import bronze from "../designs/images/bronze.png";
@@ -130,13 +130,13 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
               )}
               : {rating.username}{" "}
               {rating.user_tier === "tier3" && (
-                <img src={blue} style={{ maxWidth: "5rem" }} />
+                <img src={goldtier} style={{ maxWidth: "5rem" }} />
               )}
               {rating.user_tier === "tier2" && (
-                <img src={red} style={{ maxWidth: "5rem" }} />
+                <img src={silvertier} style={{ maxWidth: "5rem" }} />
               )}
               {rating.user_tier === "tier1" && (
-                <img src={green} style={{ maxWidth: "5rem" }} />
+                <img src={bronzetier} style={{ maxWidth: "5rem" }} />
               )}
               {rating.badge === "Gold" && (
                 <img src={gold} style={{ maxWidth: "2rem" }} />

@@ -9,6 +9,8 @@ function PreviewContent({ sharerId }) {
   const userInfo = JSON.parse(localStorage.getItem('userInfo'));
   const isAdmin = userInfo ? userInfo.user_info.is_admin : false;
   const [loading, setLoading] = useState(true);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [postIdToDelete, setPostIdToDelete] = useState(null);
 
   useEffect(() => {
     const fetchPreviewData = async () => {
@@ -45,10 +47,28 @@ function PreviewContent({ sharerId }) {
   const handleDeletePost = async (postId) => {
     try {
       await dispatch(sharerDeletePost(postId));
-      window.location.reload()
+      window.location.reload();
     } catch (error) {
       console.error('Error deleting post:', error);
     }
+  };
+
+  const handleShowDeleteConfirmation = (postId) => {
+    setPostIdToDelete(postId);
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleDeleteConfirmation = async () => {
+    if (postIdToDelete) {
+      await handleDeletePost(postIdToDelete);
+      setPostIdToDelete(null);
+      setShowDeleteConfirmation(false);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setPostIdToDelete(null);
+    setShowDeleteConfirmation(false);
   };
 
   console.log('Loading:', loading);
@@ -63,7 +83,18 @@ function PreviewContent({ sharerId }) {
           <div key={post.id}>
             {/* Render delete button if user is admin */}
             {isAdmin && (
-              <button onClick={() => handleDeletePost(post.id)}>Delete Post</button>
+              <>
+                <button onClick={() => handleShowDeleteConfirmation(post.id)}>Delete Post</button>
+                {showDeleteConfirmation && postIdToDelete === post.id && (
+                  <div className="confirmation-overlay">
+                    <div className="confirmation-modal">
+                      <p>Are you sure you want to delete this post?</p>
+                      <button onClick={handleDeleteConfirmation}>Yes</button>
+                      <button onClick={handleCancelDelete}>No</button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
             <h3>{post.title}</h3>
             <p>{post.description}</p>

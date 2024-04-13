@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { listTier2FollowedSharers } from '../actions/subscriptionAction';
 import LikeComponent from '../components/LikeComponents';
@@ -11,6 +11,8 @@ function TierTwoLatest({ sharerId }) {
   const { loading, posts, error } = useSelector((state) => state.tier2List);
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const isAdmin = userInfo ? userInfo.user_info.is_admin : false;
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [postIdToDelete, setPostIdToDelete] = useState(null);
 
   useEffect(() => {
     dispatch(listTier2FollowedSharers(sharerId));
@@ -34,15 +36,26 @@ function TierTwoLatest({ sharerId }) {
     }
   };
 
+  const handleShowDeleteConfirmation = (postId) => {
+    setPostIdToDelete(postId);
+    setShowDeleteConfirmation(true);
+  };
+
   const handleDeletePost = async (postId) => {
     try {
       await dispatch(sharerDeletePost(postId));
-      window.location.reload()
+      setShowDeleteConfirmation(false);
+      setPostIdToDelete(null); // Reset postIdToDelete after successful deletion
+      window.location.reload(); // Refresh the page after deletion
     } catch (error) {
       console.error('Error deleting post:', error);
     }
   };
 
+  const handleCancelDelete = () => {
+    setShowDeleteConfirmation(false);
+    setPostIdToDelete(null); // Reset postIdToDelete on cancel
+  };
   return (
     <div>
       <h4>Latest Posts from Tier 2 Followed Sharers</h4>
@@ -58,7 +71,18 @@ function TierTwoLatest({ sharerId }) {
                 <div style={{ background: 'black', marginBottom: '2rem', padding: '3rem' }}>
                   {/* Render delete button if user is admin */}
                   {isAdmin && (
-                    <button onClick={() => handleDeletePost(post.id)}>Delete Post</button>
+                    <>
+                      <button onClick={() => handleShowDeleteConfirmation(post.id)}>Delete Post</button>
+                      {showDeleteConfirmation && postIdToDelete === post.id && (
+                        <div className="confirmation-overlay">
+                          <div className="confirmation-modal">
+                            <p>Are you sure you want to delete this post?</p>
+                            <button onClick={() => handleDeletePost(post.id)}>Yes</button>
+                            <button onClick={handleCancelDelete}>No</button>
+                          </div>
+                        </div>
+                      )}
+                    </>
                   )}
                   <h2>{post.title}</h2>
                   <p>Description: {post.description}</p>
