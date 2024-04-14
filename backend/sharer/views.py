@@ -537,8 +537,7 @@ def get_top_donors(sharer_id):
     
 
 
-#IS FOLLOW
-
+# TEST MO
 class RatingViews(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -551,10 +550,10 @@ class RatingViews(APIView):
             except ValueError:
                 return Response({"error": "Invalid Sharer ID"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if sharer_id is not None:
-            ratings = Rating.objects.filter(sharer=sharer_id, rating__in=[i * 0.1 for i in range(1, 51)]).order_by('-created_at')  
-        else:
-            ratings = Rating.objects.filter(sharer=user.sharer, rating__in=[i * 0.1 for i in range(1, 51)]).order_by('-created_at')  
+        ratings = Rating.objects.filter(
+            sharer=sharer_id if sharer_id is not None else user.sharer,
+            rating__in=[i * 0.1 for i in range(1, 51)]
+        ).order_by('-created_at')
 
         serialized_data = []
         for rating in ratings:
