@@ -54,6 +54,8 @@ class Sharer(models.Model):
         ('Travel & Outdoor', 'Travel & Outdoor'),
         ('Business & Entrepreneurship', 'Business & Entrepreneurship'),
         ('Parenting & Family', 'Parenting & Family'),
+        ('Manga', 'Manga'),
+        ('Sports', 'Sports'),
     ]
 
     category = models.CharField(max_length=30, choices=CATEGORY_CHOICES, default='', null=True, blank=True)

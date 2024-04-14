@@ -65,6 +65,7 @@ class AdminUserPatchDelete(APIView):
 
 class AdminSharerDashboard(APIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
+
     def get(self, request):
         sharers = get_sharers_with_income()
         dashboards = Dashboard.objects.filter(sharer__in=sharers)
@@ -89,9 +90,13 @@ class AdminSharerDashboard(APIView):
             if related_dashboard:
                 sharer_entry.update(related_dashboard)
 
+        # Reverse sharer_data list
+        sharer_data.reverse()
+
         combined_data = list(zip(sharer_data, dashboard_data))
         
         return Response(combined_data, status=status.HTTP_200_OK)
+
     
 
     
@@ -155,7 +160,6 @@ class SearchUser(APIView):
             return Response({'error': 'Query parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-       
             user = User.objects.get(email=query)
         except User.DoesNotExist:
             try:
@@ -164,7 +168,10 @@ class SearchUser(APIView):
                 return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        user_data = serializer.data
+        user_data['id'] = user.id 
+        return Response(user_data, status=status.HTTP_200_OK)
+    
 
 class SearchSharer(APIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
@@ -175,17 +182,17 @@ class SearchSharer(APIView):
             return Response({'error': 'Query parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-
             sharer = Sharer.objects.get(email=query)
         except Sharer.DoesNotExist:
             try:
-
                 sharer = Sharer.objects.get(name=query)
             except Sharer.DoesNotExist:
                 return Response({'error': 'Sharer not found'}, status=status.HTTP_404_NOT_FOUND) 
 
         serializer = SharerSerializer(sharer)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        data = serializer.data
+        data['id'] = sharer.id  # Add the sharer's ID to the serialized data
+        return Response(data, status=status.HTTP_200_OK)
 
 
 

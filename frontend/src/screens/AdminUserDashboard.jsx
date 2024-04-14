@@ -37,6 +37,7 @@ function AdminUserDashboard() {
 
   const filteredUsers = usersData.filter(
     (user) =>
+      user.id.toString() === searchQuery ||
       user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase())
   );

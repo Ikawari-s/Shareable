@@ -27,8 +27,9 @@ function AdminSharerDashboard() {
 
   const filteredSharerData = sharerData ? sharerData.filter(sharer => 
     sharer[0].name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    sharer[0].email.toLowerCase().includes(searchQuery.toLowerCase())
-) : [];
+    sharer[0].email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    sharer[0].id.toString().includes(searchQuery) 
+  ) : [];
 
 
 

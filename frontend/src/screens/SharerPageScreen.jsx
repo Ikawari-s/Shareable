@@ -59,7 +59,7 @@ function SharerPageScreen() {
   };
 
   const CATEGORY_CHOICES = [
-    { value: "", label: "Select a category" },
+    { value: "", label: "Default Category" },
     { value: "Art", label: "Art" },
     { value: "Comics", label: "Comics" },
     { value: "Writing", label: "Writing" },
@@ -83,6 +83,8 @@ function SharerPageScreen() {
       label: "Business & Entrepreneurship",
     },
     { value: "Parenting & Family", label: "Parenting & Family" },
+    { value: "Manga", label: "Manga" }, 
+    { value: "Sports", label: "Sports" },
   ];
 
   const VISIBILITY_CHOICES = [

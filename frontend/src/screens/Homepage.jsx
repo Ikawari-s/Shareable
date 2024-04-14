@@ -155,6 +155,8 @@ function Homepage({ sharerList, listSharers }) {
             Business & Entrepreneurship
           </option>
           <option value="Parenting & Family">Parenting & Family</option>
+          <option value="Manga">Manga</option> {/* Added Manga */}
+           <option value="Sports">Sports</option>
           <option value="Default Category">Default Category</option>
         </select>
       </div>
