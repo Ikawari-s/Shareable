@@ -34,6 +34,7 @@ def SharerView(request):
     sort_by = request.query_params.get('sort_by', None)
     order_by = request.query_params.get('order_by', 'desc')
     search_term = request.query_params.get('search', None)
+    selected_category = request.query_params.get('category', None)
 
     # Filter queryset based on search term
     if search_term:
@@ -41,7 +42,9 @@ def SharerView(request):
             Q(name__icontains=search_term) | Q(category__icontains=search_term) | Q(description__icontains=search_term)
         )
 
-    # Validate and apply sorting
+    if selected_category and selected_category.lower() != 'all':
+        queryset = queryset.filter(category__iexact=selected_category.strip()).exclude(category__isnull=True).exclude(category__exact='')
+
     if sort_by:
         if sort_by == 'all':
             # Return all sharers without sorting

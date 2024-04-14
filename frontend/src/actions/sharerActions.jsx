@@ -112,7 +112,7 @@ export const DetailSharers = (id) => async (dispatch) => {
 
 
 
-export const listSharers = (sort_by = 'all', order_by = 'desc', searchTerm = '') => async (dispatch) => {
+export const listSharers = (sort_by = 'all', order_by = 'desc', searchTerm = '', selectedCategory = 'all') => async (dispatch) => {
   try {
     dispatch({
       type: sort_by !== 'all' ? SHARER_LIST_SORT_REQUEST : SHARER_LIST_REQUEST,
@@ -136,6 +136,11 @@ export const listSharers = (sort_by = 'all', order_by = 'desc', searchTerm = '')
     // Include search term in the request
     if (searchTerm) {
       url += `&search=${encodeURIComponent(searchTerm)}`;
+    }
+
+    // Include selected category in the request
+    if (selectedCategory && selectedCategory !== 'all') {
+      url += `&category=${encodeURIComponent(selectedCategory)}`;
     }
 
     const { data } = await instance.get(url, config);
