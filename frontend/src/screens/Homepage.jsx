@@ -15,9 +15,8 @@ function Homepage({ sharerList, listSharers }) {
   const { loading, error, sharers } = sharerList;
 
   useEffect(() => {
-    // Fetch sharers when the component mounts or when sorting criteria or search term changes
-    listSharers(currentSortBy, 'desc', searchTerm);
-  }, [currentSortBy, listSharers, searchTerm]); // Dependency on currentSortBy, listSharers, and searchTerm
+    listSharers(currentSortBy, 'desc', searchTerm, selectedCategory);
+  }, [currentSortBy, listSharers, searchTerm, selectedCategory]);
 
   const handleSort = (sortField, sortOrder) => {
     const sortParam = `${sortField}_${sortOrder}`;
@@ -26,6 +25,10 @@ function Homepage({ sharerList, listSharers }) {
 
   const handleSpecialSort = (specialSort) => {
     setCurrentSortBy(specialSort === currentSortBy ? "all" : specialSort);
+  };
+
+  const handleCategoryChange = (e) => {
+    setSelectedCategory(e.target.value);
   };
 
   const filteredSharers = Array.isArray(sharers)
@@ -128,7 +131,7 @@ function Homepage({ sharerList, listSharers }) {
       <div className="mb-3">
         <select
           value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
+          onChange={handleCategoryChange}
           className="form-control"
           style={{color:'#777777'}}
         >
@@ -155,6 +158,8 @@ function Homepage({ sharerList, listSharers }) {
             Business & Entrepreneurship
           </option>
           <option value="Parenting & Family">Parenting & Family</option>
+          <option value="Manga">Manga</option> {/* Added Manga */}
+           <option value="Sports">Sports</option>
           <option value="Default Category">Default Category</option>
         </select>
       </div>
