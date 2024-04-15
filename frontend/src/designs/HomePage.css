@@ -68,6 +68,15 @@
     border-radius: 1rem;
 }
 
+#grates{
+    background-color: #014981;
+    padding: 0.2rem 0.5rem 0.2rem 0.5rem;
+    /* position: absolute; */
+    width: fit-content;
+    margin-top: .4rem;
+    border-radius: 1rem;
+}
+
 #da-text{
     line-height: .8rem;
     padding: 0 0 1rem 0 !important;
