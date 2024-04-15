@@ -28,10 +28,11 @@ function Homepage({ sharerList, listSharers }) {
   };
 
   const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);
+    const value = e.target.value;
+    setSelectedCategory(value === "Not specified" ? "Not specified" : value);
   };
 
-  const filteredSharers = Array.isArray(sharers)
+const filteredSharers = Array.isArray(sharers)
   ? sharers.filter((sharer) => {
       const matchNameOrCategory =
         sharer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -41,7 +42,8 @@ function Homepage({ sharerList, listSharers }) {
         sharer.description &&
         sharer.description.toLowerCase().includes(searchTerm.toLowerCase());
       const matchCategory =
-        selectedCategory === "all" ||
+        selectedCategory === "all" || 
+        selectedCategory === "Not specified" || // Ensure to include all when "Not specified"
         (sharer.category &&
           sharer.category.toLowerCase() === selectedCategory.toLowerCase());
 
@@ -51,6 +53,7 @@ function Homepage({ sharerList, listSharers }) {
       );
     })
   : [];
+
 
   return (
     <div className="brap" style={{width:'90vw'}}>
@@ -160,7 +163,7 @@ function Homepage({ sharerList, listSharers }) {
           <option value="Parenting & Family">Parenting & Family</option>
           <option value="Manga">Manga</option> {/* Added Manga */}
            <option value="Sports">Sports</option>
-          <option value="Default Category">Default Category</option>
+           <option value="Not specified">Not specified</option>
         </select>
       </div>
 

@@ -20,19 +20,53 @@ function TierThreeLatest({ sharerId }) {
 
   const downloadFile = async (fileUrl) => {
     try {
-      const response = await axios.get(fileUrl, {
-        responseType: 'blob',
-      });
+      const fileType = getFileType(fileUrl);
+  
 
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'file');
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      if (['docx', 'doc', 'pdf', 'txt'].includes(fileType)) {
+        const response = await axios.get(fileUrl, {
+          responseType: 'blob',
+        });
+  
+
+        const contentType = getContentType(fileType);
+  
+       
+        const url = window.URL.createObjectURL(new Blob([response.data], { type: contentType }));
+        const link = document.createElement('a');
+        link.href = url;
+  
+        link.setAttribute('download', `file.${fileType}`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } else {
+        console.log('File type not allowed.');
+      }
     } catch (error) {
       console.error('Error downloading file:', error);
+    }
+  };
+  
+  const getFileType = (fileUrl) => {
+    const extension = fileUrl.split('.').pop();
+    return extension.toLowerCase();
+  };
+  
+  
+  const getContentType = (fileType) => {
+    switch (fileType) {
+      case 'pdf':
+        return 'application/pdf';
+      case 'png':
+        return 'image/png';
+      case 'doc':
+      case 'docx':
+        return 'application/msword';
+      case 'txt':
+        return 'text/plain';
+      default:
+        return 'application/octet-stream';
     }
   };
 
@@ -103,7 +137,13 @@ function TierThreeLatest({ sharerId }) {
                   {post.files &&
                     post.files.map((file, index) => (
                       <div key={index}>
-                        <button onClick={() => downloadFile(file.file)}>Download File {index + 1}</button>
+                         <button
+                        key={index}
+                        onClick={() => downloadFile(file.file)}
+                        className="btn btn-success m-2"
+                      >
+                        Download File {index + 1}
+                      </button>
                         <p>File {index + 1}</p>
                       </div>
                     ))}

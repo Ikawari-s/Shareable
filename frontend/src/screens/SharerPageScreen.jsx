@@ -24,10 +24,12 @@ function SharerPageScreen() {
   const [postId, setPostId] = useState(null);
   const [showPost, setShowPost] = useState(false);
   const togglePostVisibility = () => {
-  setShowPost(!showPost);}
+    setShowPost(!showPost);
+  };
   const [showUpdate, setShowUpdate] = useState(false);
   const toggleUpdateVisibility = () => {
-  setShowUpdate(!showUpdate);}
+    setShowUpdate(!showUpdate);
+  };
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
@@ -83,7 +85,7 @@ function SharerPageScreen() {
       label: "Business & Entrepreneurship",
     },
     { value: "Parenting & Family", label: "Parenting & Family" },
-    { value: "Manga", label: "Manga" }, 
+    { value: "Manga", label: "Manga" },
     { value: "Sports", label: "Sports" },
   ];
 
@@ -175,15 +177,14 @@ function SharerPageScreen() {
     sortedPosts.map((post) => [post.id, []])
   );
 
-
   const [postVisibility, setPostVisibility] = useState(initialVisibilityState);
 
   useEffect(() => {
-  const initialVisibilityState = Object.fromEntries(
-    sortedPosts.map((post) => [post.id, JSON.parse(post.visibility)])
-  );
-  setPostVisibility(initialVisibilityState);
-}, [sharerPostList]);
+    const initialVisibilityState = Object.fromEntries(
+      sortedPosts.map((post) => [post.id, JSON.parse(post.visibility)])
+    );
+    setPostVisibility(initialVisibilityState);
+  }, [sharerPostList]);
 
   const handleVisibilityChange = (postId, value, checked) => {
     setPostVisibility((prevVisibility) => {
@@ -197,7 +198,6 @@ function SharerPageScreen() {
       };
     });
   };
-  
 
   useEffect(() => {
     if (postId && sharerPostList && sharerPostList.length > 0) {
@@ -216,7 +216,6 @@ function SharerPageScreen() {
   if (error) {
     return <p>Error: {error}</p>;
   }
-
 
   const handleDeletePostConfirmation = (uploadId) => {
     setDeletePostId(uploadId);
@@ -257,26 +256,56 @@ function SharerPageScreen() {
 
   const downloadFile = async (fileUrl) => {
     try {
-      const response = await axios.get(fileUrl, {
-        responseType: "blob",
-      });
+      const fileType = getFileType(fileUrl);
 
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "file");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      if (["docx", "doc", "pdf", "txt"].includes(fileType)) {
+        const response = await axios.get(fileUrl, {
+          responseType: "blob",
+        });
+
+        const contentType = getContentType(fileType);
+
+        const url = window.URL.createObjectURL(
+          new Blob([response.data], { type: contentType })
+        );
+        const link = document.createElement("a");
+        link.href = url;
+
+        link.setAttribute("download", `file.${fileType}`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } else {
+        console.log("File type not allowed.");
+      }
     } catch (error) {
       console.error("Error downloading file:", error);
     }
   };
 
+  const getFileType = (fileUrl) => {
+    const extension = fileUrl.split(".").pop();
+    return extension.toLowerCase();
+  };
+
+  const getContentType = (fileType) => {
+    switch (fileType) {
+      case "pdf":
+        return "application/pdf";
+      case "png":
+        return "image/png";
+      case "doc":
+      case "docx":
+        return "application/msword";
+      case "txt":
+        return "text/plain";
+      default:
+        return "application/octet-stream";
+    }
+  };
   return (
     <div className="brap" style={{ paddingTop: ".2rem" }}>
       <div className="col-md-12 cover-stuff">
-
         <div className="d-flex">
           <div className="main">
             <div
@@ -393,11 +422,11 @@ function SharerPageScreen() {
                 )}
                 {post.files.length > 0 && (
                   <div>
-                    <h3>Files:</h3>
                     {post.files.map((file, index) => (
                       <button
                         key={index}
                         onClick={() => downloadFile(file.file)}
+                        className="btn btn-success m-2"
                       >
                         Download File {index + 1}
                       </button>

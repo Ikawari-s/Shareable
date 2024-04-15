@@ -35,7 +35,7 @@ function AdminCreateUser() {
       if (response) {
         window.location.reload();
       } else {
-        setError("Failed to create user");
+        setError("Check username(+4), password(+8, !@,123), email");
       }
     }
   };
@@ -43,8 +43,16 @@ function AdminCreateUser() {
   return (
     <div>
       <h2>Create New User</h2>
-      {createUserError && <Alert variant="danger" onClose={() => setError('')} dismissible>{createUserError}</Alert>}
-      {error && <Alert variant="danger" onClose={() => setError('')} dismissible>{error}</Alert>}
+          {createUserError && (
+          <Alert variant="danger" onClose={() => setError('')} dismissible style={{ fontSize: '0.7rem', padding: '0.25rem 0.5rem', marginBottom: '0.5rem' }}>
+            {createUserError}
+          </Alert>
+        )}
+        {error && (
+          <Alert variant="danger" onClose={() => setError('')} dismissible style={{ fontSize: '0.7rem', padding: '0.25rem 0.5rem', marginBottom: '0.5rem' }}>
+            {error}
+          </Alert>
+        )}
       <Form onSubmit={handleSubmit} style={{ maxWidth: '400px' }}>
         <Form.Group controlId="formUsername">
           <Form.Label>Username:</Form.Label>
