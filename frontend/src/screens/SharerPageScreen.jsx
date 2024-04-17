@@ -256,38 +256,37 @@ function SharerPageScreen() {
 
   const downloadFile = async (fileUrl) => {
     try {
+      console.log('File URL:', fileUrl); 
+  
       const fileType = getFileType(fileUrl);
-
-      if (["docx", "doc", "pdf", "txt"].includes(fileType)) {
-        const response = await axios.get(fileUrl, {
-          responseType: "blob",
-        });
-
-        const contentType = getContentType(fileType);
-
-        const url = window.URL.createObjectURL(
-          new Blob([response.data], { type: contentType })
-        );
-        const link = document.createElement("a");
-        link.href = url;
-
-        link.setAttribute("download", `file.${fileType}`);
+  
+      if (['docx', 'doc', 'pdf', 'txt'].includes(fileType)) {
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        link.setAttribute('download', '');
         document.body.appendChild(link);
         link.click();
         link.remove();
       } else {
-        console.log("File type not allowed.");
+        console.log('File type not allowed.');
       }
     } catch (error) {
-      console.error("Error downloading file:", error);
+      console.error('Error downloading file:', error);
     }
   };
-
+  
+  
+  
   const getFileType = (fileUrl) => {
-    const extension = fileUrl.split(".").pop();
+    const path = new URL(fileUrl).pathname;
+    const segments = path.split('.');
+    const fileNameWithExtension = segments[segments.length - 1];
+    const fileNameWithoutQueryParams = fileNameWithExtension.split('?')[0];
+    const extension = fileNameWithoutQueryParams.split('.').pop();
+    console.log('Extension:', extension); 
     return extension.toLowerCase();
   };
-
+  
   const getContentType = (fileType) => {
     switch (fileType) {
       case "pdf":
