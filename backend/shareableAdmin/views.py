@@ -90,8 +90,6 @@ class AdminSharerDashboard(APIView):
             if related_dashboard:
                 sharer_entry.update(related_dashboard)
 
-        # Reverse sharer_data list
-        sharer_data.reverse()
 
         combined_data = list(zip(sharer_data, dashboard_data))
         
@@ -191,7 +189,7 @@ class SearchSharer(APIView):
 
         serializer = SharerSerializer(sharer)
         data = serializer.data
-        data['id'] = sharer.id  # Add the sharer's ID to the serialized data
+        data['id'] = sharer.id  
         return Response(data, status=status.HTTP_200_OK)
 
 

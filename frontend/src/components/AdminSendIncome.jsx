@@ -1,13 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { sendIncomeToSharer } from '../actions/adminActions';
 
 function AdminSendIncome({ sharerId }) {
   const dispatch = useDispatch();
+  const [confirmSend, setConfirmSend] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSendIncome = () => {
-    dispatch(sendIncomeToSharer(sharerId));
-    window.location.reload();
+    setConfirmSend(true);
+  };
+
+  const handleConfirmSend = () => {
+    setLoading(true);
+    dispatch(sendIncomeToSharer(sharerId))
+      .then((response) => {
+
+        console.log("Income sent successfully.");
+
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error("Failed to send income:", error);
+
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const handleCancelSend = () => {
+    setConfirmSend(false);
   };
 
   return (
@@ -28,6 +51,18 @@ function AdminSendIncome({ sharerId }) {
       >
         Send Income
       </button>
+
+      {confirmSend && (
+        <div className="confirmation-overlay">
+          <div className="confirmation-modal">
+            <div>
+              Are you sure you want to send income to this sharer?
+              <button onClick={handleConfirmSend} disabled={loading}>{loading ? 'Sending...' : 'Yes'}</button>
+              <button onClick={handleCancelSend} disabled={loading}>No</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

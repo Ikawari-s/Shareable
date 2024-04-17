@@ -319,13 +319,15 @@ class Be_sharer(APIView):
                         user.is_sharer = True
                         user.save()
 
+                        default_category = Sharer.CATEGORY_CHOICES[0][0]  # Get the default category
+
                         sharer_instance_data = {
                             'user': user,
                             'email': user.email,
                             'image': user.profile_picture, 
                             'name': page_name,
                             'description': f"Sharer profile for {page_name}",
-                            'category': "Default Category",
+                            'category': default_category,  # Assign the default category
                             'username': user.username
                         }
                         sharer_instance = Sharer.objects.create(**sharer_instance_data)
@@ -348,8 +350,8 @@ class Be_sharer(APIView):
         except Exception as e:
             return Response({'error': f'Internal Server Error: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         finally:
-            del thread_locals.is_be_sharer_context 
-
+            del thread_locals.is_be_sharer_context
+            
 
 class CanUnfollowSharer(permissions.BasePermission):
     def has_permission(self, request, view):

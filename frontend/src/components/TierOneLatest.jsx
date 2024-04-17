@@ -29,19 +29,51 @@ function TierOneLatest({ sharerId }) {
 
   const downloadFile = async (fileUrl) => {
     try {
-      const response = await axios.get(fileUrl, {
-        responseType: 'blob',
-      });
-
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'file');
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      console.log('File URL:', fileUrl); 
+  
+      const fileType = getFileType(fileUrl);
+  
+      if (['docx', 'doc', 'pdf', 'txt'].includes(fileType)) {
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        link.setAttribute('download', '');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } else {
+        console.log('File type not allowed.');
+      }
     } catch (error) {
       console.error('Error downloading file:', error);
+    }
+  };
+  
+  
+  
+  const getFileType = (fileUrl) => {
+    const path = new URL(fileUrl).pathname;
+    const segments = path.split('.');
+    const fileNameWithExtension = segments[segments.length - 1];
+    const fileNameWithoutQueryParams = fileNameWithExtension.split('?')[0];
+    const extension = fileNameWithoutQueryParams.split('.').pop();
+    console.log('Extension:', extension); 
+    return extension.toLowerCase();
+  };
+  
+  
+  const getContentType = (fileType) => {
+    switch (fileType) {
+      case 'pdf':
+        return 'application/pdf';
+      case 'png':
+        return 'image/png';
+      case 'doc':
+      case 'docx':
+        return 'application/msword';
+      case 'txt':
+        return 'text/plain';
+      default:
+        return 'application/octet-stream';
     }
   };
 
@@ -77,15 +109,27 @@ function TierOneLatest({ sharerId }) {
         <p>{error}</p>
       ) : (
         <div>
+<<<<<<< HEAD
 {Array.isArray(posts) && posts.length > 0 ? (
+=======
+          {Array.isArray(posts) && posts.length > 0 ? (
+>>>>>>> 2f8f94564fc84102e1b0ba996cc3a608a914afa6
   posts.map((post) => (
     <div
       key={post.id}
       style={{
+<<<<<<< HEAD
         borderRadius: '1rem',
         padding:'1rem',
         boxShadow:'0 2px 5px #00000080',
         marginBottom:'2rem'
+=======
+        maxWidth: '60rem',
+        margin: '0 auto',
+        border: '1px solid #ccc',
+        padding: '1rem',
+        marginBottom: '2rem', // Adjust spacing between posts
+>>>>>>> 2f8f94564fc84102e1b0ba996cc3a608a914afa6
       }}
     >
       {/* Render delete button if user is admin */}
@@ -103,6 +147,7 @@ function TierOneLatest({ sharerId }) {
           )}
         </>
       )}
+<<<<<<< HEAD
       
 <div className="d-flex">
             <h1>{post.title}</h1>
@@ -152,6 +197,41 @@ function TierOneLatest({ sharerId }) {
   <div className="toppy" style={{width:'60rem', height:'5rem', padding:'1rem 0rem', textAlign:'center', overflow:'visible'}}>
   <h1>No posts available for Tier 1 Followed Sharers.</h1>
   </div>
+=======
+<h2>{post.title}</h2>
+        <p>Description: {post.description}</p>
+      <div style={{ maxHeight: '60rem', overflowY: 'auto', background: 'black', padding: '3rem' }}>
+        
+        {post.images &&
+          post.images.map((image, index) => (
+            <img key={index} src={image.image} style={{ maxWidth: '30rem', marginBottom: '2rem' }} alt={`Post Image ${index}`} />
+          ))}
+        {post.videos &&
+          post.videos.map((video, index) => (
+            <div key={index}>
+              <video style={{maxWidth: '30rem', marginBottom: '2rem'}} src={video.video} controls></video>
+              <p>Video {index + 1}</p>
+            </div>
+          ))}
+        {post.files &&
+          post.files.map((file, index) => (
+            <div key={index}>
+              <button onClick={() => downloadFile(file.file)}>Download File {index + 1}</button>
+              <p>File {index + 1}</p>
+            </div>
+          ))}
+      </div>
+
+      {/* LikeComponent and CommentComponent outside of the scrollable area */}
+      <div>
+        <LikeComponent uploadId={post.id} />
+        <Comment uploadId={post.id} />
+      </div>
+    </div>
+  ))
+) : (
+  <p>No posts available from tier 1 followed sharers.</p>
+>>>>>>> 2f8f94564fc84102e1b0ba996cc3a608a914afa6
 )}
 
 

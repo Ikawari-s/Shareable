@@ -37,22 +37,37 @@ function PreviewContent({ sharerId }) {
 
   const downloadFile = async (fileUrl) => {
     try {
-      const response = await axios.get(fileUrl, {
-        responseType: 'blob',
-      });
-
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'file');
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      console.log('File URL:', fileUrl); 
+  
+      const fileType = getFileType(fileUrl);
+  
+      if (['docx', 'doc', 'pdf', 'txt'].includes(fileType)) {
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        link.setAttribute('download', '');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } else {
+        console.log('File type not allowed.');
+      }
     } catch (error) {
       console.error('Error downloading file:', error);
     }
   };
-
+  
+  
+  
+  const getFileType = (fileUrl) => {
+    const path = new URL(fileUrl).pathname;
+    const segments = path.split('.');
+    const fileNameWithExtension = segments[segments.length - 1];
+    const fileNameWithoutQueryParams = fileNameWithExtension.split('?')[0];
+    const extension = fileNameWithoutQueryParams.split('.').pop();
+    console.log('Extension:', extension); 
+    return extension.toLowerCase();
+  };
+  
   const handleDeletePost = async (postId) => {
     try {
       await dispatch(sharerDeletePost(postId));
@@ -61,6 +76,23 @@ function PreviewContent({ sharerId }) {
       console.error('Error deleting post:', error);
     }
   };
+  
+  const getContentType = (fileType) => {
+    switch (fileType) {
+      case 'pdf':
+        return 'application/pdf';
+      case 'png':
+        return 'image/png';
+      case 'doc':
+      case 'docx':
+        return 'application/msword';
+      case 'txt':
+        return 'text/plain';
+      default:
+        return 'application/octet-stream';
+    }
+  };
+  
 
   const handleShowDeleteConfirmation = (postId) => {
     setPostIdToDelete(postId);
@@ -112,10 +144,39 @@ function PreviewContent({ sharerId }) {
                 )}
               </>
             )}
+<<<<<<< HEAD
             <div className="d-flex">
             <h1>{post.title}</h1>
             <p style={{ margin: '1rem 0 0 1rem', color: 'rgba(255, 255, 255, 0.5)' }}>{post.created_at_formatted}</p>
             {post.edited && <p style={{ margin: '1rem 0 0 1rem', color: 'rgba(255, 255, 255, 0.5)' }}>Edited {post.edited_at_formatted}</p>}
+=======
+            <h3>{post.title}</h3>
+            <p>{post.description}</p>
+            {post.images &&
+              post.images.map((image, index) => (
+                <img key={index} src={image.image} alt={`Preview ${index}`} />
+              ))}
+            {post.videos &&
+              post.videos.map((video, index) => (
+                <video key={index} controls>
+                  <source src={video.video} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              ))}
+            {post.files &&
+              post.files.map((file, index) => (
+                <div key={index}>
+                   <button
+                        key={index}
+                        onClick={() => downloadFile(file.file)}
+                        className="btn btn-success m-2"
+                      >
+                        Download File {index + 1}
+                      </button>
+                  <p>File {index + 1}</p>
+                </div>
+              ))}
+>>>>>>> 2f8f94564fc84102e1b0ba996cc3a608a914afa6
           </div>
           <h4 >{post.description}</h4>
           {post.images.length > 0 && (
@@ -156,3 +217,4 @@ function PreviewContent({ sharerId }) {
 }
 
 export default PreviewContent;
+

@@ -47,6 +47,7 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
   const [updateRatingValue, setUpdateRatingValue] = useState(0);
   const [updateComment, setUpdateComment] = useState("");
   const [deletingRatingId, setDeletingRatingId] = useState(null);
+  const sortedRatings = [...ratings];
 
   const handleUpdateRating = async () => {
     try {
@@ -65,6 +66,8 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
       console.error("Error updating rating:", error);
     }
   };
+  
+  
 
   const handleDeleteRating = async (ratingId) => {
     try {
@@ -107,6 +110,17 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
 
   // const averageRating = calculateAverageRating();
 
+  sortedRatings.sort((a, b) => {
+    const badgeOrder = { Gold: 1, Silver: 2, Bronze: 3 };
+  
+    // Get badge priority for each rating (default to lower priority if badge not present)
+    const badgeA = a.badge ? badgeOrder[a.badge] || 4 : 4;
+    const badgeB = b.badge ? badgeOrder[b.badge] || 4 : 4;
+  
+    // Sort by badge priority (ascending order)
+    return badgeA - badgeB;
+  });
+
   return (
     <div
       className=""
@@ -122,12 +136,19 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
             : "No ratings available"
           : "No ratings available"}
       </div>
+<<<<<<< HEAD
       </div>
         {ratings.map((rating) => (
           <li key={rating.id} style={{listStyle:"none", justifyContent:'center', display:'flex'}}>
             <div style={{ boxShadow:'0 2px 5px #00000080', borderRadius:'1rem', marginBottom:'1rem', padding:'1rem 0rem', width:'100%' }}>
               <div style={{textAlign:'left', paddingLeft:'1.3rem'}}>
               <div>
+=======
+      <ul>
+        {sortedRatings.map((rating) => (
+          <li key={rating.id} style={{ listStyle: "none" }}>
+            <div style={{ background: "green" }}>
+>>>>>>> 2f8f94564fc84102e1b0ba996cc3a608a914afa6
               {rating.profile_picture && (
                 <img
                   src={rating.profile_picture}
@@ -141,6 +162,7 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
                   }}
                 />
               )}
+<<<<<<< HEAD
               <strong style={{fontSize: '1.35rem', lineHeight: '2.4rem', fontWeight:'600'}}>{rating.username}</strong>
               {rating.user_tier === "tier3" && (
                 <img src={goldtier} style={{maxWidth: '3.4rem', maxHeight: '3.4rem', marginBottom:'0.2rem'}} />
@@ -151,6 +173,9 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
               {rating.user_tier === "tier1" && (
                 <img src={bronzetier} style={{maxWidth: '3.4rem', maxHeight: '3.4rem', marginBottom:'0.2rem'}} />
               )}
+=======
+              : {rating.username}{" "}
+>>>>>>> 2f8f94564fc84102e1b0ba996cc3a608a914afa6
               {rating.badge === "Gold" && (
                 <img src={gold} style={{width: '1.5rem', height: '1.5rem', marginBottom:'0.3rem'}} />
               )}
@@ -161,6 +186,7 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
                 <img src={bronze} style={{width: '1.5rem', height: '1.5rem', marginBottom:'0.3rem'}} />
               )}
               {rating.badge === "None" && null}
+<<<<<<< HEAD
               
               <div style={{padding:'0rem 0.8rem', display:'inline-block', background:'darkslategrey', width:'fit-content', borderRadius:'1rem', marginLeft:'1rem'}}>
               {rating.rating}
@@ -169,6 +195,18 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
               <div style={{padding:'0.5rem 1.5rem'}}>
               {rating.comment}
               </div>
+=======
+              {rating.user_tier === "tier3" && (
+                <img src={goldtier} style={{ maxWidth: "5rem" }} />
+              )}
+              {rating.user_tier === "tier2" && (
+                <img src={silvertier} style={{ maxWidth: "5rem" }} />
+              )}
+              {rating.user_tier === "tier1" && (
+                <img src={bronzetier} style={{ maxWidth: "5rem" }} />
+              )}, Rating: {rating.rating},
+              Comment: {rating.comment}
+>>>>>>> 2f8f94564fc84102e1b0ba996cc3a608a914afa6
               {!rating.edited && rating.time_posted && (
                 <em style={{margin:'0rem 1.5rem'}}> {rating.time_posted}</em>
               )}
