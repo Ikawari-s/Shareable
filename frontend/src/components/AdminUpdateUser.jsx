@@ -1,4 +1,3 @@
-// AdminUpdateUser.jsx
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { updateUserAdmin } from '../actions/adminActions';
@@ -15,8 +14,8 @@ function AdminUpdateUser({ userId, isActive, isStaff, isSharer, isSuperuser }) {
     profile_picture: null
   });
   const [error, setError] = useState('');
+  const [confirmUpdate, setConfirmUpdate] = useState(false);
 
-  // Update formData when props change
   useEffect(() => {
     setFormData({
       username: '',
@@ -45,8 +44,10 @@ function AdminUpdateUser({ userId, isActive, isStaff, isSharer, isSuperuser }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("User ID:", userId); // Log userId
-    console.log("FormData:", formData); // Log formData
+    setConfirmUpdate(true); // Show confirmation modal
+  };
+
+  const confirmUpdateAction = async () => {
     const response = await dispatch(updateUserAdmin(userId, formData));
 
     if (response && response.status === 200) {
@@ -54,6 +55,10 @@ function AdminUpdateUser({ userId, isActive, isStaff, isSharer, isSuperuser }) {
     } else {
       setError("Failed to update user. Please try again.");
     }
+  };
+
+  const cancelUpdate = () => {
+    setConfirmUpdate(false); // Hide confirmation modal
   };
 
   return (
@@ -86,6 +91,19 @@ function AdminUpdateUser({ userId, isActive, isStaff, isSharer, isSuperuser }) {
           Update User
         </Button>
       </Form>
+
+      {/* Confirmation modal */}
+      {confirmUpdate && (
+        <div className="confirmation-overlay">
+          <div className="confirmation-modal">
+            <div>
+              Are you sure you want to update this user?
+              <button onClick={confirmUpdateAction}>Yes</button>
+              <button onClick={cancelUpdate}>No</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

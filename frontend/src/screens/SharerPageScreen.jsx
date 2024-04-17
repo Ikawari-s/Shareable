@@ -24,10 +24,12 @@ function SharerPageScreen() {
   const [postId, setPostId] = useState(null);
   const [showPost, setShowPost] = useState(false);
   const togglePostVisibility = () => {
-  setShowPost(!showPost);}
+    setShowPost(!showPost);
+  };
   const [showUpdate, setShowUpdate] = useState(false);
   const toggleUpdateVisibility = () => {
-  setShowUpdate(!showUpdate);}
+    setShowUpdate(!showUpdate);
+  };
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
@@ -83,6 +85,11 @@ function SharerPageScreen() {
       label: "Business & Entrepreneurship",
     },
     { value: "Parenting & Family", label: "Parenting & Family" },
+<<<<<<< HEAD
+=======
+    { value: "Manga", label: "Manga" },
+    { value: "Sports", label: "Sports" },
+>>>>>>> 2f8f94564fc84102e1b0ba996cc3a608a914afa6
   ];
 
   const VISIBILITY_CHOICES = [
@@ -163,6 +170,7 @@ function SharerPageScreen() {
     setCategory(e.target.value);
   };
 
+<<<<<<< HEAD
   const handleVisibilityChange = (e) => {
     const { value, checked } = e.target;
     if (checked) {
@@ -171,6 +179,41 @@ function SharerPageScreen() {
       setNewVisibility((prevVisibility) =>
         prevVisibility.filter((item) => item !== value)
       ); // Remove from array
+=======
+  const initialVisibilityState = Object.fromEntries(
+    sortedPosts.map((post) => [post.id, []])
+  );
+
+  const [postVisibility, setPostVisibility] = useState(initialVisibilityState);
+
+  useEffect(() => {
+    const initialVisibilityState = Object.fromEntries(
+      sortedPosts.map((post) => [post.id, JSON.parse(post.visibility)])
+    );
+    setPostVisibility(initialVisibilityState);
+  }, [sharerPostList]);
+
+  const handleVisibilityChange = (postId, value, checked) => {
+    setPostVisibility((prevVisibility) => {
+      const currentVisibility = prevVisibility[postId] || [];
+      const updatedVisibility = checked
+        ? [...currentVisibility, value]
+        : currentVisibility.filter((item) => item !== value);
+      return {
+        ...prevVisibility,
+        [postId]: updatedVisibility,
+      };
+    });
+  };
+
+  useEffect(() => {
+    if (postId && sharerPostList && sharerPostList.length > 0) {
+      const currentPost = sharerPostList.find((p) => p.id === postId);
+      if (currentPost && currentPost.visibility) {
+        const currentVisibility = JSON.parse(currentPost.visibility);
+        setNewVisibility(currentVisibility);
+      }
+>>>>>>> 2f8f94564fc84102e1b0ba996cc3a608a914afa6
     }
   };
 
@@ -182,12 +225,15 @@ function SharerPageScreen() {
     return <p>Error: {error}</p>;
   }
 
+<<<<<<< HEAD
   const sortedPosts = Array.isArray(sharerPostList)
     ? sharerPostList
         .slice()
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     : [];
 
+=======
+>>>>>>> 2f8f94564fc84102e1b0ba996cc3a608a914afa6
   const handleDeletePostConfirmation = (uploadId) => {
     setDeletePostId(uploadId);
     setShowDeleteConfirmation(true);
@@ -228,6 +274,7 @@ function SharerPageScreen() {
 
   const downloadFile = async (fileUrl) => {
     try {
+<<<<<<< HEAD
       const response = await axios.get(fileUrl, {
         responseType: 'blob',
       });
@@ -241,12 +288,58 @@ function SharerPageScreen() {
       link.remove();
     } catch (error) {
       console.error('Error downloading file:', error);
+=======
+      console.log('File URL:', fileUrl); 
+  
+      const fileType = getFileType(fileUrl);
+  
+      if (['docx', 'doc', 'pdf', 'txt'].includes(fileType)) {
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        link.setAttribute('download', '');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } else {
+        console.log('File type not allowed.');
+      }
+    } catch (error) {
+      console.error('Error downloading file:', error);
     }
   };
-
+  
+  
+  
+  const getFileType = (fileUrl) => {
+    const path = new URL(fileUrl).pathname;
+    const segments = path.split('.');
+    const fileNameWithExtension = segments[segments.length - 1];
+    const fileNameWithoutQueryParams = fileNameWithExtension.split('?')[0];
+    const extension = fileNameWithoutQueryParams.split('.').pop();
+    console.log('Extension:', extension); 
+    return extension.toLowerCase();
+  };
+  
+  const getContentType = (fileType) => {
+    switch (fileType) {
+      case "pdf":
+        return "application/pdf";
+      case "png":
+        return "image/png";
+      case "doc":
+      case "docx":
+        return "application/msword";
+      case "txt":
+        return "text/plain";
+      default:
+        return "application/octet-stream";
+>>>>>>> 2f8f94564fc84102e1b0ba996cc3a608a914afa6
+    }
+  };
   return (
     <div className="brap" style={{paddingTop: '.2rem'}}>
       <div className="col-md-12 cover-stuff">
+<<<<<<< HEAD
       <div className="d-flex">
       <div className="main">
       <div className="d-flex" style={{borderBottom: '1px solid rgba(255,255,255,0.5)', paddingBottom:'3rem', width: '57rem'}}>
@@ -288,6 +381,43 @@ function SharerPageScreen() {
                 <p>Are you sure you want to delete this post?</p>
                 <button onClick={handleDeleteConfirmation}>Yes</button>
                 <button onClick={handleCancelDelete}>No</button>
+=======
+        <div className="d-flex">
+          <div className="main">
+            <div
+              className="d-flex"
+              style={{
+                borderBottom: "1px solid rgba(255,255,255,0.5)",
+                paddingBottom: "3rem",
+                width: "57rem",
+              }}
+            >
+              <img
+                src={userProfile.image}
+                alt="Profile"
+                id="profil"
+                onError={() => {
+                  console.error(
+                    "Error loading profile picture:",
+                    userProfile.image
+                  );
+                }}
+              />
+              <div className="names-and-shit">
+                <h1>{name}</h1>
+                <h2>{username}</h2>
+                <h4>{userProfile.email}</h4>
+                <button className="btn btn-primary create-post">
+                  <GrAddCircle
+                    style={{
+                      margin: "0.2rem 0.8rem 0.2rem",
+                      fontSize: "1.5rem",
+                      lineHeight: "0rem",
+                    }}
+                  />
+                  Create Post
+                </button>
+>>>>>>> 2f8f94564fc84102e1b0ba996cc3a608a914afa6
               </div>
             </div>
           )}
@@ -344,11 +474,185 @@ function SharerPageScreen() {
               />
             </div>
             <div>
+<<<<<<< HEAD
               <h9>New Description: </h9>
               <textarea
                 value={newDescription || post.description}
                 onChange={(e) => setNewDescription(e.target.value)}
                 className="form-control mb-2"
+=======
+              <SharerPost />
+            </div>
+            {sortedPosts.map((post) => (
+              <div key={post.id}>
+                <div className="d-flex rat">
+                  <h1>{post.title}</h1>
+                  <p
+                    style={{
+                      margin: "1rem 0 0 1rem",
+                      color: "rgba(255, 255, 255, 0.5)",
+                    }}
+                  >
+                    {post.created_at_formatted}
+                  </p>
+                  {post.edited && (
+                    <p
+                      style={{
+                        margin: "1rem 0 0 1rem",
+                        color: "rgba(255, 255, 255, 0.5)",
+                      }}
+                    >
+                      Edited {post.edited_at_formatted}
+                    </p>
+                  )}
+                  <button
+                    id="trash"
+                    onClick={() => handleDeletePostConfirmation(post.id)}
+                  >
+                    <BsFillTrash3Fill />
+                  </button>
+                </div>
+                {showDeleteConfirmation && deletePostId === post.id && (
+                  <div className="confirmation-overlay">
+                    <div className="confirmation-modal">
+                      <p>Are you sure you want to delete this post?</p>
+                      <button onClick={handleDeleteConfirmation}>Yes</button>
+                      <button onClick={handleCancelDelete}>No</button>
+                    </div>
+                  </div>
+                )}
+                <p id="bubble"> {post.visibility} </p>
+                <h3>{post.description}</h3>
+                {post.images.length > 0 && (
+                  <div>
+                    {post.images.map((image, index) => (
+                      <img
+                        key={index}
+                        src={image.image}
+                        alt={`Image ${index + 1}`}
+                        style={{
+                          height: " auto",
+                          width: "57rem",
+                          objectFit: "cover",
+                          borderRadius: "2rem",
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+                {post.videos.length > 0 && (
+                  <div>
+                    {post.videos.map((video, index) => (
+                      <video
+                        key={index}
+                        style={{
+                          height: " auto",
+                          width: "57rem",
+                          objectFit: "cover",
+                          borderRadius: "2rem",
+                        }}
+                        src={video.video}
+                        controls
+                      />
+                    ))}
+                  </div>
+                )}
+                {post.files.length > 0 && (
+                  <div>
+                    {post.files.map((file, index) => (
+                      <button
+                        key={index}
+                        onClick={() => downloadFile(file.file)}
+                        className="btn btn-success m-2"
+                      >
+                        Download File {index + 1}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                <form onSubmit={(e) => handleUpdatePost(post.id, e)}>
+                  <div>
+                    <h9>New Title: </h9>
+                    <input
+                      type="text"
+                      value={newTitle || post.title}
+                      onChange={(e) => setNewTitle(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <h9>New Description: </h9>
+                    <textarea
+                      value={newDescription || post.description}
+                      onChange={(e) => setNewDescription(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label>New Visibility:</label>
+                    <div>
+                      {VISIBILITY_CHOICES.map((choice) => (
+                        <div key={choice[0]}>
+                          <input
+                            type="checkbox"
+                            name={`visibility-${post.id}`}
+                            value={choice[0]}
+                            onChange={(e) => {
+                              console.log(`Post ID: ${post.id}`);
+                              handleVisibilityChange(
+                                post.id,
+                                choice[0],
+                                e.target.checked
+                              );
+                            }}
+                            checked={
+                              postVisibility[post.id] &&
+                              postVisibility[post.id].includes(choice[0])
+                            }
+                          />
+                          <label>{choice[1]}</label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <button type="submit" className="btn btn-primary mt-3">
+                    Update Post
+                  </button>
+                </form>
+
+                <div>
+                  <div className="d-flex">
+                    <LikeComponent uploadId={post.id} />
+                    <div className="comment-icon">
+                      <button onClick={() => handleButtonClick(post.id)}>
+                        <BiComment />
+                      </button>
+                    </div>
+                  </div>
+                  <div
+                    className={`comment-section ${
+                      showComment ? "expanded" : ""
+                    }`}
+                  >
+                    {showComment && <Comment uploadId={post.id} />}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="stuf">
+            {userProfile.cover_photo && (
+              <img
+                src={userProfile.cover_photo}
+                alt="Cover Photo"
+                id="cover"
+                onError={() => {
+                  console.error(
+                    "Error loading cover photo:",
+                    userProfile.cover_photo
+                  );
+                }}
+>>>>>>> 2f8f94564fc84102e1b0ba996cc3a608a914afa6
               />
             </div>
             <div>

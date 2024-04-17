@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'contact',
     'sharer',
     'shareableAdmin',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -125,7 +126,7 @@ SIMPLE_JWT = {
     "UPDATE_LAST_LOGIN": False,
 
     "ALGORITHM": "HS256",
-    "SIGNING_KEY": settings.SECRET_KEY,
+    "SIGNING_KEY": SECRET_KEY,
     "VERIFYING_KEY": "",
     "AUDIENCE": None,
     "ISSUER": None,
@@ -162,7 +163,7 @@ SIMPLE_JWT = {
     "UPDATE_LAST_LOGIN": False,
 
     "ALGORITHM": "HS256",
-    "SIGNING_KEY": settings.SECRET_KEY,
+    "SIGNING_KEY": SECRET_KEY,
     "VERIFYING_KEY": "",
     "AUDIENCE": None,
     "ISSUER": None,
@@ -230,11 +231,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'media')
-
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = [BASE_DIR / "static_my_project", ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static_cdn", "static_root")
+
 MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "static_cdn", "media_root")
 
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 # MEDIA_URL = '/contact_media/'
@@ -258,8 +263,6 @@ AUTHENTICATION_BACKENDS = [
 # Use Django's default session engine
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
-# Set a valid value for SECRET_KEY
-SECRET_KEY = 'b4dfe0e2c20db4161ed8c9467a8c4a522c1f5826a710f7ba'
 
 CSRF_COOKIE_NAME = 'csrftoken'
 
@@ -294,7 +297,7 @@ APP_SCHEME = 'https'
 # EMAIL_USE_TLS = True
 # APP_SCHEME = 'https'
 
-FILE_UPLOAD_MAX_MEMORY_SIZE = 100 * 1024 * 1024
+FILE_UPLOAD_MAX_MEMORY_SIZE = 200 * 1024 * 1024
 
 
 
@@ -302,4 +305,19 @@ DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 # MEDIA_URL = '/contact_media/'
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'contact_media')
 
+
+
+
+AWS_GROUP_NAME = "SHAREABLE_GROUP-4 "
+AWS_USERNAME = "shareable"
+
+
+AWS_ACCESS_KEY_ID = "AKIA5RXJAHFZOSDJG2YV"
+AWS_SECRET_ACCESS_KEY = "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"
+AWS_STORAGE_BUCKET_NAME = "bucket-shareable"
+
+
+AWS_S3_FILE_OVERWRITE= False
+AWS_DEFAULT_ACL = None
+DEFAULT_FILE_STORAGE = "storages.backends.s3.S3Storage"
 

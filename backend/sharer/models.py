@@ -15,7 +15,6 @@ def upload_video(instance, filename):
     return f'uploads/videos/{filename}'
 
 def upload_file(instance, filename):
-    filename = slugify(filename)
     return f'uploads/files/{filename}'
 
 def upload_cover_photo(instance, filename):
@@ -122,7 +121,14 @@ class SharerUpload(models.Model):
     
 class SharerUploadFile(models.Model):
     upload = models.ForeignKey(SharerUpload, on_delete=models.CASCADE, related_name='files')
-    file = models.FileField(upload_to=upload_file, null=True, blank=True)
+    file = models.FileField(
+        upload_to=upload_file,
+        null=True,
+        blank=True,
+        validators=[
+            FileExtensionValidator(allowed_extensions=['txt', 'pdf', 'doc', 'docx'])
+        ]
+    )
 
 class SharerUploadImage(models.Model):
     upload = models.ForeignKey(SharerUpload, on_delete=models.CASCADE, related_name='images')

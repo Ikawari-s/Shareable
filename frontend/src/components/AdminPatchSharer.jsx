@@ -7,6 +7,7 @@ function AdminPatchSharer({ sharerId }) {
   const [name, setName] = useState('');
   const [profileImage, setProfileImage] = useState(null);
   const [coverImage, setCoverImage] = useState(null);
+  const [confirmUpdate, setConfirmUpdate] = useState(false); // State for confirmation modal
 
   const handleProfileImageChange = (e) => {
     setProfileImage(e.target.files[0]);
@@ -16,7 +17,12 @@ function AdminPatchSharer({ sharerId }) {
     setCoverImage(e.target.files[0]);
   };
 
-  const handlePatch = async () => {
+  const handlePatch = () => {
+    // Show confirmation modal
+    setConfirmUpdate(true);
+  };
+
+  const confirmUpdateAction = async () => {
     const formData = new FormData();
     if (name.trim() !== '') formData.append('name', name);
     if (coverImage !== null) formData.append('cover_photo', coverImage);
@@ -29,6 +35,11 @@ function AdminPatchSharer({ sharerId }) {
   
     await dispatch(patchSharerAdmin(sharerId, formData));
     window.location.reload();
+  };
+
+  const cancelUpdate = () => {
+    // Hide confirmation modal
+    setConfirmUpdate(false);
   };
 
   return (
@@ -63,6 +74,18 @@ function AdminPatchSharer({ sharerId }) {
       <button onClick={handlePatch} className="btn btn-primary">
         Update Sharer
       </button>
+
+      {confirmUpdate && (
+        <div className="confirmation-overlay">
+          <div className="confirmation-modal">
+            <div>
+              Are you sure you want to update this sharer?
+              <button onClick={confirmUpdateAction}>Yes</button>
+              <button onClick={cancelUpdate}>No</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

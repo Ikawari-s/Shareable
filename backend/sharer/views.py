@@ -43,7 +43,10 @@ def SharerView(request):
         )
 
     if selected_category and selected_category.lower() != 'all':
-        queryset = queryset.filter(category__iexact=selected_category.strip()).exclude(category__isnull=True).exclude(category__exact='')
+        if selected_category.lower() == 'not specified':
+            queryset = queryset.filter(Q(category__isnull=True) | Q(category__exact=''))
+        else:
+            queryset = queryset.filter(category__iexact=selected_category.strip())
 
     if sort_by:
         if sort_by == 'all':
@@ -265,6 +268,7 @@ def SharerUploadListView(request):
     serializer = SharerUploadListSerializer(queryset, many=True)
     return Response(serializer.data)
 
+from rest_framework.exceptions import ValidationError
 #IS SHARER // okay
 class SharerUploadViews(APIView):
     permission_classes = [IsAuthenticated, IsSharerPermission]
@@ -275,10 +279,21 @@ class SharerUploadViews(APIView):
         serializer = SharerUploadSerializer(data=request.data, context={'request': request})
         
         if serializer.is_valid():
+            upload_files = request.FILES.getlist('files')
+            for upload_file in upload_files:
+                if not is_valid_file_type(upload_file.name):
+                    raise ValidationError("File type not allowed.")
+            
             serializer.save(uploaded_by=sharer)  
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+def is_valid_file_type(file_name):
+    allowed_extensions = ['txt', 'pdf', 'doc', 'docx']
+    extension = file_name.split('.')[-1]
+    if extension in allowed_extensions:
+        return True
+    return False
 
 
 

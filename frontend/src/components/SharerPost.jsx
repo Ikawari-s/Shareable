@@ -30,7 +30,7 @@ function SharerPost({ uploadSharer }) {
       if (checked) {
         setFormData(prevState => ({
           ...prevState,
-          [name]: [...prevState[name], value], // Append value to array
+          [name]: [...prevState[name], value], 
         }));
       } else {
         setFormData(prevState => ({
@@ -56,6 +56,20 @@ function SharerPost({ uploadSharer }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
+
+
+    const invalidFiles = formData.files.filter(file => {
+      const fileType = file.name.split('.').pop().toLowerCase();
+      return !['pdf', 'docx', 'doc', 'txt'].includes(fileType);
+    });
+  
+    if (invalidFiles.length > 0) {
+      alert('Unsupported file types detected. Supported file types are: .pdf, .docx, .doc, and .txt');
+      window.location.reload();
+      return;
+    }
+  
+  
   
     setLoading(true);
   
@@ -88,13 +102,14 @@ function SharerPost({ uploadSharer }) {
       <h1>Create a Post</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <h2>Title:</h2>
-          <input className="form-control mb-2" type="text" placeholder='Title' name="title" value={formData.title} onChange={handleChange} />
-        </div>
-        <div>
-          <h2>Description:</h2>
-          <textarea className="form-control mb-2" type="text" placeholder='Description' name="description" value={formData.description} onChange={handleChange} />
-        </div>
+        <h2>Title:</h2>
+        <input className="form-control mb-2" type="text" placeholder='Title' name="title" value={formData.title} onChange={handleChange} required />
+      </div>
+      <div>
+        <h2>Description:</h2>
+        <textarea className="form-control mb-2" type="text" placeholder='Description' name="description" value={formData.description} onChange={handleChange} required />
+      </div>
+
         <div>
           <label>Upload Image:</label>
           <input className="form-control mb-2" type="file" name="images" onChange={handleFileChange} multiple accept="image/*" />
@@ -106,6 +121,8 @@ function SharerPost({ uploadSharer }) {
         <div>
           <label>Upload File:</label>
           <input className="form-control mb-2" type="file" name="files" onChange={handleFileChange} multiple />
+          <small> Supported file types for Upload file are: .pdf, .docx, .doc, and .txt</small>
+          <p>{" "}</p>
         </div>
         <div>
           <label>Visibility:</label>
@@ -125,6 +142,7 @@ function SharerPost({ uploadSharer }) {
           </div>
         </div>
         <button className="btn btn-primary" type="submit" disabled={loading}>Upload</button>
+        <small>Max file size: 200MB</small>
       </form>
     </div>
   );
