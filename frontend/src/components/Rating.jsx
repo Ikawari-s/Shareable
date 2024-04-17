@@ -43,6 +43,7 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
   const [updateRatingValue, setUpdateRatingValue] = useState(0);
   const [updateComment, setUpdateComment] = useState("");
   const [deletingRatingId, setDeletingRatingId] = useState(null);
+  const sortedRatings = [...ratings];
 
   const handleUpdateRating = async () => {
     try {
@@ -61,6 +62,8 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
       console.error("Error updating rating:", error);
     }
   };
+  
+  
 
   const handleDeleteRating = async (ratingId) => {
     try {
@@ -103,6 +106,17 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
 
   // const averageRating = calculateAverageRating();
 
+  sortedRatings.sort((a, b) => {
+    const badgeOrder = { Gold: 1, Silver: 2, Bronze: 3 };
+  
+    // Get badge priority for each rating (default to lower priority if badge not present)
+    const badgeA = a.badge ? badgeOrder[a.badge] || 4 : 4;
+    const badgeB = b.badge ? badgeOrder[b.badge] || 4 : 4;
+  
+    // Sort by badge priority (ascending order)
+    return badgeA - badgeB;
+  });
+
   return (
     <div
       className="scroll-box overflow-auto"
@@ -118,7 +132,7 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
           : "No ratings available"}
       </div>
       <ul>
-        {ratings.map((rating) => (
+        {sortedRatings.map((rating) => (
           <li key={rating.id} style={{ listStyle: "none" }}>
             <div style={{ background: "green" }}>
               {rating.profile_picture && (
@@ -129,15 +143,6 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
                 />
               )}
               : {rating.username}{" "}
-              {rating.user_tier === "tier3" && (
-                <img src={goldtier} style={{ maxWidth: "5rem" }} />
-              )}
-              {rating.user_tier === "tier2" && (
-                <img src={silvertier} style={{ maxWidth: "5rem" }} />
-              )}
-              {rating.user_tier === "tier1" && (
-                <img src={bronzetier} style={{ maxWidth: "5rem" }} />
-              )}
               {rating.badge === "Gold" && (
                 <img src={gold} style={{ maxWidth: "2rem" }} />
               )}
@@ -147,7 +152,16 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
               {rating.badge === "Bronze" && (
                 <img src={bronze} style={{ maxWidth: "2rem" }} />
               )}
-              {rating.badge === "None" && null}, Rating: {rating.rating},
+              {rating.badge === "None" && null}
+              {rating.user_tier === "tier3" && (
+                <img src={goldtier} style={{ maxWidth: "5rem" }} />
+              )}
+              {rating.user_tier === "tier2" && (
+                <img src={silvertier} style={{ maxWidth: "5rem" }} />
+              )}
+              {rating.user_tier === "tier1" && (
+                <img src={bronzetier} style={{ maxWidth: "5rem" }} />
+              )}, Rating: {rating.rating},
               Comment: {rating.comment}
               {!rating.edited && rating.time_posted && (
                 <div>Post Time: {rating.time_posted}</div>

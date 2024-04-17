@@ -71,6 +71,15 @@ function Comment({ uploadId }) {
     }
   };
 
+  const sortCommentsByBadge = (comments) => {
+    return comments.sort((a, b) => {
+      const badgeOrder = { Gold: 1, Silver: 2, Bronze: 3 };
+      const badgeA = a.badge ? badgeOrder[a.badge] || 4 : 4;
+      const badgeB = b.badge ? badgeOrder[b.badge] || 4 : 4;
+      return badgeA - badgeB;
+    });
+  };
+
   return (
     <div>
       {/* <h2>Comments</h2> */}
