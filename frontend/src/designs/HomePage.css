@@ -9,6 +9,10 @@
     animation: slideAndFadeIn 1s ease forwards;
 }
 
+.wat{   
+    animation: slideAndFadeIn 1s ease forwards;
+}
+
 .brap{
     padding-top: 3rem;
     animation: slideAndFadeIn 1s ease forwards;
@@ -228,25 +232,44 @@
 
 #country::-webkit-scrollbar {
     scrollbar-width: 0;
-  }
+}
 
 #paw{
-   border-radius: 6.25rem;
-   border-color: #084d6e;
-   background-color: #084d6e;
+    border-radius: 6.25rem;
+    border-color: #084d6e;
+    background-color: #084d6e;
 }
 
 #paw:hover{
     box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
     border-color: #0071bd;
     background-color: #0071bd;
- }
+}
 
- #paw:active{
+#paw:active{
     box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
     border-color: #e83283;
     background-color: #e83283;
- }
+}
+
+#jaw{
+    border-radius: 6.25rem;
+    border-color: #bd0000;
+    background-color: #bd0000;
+    margin-bottom: 2rem;
+}
+
+#jaw:hover{
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+    border-color: #e83232;
+    background-color: #e83232;
+}
+
+#jaw:active{
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+    border-color: #6e0808;
+    background-color: #6e0808;
+}
 
  .dange{
     /* background-color: #0071bd; */

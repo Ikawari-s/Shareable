@@ -64,6 +64,8 @@ function Homepage({ sharerList, listSharers }) {
         onChange={(e) => setSearchTerm(e.target.value)}
         className="form-control mb-3"
       />
+      
+      <FollowedSharersList />
 
       {/* Sorting Buttons */}
       <div className="mb-3 d-flex" style={{justifyContent: 'space-between'}}>
@@ -128,6 +130,7 @@ function Homepage({ sharerList, listSharers }) {
       </div>
 
       {/* Category Dropdown */}
+      
       <div className="mb-3">
         <select
           value={selectedCategory}
@@ -165,6 +168,7 @@ function Homepage({ sharerList, listSharers }) {
       </div>
 
        {/* Display Sharers */}
+       
       <div className="row">
         {filteredSharers.length === 0 ? (
           <div className="col-md-12 text-center">
@@ -222,7 +226,7 @@ function Homepage({ sharerList, listSharers }) {
 
       {/* Display followed sharers list */}
       
-      <FollowedSharersList />
+      {/* <FollowedSharersList /> */}
       
 
       {/* Show loading state if data is being fetched */}

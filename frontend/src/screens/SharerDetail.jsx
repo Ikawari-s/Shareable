@@ -230,88 +230,97 @@ const onApprove = (data, actions) => {
   };
 
   const handleCancelUnfollow = () => {
-    setShowConfirmation(false); // Hide the confirmation modal
-    // You can add any additional cancel logic here if needed
+    setShowConfirmation(false);
   };
 
   return (
-    <div>
+    <div className="wat">
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
         <p>Error: {error}</p>
       ) : sharer ? (
-        <div className="text-center py-3" style={{ textAlign: "center" }}>
+        <div className="text-center py-3 hi" style={{ textAlign: "center" }}>
           {sharer.cover_photo && (
             <img
+              className="cober"
               src={sharer.cover_photo}
               alt="Cover-Photo"
-              style={{ position: "relative", width: "100%", height: "50vh" }}
             />
           )}
           {sharer.image && (
             <img
               src={sharer.image}
               alt="Profile"
-              style={{
-                width: "10rem",
-                height: "10rem",
-                borderRadius: "50%",
-                padding: "0.2rem",
-                position: "absolute",
-                top: "30%",
-                left: "50%",
-                transform: "translateX(-50%)",
-                backgroundColor: "white",
-              }}
+              id="pfp"
             />
           )}
-          <h2>{sharer.name}</h2>
-          <p>@{sharer.username}</p>
-          <p>Followers : {sharer.total_followers}</p>
+          <div id="tex">
+          <h1>{sharer.name}</h1>
+          <p className="username">@{sharer.username}</p>
           <p>{sharer.description}</p>
-          <p>Category: {sharer.category ? sharer.category : "Not Specified"}</p>
-          <PostCount sharerId={id} />
+          <p style={{opacity:'0.7', fontWeight:'lighter'}}>{sharer.total_followers} followers ∘ {sharer.category ? sharer.category : "Not Specified"} ∘ {sharer.average_rating !== null
+                    ? sharer.average_rating > 0
+                      ? `${sharer.average_rating}/5`
+                      : " No ratings yet"
+                    : "N/A"}</p> 
+          </div>
+          {/* <PostCount sharerId={id} /> */}
           <div>
+          {showConfirmation && (
+              <div className="confirmation-overlay">
+                <div className="confirmation-unfollow">
+                  <p>Are you sure you want to unfollow?</p>
+                  <button onClick={handleConfirmUnfollow}>Yes</button>
+                  <button onClick={handleCancelUnfollow}>No</button>
+                </div>
+              </div>
+            )}
             {isFollowing ? (
-              <Button onClick={() => setShowConfirmation(true)}>
-                Unfollow Sharer
+              <Button id="jaw" onClick={() => setShowConfirmation(true)}>
+                <strong>Unfollow Sharer</strong>
               </Button>
+              
             ) : (
               <>
-                <div>
+              <h3 style={{letterSpacing:'.2rem', fontWeight: 'lighter'}}>Choose your membership</h3>
+              <div className="row ra">
+                <div className="column wo" id="bronze">
+                  <h1>Tier 1</h1>
                   <PostCount sharerId={id} tier="tier1" />
                   <Button
-                    variant="success"
+                    id="pay"
                     onClick={() => handleTierButtonClick("tier1", 5)}
-                    style={{ backgroundColor: "#FF5733" }}
                   >
-                    Tier 1 - 5$
+                    <strong>5$</strong>
                   </Button>
                 </div>
-                <div>
-                  <PostCount sharerId={id} tier="tier2" />
-                  <Button
-                    variant="success"
-                    onClick={() => handleTierButtonClick("tier2", 10)}
-                    style={{ backgroundColor: "#C0C0C0" }}
-                  >
-                    Tier 2 - 10$
-                  </Button>
-                </div>
-                <div>
+                <div className="column wo" id="gold">
+                  <h1>Tier 3</h1>
                   <PostCount sharerId={id} tier="tier3" />
                   <Button
-                    variant="success"
+                    id="pay"
                     onClick={() => handleTierButtonClick("tier3", 20)}
-                    style={{ backgroundColor: "#FFD700" }}
                   >
-                    Tier 3 - 20$
+                    <strong>20$</strong>
+                  </Button>
+                  
+                </div>
+                <div className="column wo" id="silver" >
+                  <h1>Tier 2</h1>
+                  <PostCount sharerId={id} tier="tier2" />
+                  <Button
+                    id="pay"
+                    onClick={() => handleTierButtonClick("tier2", 10)}
+                  >
+                    <strong>10$</strong>
                   </Button>
                 </div>
+              </div>
               </>
             )}
             {/* PayPal button section */}
+            
             {showPaypalModal && followTier && paypalLoaded && (
               <PayPalScriptProvider
                 options={{
@@ -330,65 +339,62 @@ const onApprove = (data, actions) => {
                   />
                 </div>
               </PayPalScriptProvider>
-            )}
-            {showConfirmation && (
-              <div className="confirmation-overlay">
-                <div className="confirmation-modal">
-                  <p>Are you sure you want to unfollow?</p>
-                  <button onClick={handleConfirmUnfollow}>Yes</button>
-                  <button onClick={handleCancelUnfollow}>No</button>
+                )}
+          </div>
+
+          <div className="col-md-12">
+      <div className="d-flex" style={{ textAlign: 'left' }}>
+      <div className="nain">
+<div>
+              {isFollowing ? (
+                <div>
+                  {userInfo.followed_sharers.tier1.includes(parseInt(id)) && (
+                    <TierOneLatest sharerId={id} />
+                  )}
+                  {userInfo.followed_sharers.tier2.includes(parseInt(id)) && (
+                    <TierTwoLatest sharerId={id} />
+                  )}
+                  {userInfo.followed_sharers.tier3.includes(parseInt(id)) && (
+                    <TierThreeLatest sharerId={id} />
+                  )}
                 </div>
-              </div>
-            )}
+              ) : (
+                <div>
+                  {/* <h6>FOLLOW NOW!</h6> */}
+                  <div className="toppy" style={{width:'60rem', height:'5rem', padding:'1rem 0rem', textAlign:'center', overflow:'visible'}}>
+                  <h1>Preview Content</h1>
+                  </div>
+                  <PreviewContent sharerId={id} />
+                </div>
+              )}
           </div>
-
+       	</div>
+        <div>
+        <div className="toppy">
           <div>
-            {isFollowing ? (
-              <div>
-                {userInfo.followed_sharers.tier1.includes(parseInt(id)) && (
-                  <TierOneLatest sharerId={id} />
-                )}
-                {userInfo.followed_sharers.tier2.includes(parseInt(id)) && (
-                  <TierTwoLatest sharerId={id} />
-                )}
-                {userInfo.followed_sharers.tier3.includes(parseInt(id)) && (
-                  <TierThreeLatest sharerId={id} />
-                )}
-              </div>
-            ) : (
-              <div>
-                <h6>FOLLOW NOW!</h6>
-                <h3>Preview Content</h3>
-                <PreviewContent sharerId={id} />
-              </div>
-            )}
+          <TopDonor sharerId={id} />
           </div>
-
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-            }}
-          >
-            <div style={{ flex: 1, marginRight: "20px" }}>
-              <TopDonor sharerId={id} />
-            </div>
-            <div style={{ flex: 1 }}>
+        </div>  
+         <div className="tippy">
+            <div>
               <TipBox sharerId={id} />
             </div>
-          </div>
-          <Link to={"/homepage"}>
-            <Button variant="primary">Go Back</Button>
-          </Link>
-          <div className="scroll-box overflow-auto">
+        </div>
+        <div className="ratty">    
+          <div className="">
+          {isFollowing && !userHasRated && (
+              <PostSharerRatingsComponent sharerId={id} />
+            )}
             <div className="fetch-ratings-box">
               <FetchSharerRatingsComponent sharerId={id} />
             </div>
-            {isFollowing && !userHasRated && (
-              <PostSharerRatingsComponent sharerId={id} />
-            )}
-          </div>
+          </div>	
+      </div>
+      </div>
+        </div>    
+
+
+      </div>
         </div>
       ) : null}
     </div>

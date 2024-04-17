@@ -80,10 +80,19 @@ function TipBox({ sharerId }) {
   
 
   return (
-    <div>
-      <h2>Tip Box</h2>
+    <div style={{ textAlign: 'center' }}>
+      <h1>Tip Box</h1>
       <input
         id="tipAmountInput"
+        style={{
+          width:'100%',
+          border:'none',
+          borderRadius:'0.3rem',
+          height:'3rem',
+          fontSize:'1.1rem',
+          padding:'0rem 0rem 0rem 1rem',
+          marginBottom:'1rem'
+        }}
         type="number"
         value={tipAmount}
         onChange={(e) => setTipAmount(parseFloat(e.target.value))}

@@ -29,6 +29,13 @@
     height: 96vh;
 }
 
+.nain{
+    /* background-color: red;    */
+    margin-left: 2rem;
+    margin-right: 2rem;
+    width: 60rem;
+}
+
 .names-and-shit{
     margin: 1rem 0 0 1.8rem;
     /* background-color: blue; */
@@ -111,7 +118,8 @@
     color: red;
     background: none;
     border: none;
-    margin: 0 0 1rem 1rem;
+    font-size: .9rem;
+    margin: 0 0 1.2rem .4rem;
 }
 
 #bubble{
@@ -275,9 +283,9 @@
     border-color: #0071bd;
     background-color: #0071bd;
     transition: all 0.1s ease-in-out;
- }
+}
 
- .update-icon{
+.update-icon{
     height: fit-content;
     width: fit-content; 
     background-color: rgba(255, 255, 255, 0.5);
@@ -296,6 +304,28 @@
 
 .update-icon text{
     font-size: .9rem;
+    padding-left: 0.5rem;
+}
+
+.rawr-icon{
+    height: fit-content;
+    width: fit-content; 
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 0rem 0.05rem;
+    border-radius: 2rem;
+    margin-right: .5rem;
+}
+
+.rawr-icon button{
+    background: none;
+    color: white;
+    border: none;
+    margin-bottom: 0.3rem; 
+    font-size: small;
+}
+
+.rawr-icon text{
+    font-size: .7rem;
     padding-left: 0.5rem;
 }
 
@@ -346,4 +376,155 @@
 .update-trans.show {
     height: 29rem;
     /* background-color: red; */
+}
+
+.hi{
+    /* background: red; */
+    margin-left: 5rem;
+}
+
+.cober{
+    position: relative;
+    width: 100%;
+    height: 50vh;
+    margin-top: -2rem;
+    object-fit: cover;
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+}
+
+#pfp{
+    width: 10rem;
+    height: 10rem;
+    border-radius: 50%;
+    position: relative;
+    background-color: white;
+    box-shadow: 0 0.313rem 0.625rem rgba(0,0,0,0.2);
+    margin-top: -4rem;
+}
+
+.ra{
+    display: flex;
+    justify-content: center;
+    height: 35rem;
+    width: 100%;
+}
+
+#bronze button{
+    background: linear-gradient(to bottom right, #CD7F32, #A52A2A);
+    transition: all 0.2s ease-in-out;
+}
+
+#gold button{
+    background: linear-gradient(to bottom right, #FFD700, #FFA500);
+}
+
+#silver button{
+    background: linear-gradient(to bottom right, #dbdbdb, #7d7d7d);
+}
+
+#bronze button,
+#gold button,
+#silver button {
+    background-size: 200% auto;
+    transition: all 0.2s ease;
+    transform: scale(1);
+}
+
+#bronze button:hover {
+    background-position: right center;
+    box-shadow: 0 2px 15px #00000080;
+}
+
+#gold button:hover {
+    background-position: right center;
+    box-shadow: 0 2px 15px #00000080;
+}
+
+#silver button:hover {
+    background-position: right center;
+    box-shadow: 0 2px 15px #00000080;
+}
+
+
+.wo{
+    width: 20rem;
+    margin: 2rem 1rem;
+    height: 30rem;
+    padding: 2rem 0rem;
+    border-radius: 0.3rem;
+    box-shadow: 0 2px 10px #00000080;
+    /* background-image: none !important; */
+    transition: all 0.15s ease-in-out;
+    margin-bottom: 5rem;
+}
+
+.wo:hover{
+    box-shadow: 0 2px 15px #00000080;
+    height: 30.5rem;
+}
+
+#gold {
+    margin-top: 1rem;
+    height: 31rem;
+}
+
+#gold:hover{
+    box-shadow: 0 2px 15px #00000080;
+    height: 31.5rem;
+}
+
+.username{
+    margin-top: -1rem !important;
+    padding-bottom: 1.5rem;
+    font-style: italic;
+}
+
+#pay{
+    outline: none;
+    border: 0;
+    padding: 1rem 7rem;
+    box-shadow: 0 2px 10px #00000080;
+    margin-top: 14rem;
+}
+
+.tippy{
+    /* background-color: red; */
+    width: 25rem;
+    box-shadow: 0 2px 5px #00000080;
+    background-color: none !important;
+    position: relative;
+    margin-bottom: 2rem;
+    padding: 2rem;
+    border-radius: 1rem;
+    overflow: scroll;
+    height: fit-content;
+}
+
+.toppy{
+    /* background-color: red; */
+    width: 25rem;
+    box-shadow: 0 2px 5px #00000080;
+    background-color: none !important;
+    position: relative;
+    margin-bottom: 2rem;
+    padding-top: 2rem;
+    border-radius: 1rem;
+    overflow: scroll;
+    height: fit-content;
+}
+
+.ratty{
+    /* background-color: red; */
+    width: 25rem;
+    background-color: none !important;
+    position: relative;
+    border-radius: 1rem;
+    overflow: visible;
+    height: fit-content;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+height: 3rem;
+padding-left: 0.2rem;
 }
