@@ -253,7 +253,7 @@ function SharerPageScreen() {
   const handleCancelUpdate = () => {
     setShowUpdateConfirmation(false);
   };
-  
+
   const downloadFile = async (fileUrl) => {
     try {
       console.log("File URL:", fileUrl);
@@ -328,9 +328,15 @@ function SharerPageScreen() {
                 </button>
               </div>
             </div>
-            <div className={`transition ${showPost ? "show" : ""}`}>
-              {showPost && <SharerPost />}
+            <div
+              className={`transition ${showPost ? "show" : ""}`}
+              style={{ maxHeight: "600px", overflowY: "auto" }}
+            >
+              <div style={{ maxHeight: "100%", overflowY: "auto" }}>
+                {showPost && <SharerPost />}
+              </div>
             </div>
+
             {sortedPosts.map((post) => (
               <div key={post.id}>
                 <div className="d-flex rat">
@@ -457,28 +463,28 @@ function SharerPageScreen() {
                       <div>
                         <label>New Visibility:</label>
                         <div>
-                        {VISIBILITY_CHOICES.map((choice) => (
-                        <div key={choice[0]}>
-                          <input
-                            type="checkbox"
-                            name={`visibility-${post.id}`}
-                            value={choice[0]}
-                            onChange={(e) => {
-                              console.log(`Post ID: ${post.id}`);
-                              handleVisibilityChange(
-                                post.id,
-                                choice[0],
-                                e.target.checked
-                              );
-                            }}
-                            checked={
-                              postVisibility[post.id] &&
-                              postVisibility[post.id].includes(choice[0])
-                            }
-                          />
-                          <label>{choice[1]}</label>
-                        </div>
-                      ))}
+                          {VISIBILITY_CHOICES.map((choice) => (
+                            <div key={choice[0]}>
+                              <input
+                                type="checkbox"
+                                name={`visibility-${post.id}`}
+                                value={choice[0]}
+                                onChange={(e) => {
+                                  console.log(`Post ID: ${post.id}`);
+                                  handleVisibilityChange(
+                                    post.id,
+                                    choice[0],
+                                    e.target.checked
+                                  );
+                                }}
+                                checked={
+                                  postVisibility[post.id] &&
+                                  postVisibility[post.id].includes(choice[0])
+                                }
+                              />
+                              <label>{choice[1]}</label>
+                            </div>
+                          ))}
                         </div>
                       </div>
                       <button type="submit" className="btn btn-primary mt-3">
