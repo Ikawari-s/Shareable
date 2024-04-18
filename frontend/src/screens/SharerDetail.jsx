@@ -124,7 +124,7 @@ const SharerDetail = ({
       );
 
       if (isExpired) {
-        window.location.reload();
+        // window.location.reload();
       }
     };
 
@@ -145,7 +145,7 @@ const onApprove = (data, actions) => {
         updatedUserInfo.followed_sharers[followTier].push(parseInt(id));
         localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
         dispatch(getExpiration()).then(() => {
-          window.location.reload();
+          // window.location.reload();
         });
       })  
       .catch((error) => {

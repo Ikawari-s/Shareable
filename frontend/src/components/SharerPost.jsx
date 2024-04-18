@@ -56,8 +56,7 @@ function SharerPost({ uploadSharer }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
-
-
+  
     const invalidFiles = formData.files.filter(file => {
       const fileType = file.name.split('.').pop().toLowerCase();
       return !['pdf', 'docx', 'doc', 'txt'].includes(fileType);
@@ -65,11 +64,20 @@ function SharerPost({ uploadSharer }) {
   
     if (invalidFiles.length > 0) {
       alert('Unsupported file types detected. Supported file types are: .pdf, .docx, .doc, and .txt');
-      window.location.reload();
+  
+
+      const initialFormData = {
+        title: '',
+        description: '',
+        images: [],
+        videos: [],
+        files: [],
+        visibility: [], 
+      };
+  
+      setFormData(initialFormData); 
       return;
     }
-  
-  
   
     setLoading(true);
   
@@ -93,7 +101,6 @@ function SharerPost({ uploadSharer }) {
   
     await uploadSharer(formDataUpload);
     setLoading(false);
-    window.location.reload(); 
   };
   
 

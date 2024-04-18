@@ -14,8 +14,6 @@ function AdminContactDelete(props) {
   const confirmDelete = () => {
     dispatch(deleteAdminContact(contactId));
     setShowConfirmation(false);
-
-    window.location.reload();
   };
 
   return (

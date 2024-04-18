@@ -284,7 +284,6 @@ const PostSharerRatingsComponent = ({ sharerId }) => {
       };
 
       await dispatch(postSharerRatings(sharerId, ratingData));
-      window.location.reload();
     } catch (error) {
       console.error("Error posting rating:", error);
     }

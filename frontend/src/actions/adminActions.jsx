@@ -69,6 +69,7 @@ export const listAdminUsers = () => async (dispatch) => {
     });
   }
 };
+
 export const createUserAdmin = (userData) => async (dispatch) => {
   try {
     dispatch({ type: CREATE_USER_ADMIN_REQUEST });
@@ -93,6 +94,7 @@ export const createUserAdmin = (userData) => async (dispatch) => {
 
     if (response.status === 201) {
       dispatch({ type: CREATE_USER_ADMIN_SUCCESS, payload: response.data });
+      dispatch(listAdminUsers());
       return response;
     } else {
       throw new Error("Bad Request");
@@ -152,6 +154,7 @@ export const updateUserAdmin = (userId, userData) => async (dispatch) => {
 
     if (response.status === 200) {
       dispatch({ type: UPDATE_USER_ADMIN_SUCCESS, payload: response.data });
+      dispatch(listAdminUsers());
       return response;
     } else {
       throw new Error("Bad Request");
@@ -188,6 +191,7 @@ export const deleteUserAdmin = (userId) => async (dispatch) => {
 
     if (response.status === 204) {
       dispatch({ type: DELETE_USER_ADMIN_SUCCESS });
+      dispatch(listAdminUsers());
     } else {
       throw new Error('Bad Request');
     }
@@ -252,6 +256,7 @@ export const sendIncomeToSharer = (sharerId) => async (dispatch) => {
 
     if (response.status === 200) {
       dispatch({ type: INCOME_SENT_ADMIN_SUCCESS });
+      dispatch(getSharerIncomeAdmin(sharerId));
     } else {
       throw new Error('Bad Request');
     }
@@ -283,6 +288,7 @@ export const patchSharerAdmin = (sharerId, formData) => async (dispatch) => {
     const response = await instance.patch(`api/admin/patch-sharer/${sharerId}/`, formData, config);
 
     dispatch({ type: PATCH_SHARER_ADMIN_SUCCESS, payload: response.data });
+    dispatch(getSharerIncomeAdmin(sharerId));
   } catch (error) {
     dispatch({
       type: PATCH_SHARER_ADMIN_FAIL,
@@ -409,6 +415,8 @@ export const deleteAdminContact = (contactId) => async (dispatch) => {
     await instance.delete(`api/admin/delete-contact/${contactId}/`, config);
 
     dispatch({ type: DELETE_CONTACT_SUCCESS, payload: contactId });
+    
+    dispatch(fetchAdminContacts());
   } catch (error) {
     dispatch({
       type: DELETE_CONTACT_FAIL,

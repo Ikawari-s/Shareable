@@ -40,6 +40,7 @@ import {
   REMOVE_DELETED_POST,
   
 } from "../constants/userConstants";
+import {profile} from './profileActions'
 
 const instance = axios.create({
   baseURL: "http://127.0.0.1:8000/",
@@ -258,6 +259,7 @@ export const postComment = (userId, uploadId, comments, accessToken) => async (d
       config
     );
     dispatch({ type: USER_COMMENT_SUCCESS, payload: response.data });
+    dispatch(listComments(uploadId));
   } catch (error) {
     dispatch({ type: USER_COMMENT_FAIL, payload: error.message });
   }
@@ -308,6 +310,7 @@ export const deleteComments = (commentId) => async (dispatch) => {
     const response = await instance.delete(`api/sharer/comment/delete/${commentId}/`, config);
     const { data } = response;
     dispatch({ type: USER_DELETE_COMMENT_SUCCESS, payload: { comments: data, commentId } });
+    dispatch(listComments(commentId));
   } catch (error) {
     dispatch({ type: USER_DELETE_COMMENT_FAIL, payload: error.response ? error.response.data.message : error.message });
   }
@@ -351,7 +354,10 @@ export const updateUserProfile = ({ profile_picture, username }) => async (dispa
     dispatch({
       type: UPDATE_PROFILE_SUCCESS,
       payload: data,
+      
     });
+
+    dispatch(profile())
   } catch (error) {
     dispatch({
       type: UPDATE_PROFILE_FAILURE,

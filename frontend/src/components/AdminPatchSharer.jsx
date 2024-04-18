@@ -18,7 +18,6 @@ function AdminPatchSharer({ sharerId }) {
   };
 
   const handlePatch = () => {
-    // Show confirmation modal
     setConfirmUpdate(true);
   };
 
@@ -26,7 +25,7 @@ function AdminPatchSharer({ sharerId }) {
     const formData = new FormData();
     if (name.trim() !== '') formData.append('name', name);
     if (coverImage !== null) formData.append('cover_photo', coverImage);
-    if (profileImage !== null) formData.append('image', profileImage); // Corrected field name
+    if (profileImage !== null) formData.append('image', profileImage); 
   
     console.log('FormData:', formData);
     console.log('Name:', name);
@@ -34,11 +33,9 @@ function AdminPatchSharer({ sharerId }) {
     console.log('Profile Image:', profileImage);
   
     await dispatch(patchSharerAdmin(sharerId, formData));
-    window.location.reload();
   };
 
   const cancelUpdate = () => {
-    // Hide confirmation modal
     setConfirmUpdate(false);
   };
 

@@ -182,10 +182,10 @@ export const adminDeleteContactsReducer = (state = initialState, action) => {
   switch (action.type) {
     case DELETE_CONTACT_REQUEST:
       return { ...state, loading: true, error: null };
-      case DELETE_CONTACT_SUCCESS:
-      return { ...state, loading: false, contactsData: action.payload, error: null }; 
-      case DELETE_CONTACT_FAIL:
-      return { ...state, loading: false, contactsData: [], error: action.payload }; 
+    case DELETE_CONTACT_SUCCESS:
+      return { ...state, loading: false, error: null }; 
+    case DELETE_CONTACT_FAIL:
+      return { ...state, loading: false, error: action.payload };
     default:
       return state;
   }

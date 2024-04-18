@@ -51,7 +51,6 @@ function AdminUpdateUser({ userId, isActive, isStaff, isSharer, isSuperuser }) {
     const response = await dispatch(updateUserAdmin(userId, formData));
 
     if (response && response.status === 200) {
-      window.location.reload();
     } else {
       setError("Failed to update user. Please try again.");
     }

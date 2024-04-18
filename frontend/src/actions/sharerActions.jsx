@@ -225,6 +225,7 @@ export const uploadSharer = (formData) => async (dispatch) => {
     console.log("Response Data:", data);
 
     dispatch({ type: SHARER_POST_LIST_SUCCESS, payload: data });
+    dispatch(listSharerPosts());
   } catch (error) {
     dispatch({
       type: SHARER_POST_LIST_FAIL,
@@ -611,6 +612,7 @@ export const postSharerRatings = (sharerId, ratingData) => async (dispatch) => {
     const response = await axios.post(`/api/sharer/ratings/${sharerId}`, fullRatingData, config);
 
     dispatch({ type: POST_SHARER_RATINGS_SUCCESS, payload: response.data });
+    dispatch(fetchSharerRatings(sharerId));
   } catch (error) {
     dispatch({
       type: POST_SHARER_RATINGS_FAILURE,
@@ -642,6 +644,7 @@ export const deleteSharerRatings = (ratingId) => async (dispatch) => {
     const response = await instance.delete(`/api/sharer/delete-rating/${ratingId}`, config); // Pass the config object for authorization
 
     dispatch({ type: DELETE_SHARER_RATINGS_SUCCESS, payload: response.data });
+    dispatch(fetchSharerRatings(ratingId));
   } catch (error) {
     dispatch({
       type: DELETE_SHARER_RATINGS_FAILURE,
@@ -673,6 +676,7 @@ export const patchSharerRatings = (ratingId, newData) => async (dispatch) => {
     const response = await instance.patch(`/api/sharer/update-rating/${ratingId}`, newData, config); // Pass the config object for authorization
 
     dispatch({ type: PATCH_SHARER_RATINGS_SUCCESS, payload: response.data });
+    dispatch(fetchSharerRatings(ratingId));
   } catch (error) {
     dispatch({
       type: PATCH_SHARER_RATINGS_FAILURE,
@@ -718,6 +722,7 @@ export const editSharerPost = (upload_id, postData = {}) => async (dispatch) => 
       type: SHARER_EDIT_POST_SUCCESS,
       payload: response.data,
     });
+    dispatch(listSharerPosts());
 
     return response;
   } catch (error) {
@@ -808,7 +813,7 @@ export const sendTipBox = (userId, sharerId, tipAmount) => async (dispatch) => {
       payload: response.data,
     });
 
-
+    dispatch(getTopDonor(sharerId));
     return response;
   } catch (error) {
 

@@ -12,7 +12,6 @@ function AdminDeleteUser({ userId }) {
 
   const handleConfirmDelete = () => {
     dispatch(deleteUserAdmin(userId));
-    window.location.reload();
   };
 
   const handleCancelDelete = () => {

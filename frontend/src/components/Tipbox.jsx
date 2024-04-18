@@ -66,7 +66,6 @@ function TipBox({ sharerId }) {
         .then((response) => {
           console.log("Tip box sent successfully:", response);
           setTipAmount("");
-          window.location.reload();
         })
         .catch((error) => {
           console.error("Error sending tip box:", error);

@@ -44,7 +44,6 @@ const Settings = () => {
     if (newProfilePicture || username) {
       dispatch(updateUserProfile({ profile_picture: newProfilePicture, username }));
       setNewProfilePicture(null);
-      window.location.reload()
     }
   };
 
@@ -56,15 +55,7 @@ const Settings = () => {
 
 
 
-          <div id='titel' style={{borderBottom: 'solid rgba(255,255,255,0.5) 1px', paddingBottom: '1.5rem'}}>
-
-
-          <div id='titel' style={{borderBottom: 'solid rgba(255,255,255,0.5) 1px', paddingBottom: '1.5rem'}}>
-
-
-
-          <div id='titel' style={{borderBottom: 'solid rgba(255,255,255,0.5) 1px', paddingBottom: '1.5rem'}}>
-
+  
 
             <h1>Profile Information</h1>
             <p style={{width: '28rem'}}>Keep your personal details private. Information you add here is visible to anyone who can view your profile.</p>
@@ -83,20 +74,8 @@ const Settings = () => {
               <div><input type="email" id="emal" value={email} disabled /></div>
               <Button className="save-btn" id='paw' variant="primary" onClick={handleSaveProfile}>Save</Button>
             </div>
-          </div>
-          </div>
-        </div>
+    
         <br />
-        <div>
-          <div id='memberships'>
-            <h4>Memberships ✓</h4>
-            <ol>
-              <li>Followed sharer 1: TIER 2</li>
-              <li>Followed sharer 2: TIER 3</li>
-              <li>Followed sharer 3: TIER 1</li>
-            </ol>
-          </div>
-        </div>
       </div> 
       </div> 
       </form>

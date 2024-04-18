@@ -208,7 +208,8 @@ function HomeScreen() {
             <div className="card-body">
               <Form onSubmit={handleRegisterSubmit}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Email:</Form.Label>
+                <Form.Label>Email (Associated with PayPal):</Form.Label>
+
                   <Form.Control
                     type="email"
                     placeholder="Email"

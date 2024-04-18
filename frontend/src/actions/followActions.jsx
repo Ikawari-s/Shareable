@@ -65,6 +65,7 @@ export const followSharer = (sharerId, tier, amount) => async (dispatch) => {
   }
 };
 
+
 export const unfollowSharer = (sharerId, tier) => async (dispatch) => {
   try {
     dispatch({ type: SHARER_UNFOLLOW_REQUEST });

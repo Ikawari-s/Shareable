@@ -15,20 +15,16 @@ function AdminSendIncome({ sharerId }) {
     setLoading(true);
     dispatch(sendIncomeToSharer(sharerId))
       .then((response) => {
-
         console.log("Income sent successfully.");
-
-        window.location.reload();
       })
       .catch((error) => {
         console.error("Failed to send income:", error);
-
       })
       .finally(() => {
         setLoading(false);
       });
   };
-
+  
   const handleCancelSend = () => {
     setConfirmSend(false);
   };

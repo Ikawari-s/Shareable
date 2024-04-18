@@ -33,7 +33,17 @@ function AdminCreateUser() {
     } else {
       const response = await dispatch(createUserAdmin(formData));
       if (response) {
-        window.location.reload();
+
+  setFormData({
+    username: '',
+    email: '',
+    password1: '',
+    password2: '',
+    is_active: false,
+    is_sharer: false,
+    is_staff: false,
+    is_superuser: false
+  });
       } else {
         setError("Check username(+4), password(+8, !@,123), email");
       }

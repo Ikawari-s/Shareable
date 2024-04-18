@@ -49,7 +49,7 @@ function Comment({ uploadId }) {
         postComment(userInfo.user_id, uploadId, content, userInfo.access_token)
       );
       setContent("");
-      window.location.reload();
+
     } catch (error) {
       console.error("Failed to submit comment:", error);
     }
