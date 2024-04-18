@@ -1,125 +1,92 @@
 import React from "react";
-import { Row, Col } from "react-bootstrap";
-import Header from '../components/Header';
+import Footer from "../components/Footer";
+import GuestHeader from "../components/GuestHeader";
 
-function AboutScreen() {
+const ShareableIntro = () => {
   return (
-    <div>
-        <Header />
-        <Row className="m-3 justify-content-center">
-          <Col xl={6}>
-          <h1 className="text-center">Shareable</h1>
-            <p className="m-3">The primary objective of Shareable brings patrons or users exclusive content (art, music, games, podcast, writing, or photography) of their favorite creators through subscriptions or tier, either monthly, annually, or per creation. It aims to bring diverse preferences of users, creating a platform that resonates their needs and drive their engagement.</p>
-          </Col>
-        
-        </Row>
-        <Row className="m-3">
-            
-        </Row >
-      <Row className="mt-3">
-        <Col>
-          <h1 className="text-center">Meet our team</h1>
-        </Col>
-      </Row>
-      <Row className="justify-content-center">
-        <Col xl={2}>
-          <div className="card text-center">
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/340px-Default_pfp.svg.png"
-              className="card-img-top mx-auto mt-3"
-              alt="..."
-              style={{ maxWidth: "150px", maxHeight: "150px" }}
-            />
-            <div className="card-body d-flex flex-column align-items-center">
-              <h5 className="card-title">Name</h5>
-              <p className="card-text">short info</p>
-              <div className="d-flex">
-                <i className="fa-brands fa-facebook-f me-2"></i>
-                <i className="fa-brands fa-twitter me-2"></i>
-                <i class="fa-brands fa-instagram me-2"></i>
-              </div>
-            </div>
-          </div>
-        </Col>
-        <Col xl={2}>
-          <div className="card text-center">
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/340px-Default_pfp.svg.png"
-              className="card-img-top mx-auto mt-3"
-              alt="..."
-              style={{ maxWidth: "150px", maxHeight: "150px" }}
-            />
-            <div className="card-body d-flex flex-column align-items-center">
-              <h5 className="card-title">Name</h5>
-              <p className="card-text">short info</p>
-              <div className="d-flex">
-                <i className="fa-brands fa-facebook-f me-2"></i>
-                <i className="fa-brands fa-twitter me-2"></i>
-                <i class="fa-brands fa-instagram me-2"></i>
-              </div>
-            </div>
-          </div>
-        </Col>
-        <Col xl={2}>
-          <div className="card text-center">
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/340px-Default_pfp.svg.png"
-              className="card-img-top mx-auto mt-3"
-              alt="..."
-              style={{ maxWidth: "150px", maxHeight: "150px" }}
-            />
-            <div className="card-body d-flex flex-column align-items-center">
-              <h5 className="card-title">Name</h5>
-              <p className="card-text">short info</p>
-              <div className="d-flex">
-                <i className="fa-brands fa-facebook-f me-2"></i>
-                <i className="fa-brands fa-twitter me-2"></i>
-                <i class="fa-brands fa-instagram me-2"></i>
-              </div>
-            </div>
-          </div>
-        </Col>
-        <Col xl={2}>
-          <div className="card text-center">
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/340px-Default_pfp.svg.png"
-              className="card-img-top mx-auto mt-3"
-              alt="..."
-              style={{ maxWidth: "150px", maxHeight: "150px" }}
-            />
-            <div className="card-body d-flex flex-column align-items-center">
-              <h5 className="card-title">Name</h5>
-              <p className="card-text">short info</p>
-              <div className="d-flex">
-                <i className="fa-brands fa-facebook-f me-2"></i>
-                <i className="fa-brands fa-twitter me-2"></i>
-                <i class="fa-brands fa-instagram me-2"></i>
-              </div>
-            </div>
-          </div>
-        </Col>
-        <Col xl={2}>
-          <div className="card text-center">
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/340px-Default_pfp.svg.png"
-              className="card-img-top mx-auto mt-3"
-              alt="..."
-              style={{ maxWidth: "150px", maxHeight: "150px" }}
-            />
-            <div className="card-body d-flex flex-column align-items-center">
-              <h5 className="card-title">Name</h5>
-              <p className="card-text">short info</p>
-              <div className="d-flex">
-                <i className="fa-brands fa-facebook-f me-2"></i>
-                <i className="fa-brands fa-twitter me-2"></i>
-                <i class="fa-brands fa-instagram me-2"></i>
-              </div>
-            </div>
-          </div>
-        </Col>
-      </Row>
-    </div>
-  );
-}
+    <>
+      <div
+        style={{
+          fontFamily: "Arial, sans-serif",
+          padding: "2rem",
+          lineHeight: "1.6",
 
-export default AboutScreen;
+          borderRadius: "8px",
+        }}
+      >
+        <h1
+          style={{
+            fontSize: "2rem",
+            marginBottom: "1rem",
+            textAlign: "center",
+            marginTop: "5rem",
+          }}
+        >
+          Welcome to Shareable
+        </h1>
+        <div style={{ maxWidth: "50rem", margin: "auto" }}>
+          <p>
+            The primary objective of Shareable is to connect patrons or users
+            with exclusive content from their favorite creators through
+            subscriptions or tiers, be it monthly, annually, or per creation. We
+            aim to cater to diverse preferences, creating a platform that
+            resonates with users' needs and drives engagement.
+          </p>
+          <p>
+            In today’s world where the internet is a huge part of our daily
+            life, people are creating interesting and different contents for
+            different people. Shareable is a subscription website where people
+            can access exclusive contents from different content creators such
+            as musicians, artists, writers, and more. The website would like to
+            provide an equal opportunity for both creator and users, benefiting
+            users to access exclusive contents from their favorite creators, and
+            creators to gain monetary compensation.
+          </p>
+          <p>
+            The number one reason that people pay for content is because they
+            can’t get the information they need elsewhere for free. Successful
+            membership websites tend to be run by people deeply immersed in
+            their subject, whose access to certain sources, background knowledge
+            and informed opinion creates sustainable advantage and value.
+          </p>
+          <p>
+            People pay for content because it enhances their trust in its
+            quality. That explains why news corporations aligned with values
+            such as objectivity and reliability are the ones with the highest
+            number of subscribers. Also, media that offer complete information
+            regarding a topic generate a higher sense of trust amongst
+            consumers.
+          </p>
+          <p>
+            This means that your target audience must comprehend how your
+            service or product will help them and be able to visualize the
+            possible outcome before they spend a coin. Unlike free content,
+            where you only list ideas and tips, paid content is a complete and
+            detailed guide that can be followed to get actual results (Kaiwen,
+            2021).
+          </p>
+          <p>
+            Selling exclusive content on YouTube can be a win-win for both
+            creators and their subscribers. It allows creators to monetize their
+            content further while offering a unique experience to their most
+            dedicated fans. As YouTube continues to evolve, this approach to
+            content monetization is likely to play a significant role in the
+            platform’s future. It’s a great way for creators to build deeper
+            relationships with their biggest fans, establish a recurring revenue
+            stream, and have more control over their business.
+          </p>
+          <p>
+            This website was created so people can access exclusive content from
+            different creators and for the creators to gain monetary
+            compensation. As well as providing equal opportunity for both users
+            and creators. As a result, Shareable will be a way for different
+            people to explore different creators with various content.
+          </p>
+        </div>
+      </div>
+      <Footer />
+    </>
+  );
+};
+
+export default ShareableIntro;
