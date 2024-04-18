@@ -71,6 +71,15 @@ function Comment({ uploadId }) {
     }
   };
 
+  const sortCommentsByBadge = (comments) => {
+    return comments.sort((a, b) => {
+      const badgeOrder = { Gold: 1, Silver: 2, Bronze: 3 };
+      const badgeA = a.badge ? badgeOrder[a.badge] || 4 : 4;
+      const badgeB = b.badge ? badgeOrder[b.badge] || 4 : 4;
+      return badgeA - badgeB;
+    });
+  };
+
   return (
     <div>
       {/* <h2>Comments</h2> */}
@@ -96,7 +105,7 @@ function Comment({ uploadId }) {
                   justifyContent: 'center',
                   margin: '0',
                 }}>
-                  <div className="d-flex">
+                  <div className="d-flex" style={{ height:'2.5rem'}}>
                     {comment.profile_picture && (
                       <img
                         src={comment.profile_picture}
@@ -106,29 +115,28 @@ function Comment({ uploadId }) {
                           height: '2.5rem',
                           borderRadius: "50%",
                           marginRight: '0.6rem',
-                          marginBottom: '1rem'
+                          marginBottom: '1rem',
                         }}
                       />
                     )}
-                    <strong style={{color: "black", fontSize: '2rem', lineHeight: '2.4rem'}}>
+                    <p style={{color: "#333333", fontSize: '1.35rem', lineHeight: '2.4rem', fontWeight:'600', marginLeft:'0.2rem', }}>
                       {comment.username}
-                    </strong> 
+                    </p> 
+                    {comment.badge === 'Gold' && <img src={gold} style={{width: '1.5rem', height: '1.5rem', margin:'0.5rem 0rem 0.5rem 0.5rem'}} />}
+                    {comment.badge === 'Silver' && <img src={silver} style={{width: '1.5rem', height: '1.5rem', margin:'0.5rem 0rem 0.5rem 0.5rem'}} />}
+                    {comment.badge === 'Bronze' && <img src={bronze} style={{width: '1.5rem', height: '1.5rem', margin:'0.5rem 0rem 0.5rem 0.5rem'}} />}
+                    {comment.badge === 'None' && null}
                     {(userInfo.user_id === comment.user || isAdmin) && (
                       <button
-                        style={{margin: '0 0 1rem .2rem'}}
                         id="trash"
                         onClick={() => handleDelete(comment.id)}
                       >
                         <BsFillTrash3Fill />
                       </button>
                     )}
-                    {comment.badge === 'Gold' && <img src={gold} style={{maxWidth: '2rem', maxHeight: '2rem'}} />}
-                    {comment.badge === 'Silver' && <img src={silver} style={{maxWidth: '2rem', maxHeight: '2rem'}} />}
-                    {comment.badge === 'Bronze' && <img src={bronze} style={{maxWidth: '2rem', maxHeight: '2rem'}} />}
-                    {comment.badge === 'None' && null}
                   </div>
 
-                  <div style={{ marginLeft: '1rem', color: 'black'}}>{comment.comments}</div>
+                  <div style={{ marginLeft: '3.3rem', color: 'black'}}>{comment.comments}</div>
                   {(userInfo.user_id === comment.user || isAdmin) && (
                     <>
                       

@@ -12,6 +12,10 @@ import bronzetier from "../designs/images/bronzetier.png";
 import gold from "../designs/images/gold.png";
 import silver from "../designs/images/silver.png";
 import bronze from "../designs/images/bronze.png";
+import { BsFillTrash3Fill } from 'react-icons/bs';
+import { FiEdit2 } from 'react-icons/fi';
+import Button from "react-bootstrap/Button";
+
 
 const FetchSharerRatingsComponent = ({ sharerId }) => {
   const dispatch = useDispatch();
@@ -105,10 +109,11 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
 
   return (
     <div
-      className="scroll-box overflow-auto"
-      style={{ background: "black", maxWidth: "60rem", margin: "0 auto" }}
+      className=""
+      style={{textAlign: 'center',  }}
     >
-      <h2>Sharer Ratings</h2>
+      <div style={{ boxShadow:'0 2px 5px #00000080', borderRadius:'1rem', margin:'1rem 0rem', padding:'1rem 0rem', width:'100%' }}>
+      <h1>Sharer Ratings</h1>
       <div>
         Total Rating:{" "}
         {ratings.length > 0
@@ -117,60 +122,116 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
             : "No ratings available"
           : "No ratings available"}
       </div>
-      <ul>
+      </div>
         {ratings.map((rating) => (
-          <li key={rating.id} style={{ listStyle: "none" }}>
-            <div style={{ background: "green" }}>
+          <li key={rating.id} style={{listStyle:"none", justifyContent:'center', display:'flex'}}>
+            <div style={{ boxShadow:'0 2px 5px #00000080', borderRadius:'1rem', marginBottom:'1rem', padding:'1rem 0rem', width:'100%' }}>
+              <div style={{textAlign:'left', paddingLeft:'1.3rem'}}>
+              <div>
               {rating.profile_picture && (
                 <img
                   src={rating.profile_picture}
                   alt="Profile"
-                  style={{ width: 50, height: 50, borderRadius: "50%" }}
+                  style={{
+                    width: '2.5rem',
+                    height: '2.5rem',
+                    borderRadius: "50%",  
+                    marginRight: '0.6rem',
+                    marginBottom: '0.3rem',
+                  }}
                 />
               )}
-              : {rating.username}{" "}
+              <strong style={{fontSize: '1.35rem', lineHeight: '2.4rem', fontWeight:'600'}}>{rating.username}</strong>
               {rating.user_tier === "tier3" && (
-                <img src={goldtier} style={{ maxWidth: "5rem" }} />
+                <img src={goldtier} style={{maxWidth: '3.4rem', maxHeight: '3.4rem', marginBottom:'0.2rem'}} />
               )}
               {rating.user_tier === "tier2" && (
-                <img src={silvertier} style={{ maxWidth: "5rem" }} />
+                <img src={silvertier} style={{maxWidth: '3.4rem', maxHeight: '3.4rem', marginBottom:'0.2rem'}} />
               )}
               {rating.user_tier === "tier1" && (
-                <img src={bronzetier} style={{ maxWidth: "5rem" }} />
+                <img src={bronzetier} style={{maxWidth: '3.4rem', maxHeight: '3.4rem', marginBottom:'0.2rem'}} />
               )}
               {rating.badge === "Gold" && (
-                <img src={gold} style={{ maxWidth: "2rem" }} />
+                <img src={gold} style={{width: '1.5rem', height: '1.5rem', marginBottom:'0.3rem'}} />
               )}
               {rating.badge === "Silver" && (
-                <img src={silver} style={{ maxWidth: "2rem" }} />
+                <img src={silver} style={{width: '1.5rem', height: '1.5rem', marginBottom:'0.3rem'}} />
               )}
               {rating.badge === "Bronze" && (
-                <img src={bronze} style={{ maxWidth: "2rem" }} />
+                <img src={bronze} style={{width: '1.5rem', height: '1.5rem', marginBottom:'0.3rem'}} />
               )}
-              {rating.badge === "None" && null}, Rating: {rating.rating},
-              Comment: {rating.comment}
+              {rating.badge === "None" && null}
+              
+              <div style={{padding:'0rem 0.8rem', display:'inline-block', background:'darkslategrey', width:'fit-content', borderRadius:'1rem', marginLeft:'1rem'}}>
+              {rating.rating}
+              </div>
+              </div>
+              <div style={{padding:'0.5rem 1.5rem'}}>
+              {rating.comment}
+              </div>
               {!rating.edited && rating.time_posted && (
-                <div>Post Time: {rating.time_posted}</div>
+                <em style={{margin:'0rem 1.5rem'}}> {rating.time_posted}</em>
               )}
               {rating.edited && (
-                <div>
-                  Last Edit Date: {rating.last_edit_date}
-                  {", "}
-                  Edited
-                </div>
+                <em style={{margin:'0rem 1.5rem'}}>{rating.last_edit_date}{" "}edited</em>
               )}
               {isAdmin || rating.user === userId ? (
                 <>
+                <div className="rawr-icon" style={{display:'inline-block'}}>
                   <button onClick={() => handleDeleteRating(rating.id)}>
-                    Delete
+                  <BsFillTrash3Fill />
+                    <text>Delete Post</text>
                   </button>
+                </div>
                   {rating.user === userId && (
+                  <div className="rawr-icon" style={{display:'inline-block'}}>
                     <button onClick={() => setUpdateRatingId(rating.id)}>
-                      Update
+                      <FiEdit2 />
+                      <text>Edit Post</text>
                     </button>
+                  </div>
                   )}
                 </>
               ) : null}
+              {updateRatingId === rating.id && (
+                <div style={{padding:'1rem'}}>
+                  <input
+                    style={{
+                      width:'100%',
+                      border:'none',
+                      borderRadius:'0.3rem',
+                      height:'3rem',
+                      fontSize:'1.1rem',
+                      padding:'0rem 0rem 0rem 1rem',
+                      marginBottom:'1rem'
+                    }}
+                    type="number"
+                    min="0"
+                    max="5"
+                    step="0.1"
+                    value={updateRatingValue}
+                    onChange={(e) =>
+                      setUpdateRatingValue(parseFloat(e.target.value))
+                    }
+                  />
+                  <input
+                    style={{
+                    width:'100%',
+                    border:'none',
+                    borderRadius:'0.3rem',
+                    height:'3rem',
+                    fontSize:'1.1rem',
+                    padding:'0rem 0rem 0rem 1rem',
+                    marginBottom:'1rem'
+                    }}
+                    type="text"
+                    value={updateComment}
+                    onChange={(e) => setUpdateComment(e.target.value)}
+                  />
+                  <Button style={{marginLeft: '57%'}} id="paw" onClick={handleUpdateRating}>Update Rating</Button>
+                </div>
+            )}
+              </div>
             </div>
             {deletingRatingId === rating.id && (
               <div className="confirmation-overlay">
@@ -185,29 +246,9 @@ const FetchSharerRatingsComponent = ({ sharerId }) => {
                 </div>
               </div>
             )}
-            {updateRatingId === rating.id && (
-              <div>
-                <input
-                  type="number"
-                  min="0"
-                  max="5"
-                  step="0.1"
-                  value={updateRatingValue}
-                  onChange={(e) =>
-                    setUpdateRatingValue(parseFloat(e.target.value))
-                  }
-                />
-                <input
-                  type="text"
-                  value={updateComment}
-                  onChange={(e) => setUpdateComment(e.target.value)}
-                />
-                <button onClick={handleUpdateRating}>Update Rating</button>
-              </div>
-            )}
+            
           </li>
         ))}
-      </ul>
     </div>
   );
 };
@@ -250,30 +291,47 @@ const PostSharerRatingsComponent = ({ sharerId }) => {
   };
 
   return (
-    <div className="scroll-box overflow-auto">
-      <h2>Post Rating</h2>
-      <label>
-        Rating:
-        <input
-          type="number"
-          min="0"
-          max="5"
-          step="0.1"
-          value={ratingValue}
-          onChange={(e) => setRatingValue(parseFloat(e.target.value))}
-        />
-      </label>
-      <br />
-      <label>
-        Comment:
-        <input
-          type="text"
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-        />
-      </label>
-      <br />
-      <button onClick={handlePostRating}>Post Rating</button>
+    <div
+      className=""
+      style={{textAlign: 'center',  }}
+    >
+      <div style={{ boxShadow:'0 2px 5px #00000080', borderRadius:'1rem', margin:'1rem 0rem', padding:'1rem 0rem', width:'100%', marginBottom:'2rem' }}>
+      <h1>Post Rating</h1>
+      <div style={{padding:'1rem'}}>
+                <input
+                  style={{
+                    width:'100%',
+                    border:'none',
+                    borderRadius:'0.3rem',
+                    height:'3rem',
+                    fontSize:'1.1rem',
+                    padding:'0rem 0rem 0rem 1rem',
+                    marginBottom:'1rem'
+                  }}
+                  type="number"
+                  min="0"
+                  max="5"
+                  step="0.1"
+                  value={ratingValue}
+                  onChange={(e) => setRatingValue(parseFloat(e.target.value))}
+                />
+                <input
+                  style={{
+                  width:'100%',
+                  border:'none',
+                  borderRadius:'0.3rem',
+                  height:'3rem',
+                  fontSize:'1.1rem',
+                  padding:'0rem 0rem 0rem 1rem',
+                  marginBottom:'1rem'
+                  }}
+                  type="text"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                />
+                <Button style={{marginLeft: '64%'}} id="paw" onClick={handlePostRating}>Post Rating</Button>
+              </div>
+      </div>        
     </div>
   );
 };

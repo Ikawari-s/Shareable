@@ -67,6 +67,8 @@ const filteredSharers = Array.isArray(sharers)
         onChange={(e) => setSearchTerm(e.target.value)}
         className="form-control mb-3"
       />
+      
+      <FollowedSharersList />
 
       {/* Sorting Buttons */}
       <div className="mb-3 d-flex" style={{justifyContent: 'space-between'}}>
@@ -131,6 +133,7 @@ const filteredSharers = Array.isArray(sharers)
       </div>
 
       {/* Category Dropdown */}
+      
       <div className="mb-3">
         <select
           value={selectedCategory}
@@ -168,6 +171,7 @@ const filteredSharers = Array.isArray(sharers)
       </div>
 
        {/* Display Sharers */}
+       
       <div className="row">
         {filteredSharers.length === 0 ? (
           <div className="col-md-12 text-center">
@@ -225,7 +229,7 @@ const filteredSharers = Array.isArray(sharers)
 
       {/* Display followed sharers list */}
       
-      <FollowedSharersList />
+      {/* <FollowedSharersList /> */}
       
 
       {/* Show loading state if data is being fetched */}
