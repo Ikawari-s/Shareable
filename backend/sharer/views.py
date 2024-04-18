@@ -132,7 +132,7 @@ class Tier1FollowedSharers(generics.ListAPIView):
             user_follows = getattr(user, f'follows_{tier}').all()
             queryset = queryset.filter(uploaded_by__in=user_follows)
 
-        queryset = queryset.order_by('-created_at')
+        queryset = queryset.annotate(comment_count=Count('comments')).order_by('-created_at')
 
         return queryset
 
@@ -172,7 +172,7 @@ class Tier2FollowedSharers(generics.ListAPIView):
             user_follows = getattr(user, f'follows_{tier}').all()
             queryset = queryset.filter(uploaded_by__in=user_follows)
 
-        queryset = queryset.order_by('-created_at')
+        queryset = queryset.annotate(comment_count=Count('comments')).order_by('-created_at')
 
         return queryset
 
@@ -212,7 +212,7 @@ class Tier3FollowedSharers(generics.ListAPIView):
             user_follows = getattr(user, f'follows_{tier}').all()
             queryset = queryset.filter(uploaded_by__in=user_follows)
 
-        queryset = queryset.order_by('-created_at')
+        queryset = queryset.annotate(comment_count=Count('comments')).order_by('-created_at')
 
         return queryset
 

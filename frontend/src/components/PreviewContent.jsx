@@ -40,34 +40,22 @@ function PreviewContent({ sharerId }) {
 
   const downloadFile = async (fileUrl) => {
     try {
-      console.log("File URL:", fileUrl);
+      const response = await axios.get(fileUrl, {
+        responseType: "blob",
+      });
 
-      const fileType = getFileType(fileUrl);
-
-      if (["docx", "doc", "pdf", "txt"].includes(fileType)) {
-        const link = document.createElement("a");
-        link.href = fileUrl;
-        link.setAttribute("download", "");
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      } else {
-        console.log("File type not allowed.");
-      }
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "file");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
     } catch (error) {
       console.error("Error downloading file:", error);
     }
   };
 
-  const getFileType = (fileUrl) => {
-    const path = new URL(fileUrl).pathname;
-    const segments = path.split(".");
-    const fileNameWithExtension = segments[segments.length - 1];
-    const fileNameWithoutQueryParams = fileNameWithExtension.split("?")[0];
-    const extension = fileNameWithoutQueryParams.split(".").pop();
-    console.log("Extension:", extension);
-    return extension.toLowerCase();
-  };
   const handleDeletePost = async (postId) => {
     try {
       await dispatch(sharerDeletePost(postId));
@@ -117,13 +105,9 @@ function PreviewContent({ sharerId }) {
             {/* Render delete button if user is admin */}
             {isAdmin && (
               <>
-                <button
-                  onClick={() => handleShowDeleteConfirmation(post.id)}
-                  className="btn btn-danger btn-sm"
-                >
+                <button onClick={() => handleShowDeleteConfirmation(post.id)}>
                   Delete Post
                 </button>
-
                 {showDeleteConfirmation && postIdToDelete === post.id && (
                   <div className="confirmation-overlay">
                     <div className="confirmation-modal">
@@ -157,54 +141,54 @@ function PreviewContent({ sharerId }) {
               )}
             </div>
             <h4>{post.description}</h4>
-            {post.images.length > 0 && (
-              <div>
-                {post.images.map((image, index) => (
-                  <img
-                    key={index}
-                    src={image.image}
-                    alt={`Image ${index + 1}`}
-                    style={{
-                      height: " auto",
-                      width: "57rem",
-                      objectFit: "cover",
-                      borderRadius: "2rem",
-                    }}
-                  />
-                ))}
-              </div>
-            )}
-            {post.videos.length > 0 && (
-              <div>
-                {post.videos.map((video, index) => (
-                  <video
-                    key={index}
-                    style={{
-                      height: " auto",
-                      width: "57rem",
-                      objectFit: "cover",
-                      borderRadius: "2rem",
-                    }}
-                    src={video.video}
-                    controls
-                  />
-                ))}
-              </div>
-            )}
-            {post.files.length > 0 && (
-              <div>
-                <h3>Files:</h3>
-                {post.files.map((file, index) => (
-                  <button
-                    key={index}
-                    onClick={() => downloadFile(file.file)}
-                    className="btn btn-outline-primary btn-sm"
-                  >
-                    Download File {index + 1}
-                  </button>
-                ))}
-              </div>
-            )}
+            <div style={{ maxHeight: "70rem", overflowY: "auto" }}>
+              {post.images.length > 0 && (
+                <div>
+                  {post.images.map((image, index) => (
+                    <img
+                      key={index}
+                      src={image.image}
+                      alt={`Image ${index + 1}`}
+                      style={{
+                        height: "auto",
+                        width: "57rem",
+                        objectFit: "cover",
+                        borderRadius: "2rem",
+                        padding: "1rem",
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+              {post.videos.length > 0 && (
+                <div>
+                  {post.videos.map((video, index) => (
+                    <video
+                      key={index}
+                      style={{
+                        height: "auto",
+                        width: "57rem",
+                        objectFit: "cover",
+                        borderRadius: "2rem",
+                        padding: "1rem",
+                      }}
+                      src={video.video}
+                      controls
+                    />
+                  ))}
+                </div>
+              )}
+              {post.files.length > 0 && (
+                <div>
+                  <h3>Files:</h3>
+                  {post.files.map((file, index) => (
+                    <button key={index} onClick={() => downloadFile(file.file)}>
+                      Download File {index + 1}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         ))
       ) : (

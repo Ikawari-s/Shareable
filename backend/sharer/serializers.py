@@ -40,10 +40,11 @@ class SharerUploadListSerializer(serializers.ModelSerializer):
     videos = serializers.SerializerMethodField()
     files = serializers.SerializerMethodField()
     visibility = serializers.CharField() 
+    comment_count = serializers.SerializerMethodField()
 
     class Meta:
         model = SharerUpload
-        fields = ['id', 'title', 'description', 'images', 'videos', 'files', 'created_at', 'edited_at_formatted', 'edited', 'visibility']
+        fields = ['id', 'title', 'description', 'images', 'videos', 'files', 'created_at', 'edited_at_formatted', 'edited', 'visibility', 'comment_count']
 
     def get_edited_at_formatted(self, instance):
         edited_at = instance.edited_at
@@ -53,6 +54,9 @@ class SharerUploadListSerializer(serializers.ModelSerializer):
 
     def get_edited(self, instance):
         return instance.edited_at is not None
+    
+    def get_comment_count(self, obj):
+        return obj.comments.count()
 
     def get_images(self, instance):
         images = instance.images.all()
@@ -115,6 +119,9 @@ class SharerUploadSerializer(serializers.ModelSerializer):
     def get_file(self, obj):
         file_urls = [file.file.url for file in obj.files.all()]
         return file_urls if file_urls else None
+    
+    def get_comment_count(self, obj):
+        return obj.comments.count()
 
     def create(self, validated_data):
         image_data = self.context.get('request').FILES.getlist('images')
@@ -140,6 +147,8 @@ class SharerUploadSerializer(serializers.ModelSerializer):
             SharerUploadFile.objects.create(upload=sharer_upload, file=data)
 
         return sharer_upload
+    
+    
 
 
 

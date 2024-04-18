@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import '../designs/Footer.css';
+import '../designs/footer.css';
 import logotext from '../designs/images/logotext.png';
 import { Link } from "react-router-dom";
 
@@ -33,6 +33,9 @@ function Footer() {
             </Link>
             <Link to="/terms-of-use-and-policies" style={{ textDecoration: "none" }}> 
             <p>Terms of use & policies</p>
+            </Link>
+            <Link to="/about" style={{ textDecoration: "none" }}>
+              <p>About Us</p>
             </Link>
           </Col>
         </Row>

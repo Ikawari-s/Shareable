@@ -4,7 +4,11 @@ import { connect, useDispatch } from "react-redux";
 import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 import { DetailSharers, getSharerPostCount } from "../actions/sharerActions";
-import { followSharer, unfollowSharer, getExpiration } from "../actions/followActions"; // Import the followSharer action creator
+import {
+  followSharer,
+  unfollowSharer,
+  getExpiration,
+} from "../actions/followActions"; // Import the followSharer action creator
 import {
   FetchSharerRatingsComponent,
   PostSharerRatingsComponent,
@@ -124,7 +128,7 @@ const SharerDetail = ({
       );
 
       if (isExpired) {
-        // window.location.reload();
+        window.location.reload();
       }
     };
 
@@ -137,23 +141,22 @@ const SharerDetail = ({
     return createOrder(data, actions);
   };
 
-const onApprove = (data, actions) => {
-  return actions.order.capture().then(() => {
-    followSharer(id, followTier, selectedAmount)
-      .then(() => {
-        const updatedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
-        updatedUserInfo.followed_sharers[followTier].push(parseInt(id));
-        localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
-        dispatch(getExpiration()).then(() => {
-          // window.location.reload();
+  const onApprove = (data, actions) => {
+    return actions.order.capture().then(() => {
+      followSharer(id, followTier, selectedAmount)
+        .then(() => {
+          const updatedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
+          updatedUserInfo.followed_sharers[followTier].push(parseInt(id));
+          localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
+          dispatch(getExpiration()).then(() => {
+            window.location.reload();
+          });
+        })
+        .catch((error) => {
+          console.error("Error following sharer:", error);
         });
-      })  
-      .catch((error) => {
-        console.error("Error following sharer:", error);
-      });
-  });
-};
-
+    });
+  };
 
   useEffect(() => {
     DetailSharers(id);
@@ -186,8 +189,8 @@ const onApprove = (data, actions) => {
     setCurrentTier(tier);
     setFollowTier(tier);
     setSelectedAmount(amount);
-    setShowPaypalModal(false); 
-    setTimeout(() => setShowPaypalModal(true), 100); 
+    setShowPaypalModal(false);
+    setTimeout(() => setShowPaypalModal(true), 100);
   };
 
   const handleUnfollow = () => {
@@ -242,35 +245,33 @@ const onApprove = (data, actions) => {
       ) : sharer ? (
         <div className="text-center py-3 hi" style={{ textAlign: "center" }}>
           {sharer.cover_photo && (
-            <img
-              className="cober"
-              src={sharer.cover_photo}
-              alt="Cover-Photo"
-            />
+            <img className="cober" src={sharer.cover_photo} alt="Cover-Photo" />
           )}
-          {sharer.image && (
-            <img
-              src={sharer.image}
-              alt="Profile"
-              id="pfp"
-            />
-          )}
+          {sharer.image && <img src={sharer.image} alt="Profile" id="pfp" />}
           <div id="tex">
-          <h1>{sharer.name}</h1>
-          <p className="username">@{sharer.username}</p>
-          <p>{sharer.description}</p>
-          <p style={{opacity:'0.7', fontWeight:'lighter'}}>{sharer.total_followers} followers ∘ {sharer.category ? sharer.category : "Not Specified"} ∘ {sharer.average_rating !== null
-                    ? sharer.average_rating > 0
-                      ? `${sharer.average_rating}/5`
-                      : " No ratings yet"
-                    : "N/A"}</p> 
+            <h1>{sharer.name}</h1>
+            <p className="username">@{sharer.username}</p>
+            <p>{sharer.description}</p>
+            <p style={{ opacity: "0.7", fontWeight: "lighter" }}>
+              {sharer.total_followers} followers ∘{" "}
+              {sharer.category ? sharer.category : "Not Specified"} ∘{" "}
+              {sharer.average_rating !== null
+                ? sharer.average_rating > 0
+                  ? `${sharer.average_rating}/5`
+                  : " No ratings yet"
+                : "N/A"}
+            </p>
           </div>
           {/* <PostCount sharerId={id} /> */}
           <div>
-          {showConfirmation && (
+            {showConfirmation && (
               <div className="confirmation-overlay">
                 <div className="confirmation-unfollow">
-                  <p>Are you sure you want to unfollow?</p>
+                  <p>
+                    Are you sure you want to unfollow? Once you unfollow you
+                    will no longer be able to view the content unless you rejoin
+                    this tier.
+                  </p>
                   <button onClick={handleConfirmUnfollow}>Yes</button>
                   <button onClick={handleCancelUnfollow}>No</button>
                 </div>
@@ -280,121 +281,141 @@ const onApprove = (data, actions) => {
               <Button id="jaw" onClick={() => setShowConfirmation(true)}>
                 <strong>Unfollow Sharer</strong>
               </Button>
-              
             ) : (
               <>
-              <h3 style={{letterSpacing:'.2rem', fontWeight: 'lighter'}}>Choose your membership</h3>
-              <div className="row ra">
-                <div className="column wo" id="bronze">
-                  <h1>Tier 1</h1>
-                  <PostCount sharerId={id} tier="tier1" />
-                  <Button
-                    id="pay"
-                    onClick={() => handleTierButtonClick("tier1", 5)}
-                  >
-                    <strong>5$</strong>
-                  </Button>
+                <h3 style={{ letterSpacing: ".2rem", fontWeight: "lighter" }}>
+                  Choose your membership
+                </h3>
+                <div className="row ra">
+                  <div className="column wo" id="bronze">
+                    <h1>Tier 1</h1>
+                    <PostCount sharerId={id} tier="tier1" />
+                    <Button
+                      id="pay"
+                      onClick={() => handleTierButtonClick("tier1", 5)}
+                    >
+                      <strong>5$</strong>
+                    </Button>
+                  </div>
+                  <div className="column wo" id="gold">
+                    <h1>Tier 3</h1>
+                    <PostCount sharerId={id} tier="tier3" />
+                    <Button
+                      id="pay"
+                      onClick={() => handleTierButtonClick("tier3", 20)}
+                    >
+                      <strong>20$</strong>
+                    </Button>
+                  </div>
+                  <div className="column wo" id="silver">
+                    <h1>Tier 2</h1>
+                    <PostCount sharerId={id} tier="tier2" />
+                    <Button
+                      id="pay"
+                      onClick={() => handleTierButtonClick("tier2", 10)}
+                    >
+                      <strong>10$</strong>
+                    </Button>
+                  </div>
                 </div>
-                <div className="column wo" id="gold">
-                  <h1>Tier 3</h1>
-                  <PostCount sharerId={id} tier="tier3" />
-                  <Button
-                    id="pay"
-                    onClick={() => handleTierButtonClick("tier3", 20)}
-                  >
-                    <strong>20$</strong>
-                  </Button>
-                  
-                </div>
-                <div className="column wo" id="silver" >
-                  <h1>Tier 2</h1>
-                  <PostCount sharerId={id} tier="tier2" />
-                  <Button
-                    id="pay"
-                    onClick={() => handleTierButtonClick("tier2", 10)}
-                  >
-                    <strong>10$</strong>
-                  </Button>
-                </div>
-              </div>
               </>
             )}
             {/* PayPal button section */}
-            
+
             {showPaypalModal && followTier && paypalLoaded && (
-              <PayPalScriptProvider
-                options={{
-                  "client-id":
-                    "ATyV_k4Cl0uXb3m5rslF-APNEeMSqlO2xp42GOJoMOb7mzeguFi2028uPwa5UOTSbN8U7rjnKpOYFQT8",
-                  currency: "USD",
-                }}
+              <div
+                className="paypal-modal-overlay"
+                onClick={(e) => e.stopPropagation()}
               >
-                <div>
-                  <PayPalButtons
-                    style={{ layout: "horizontal" }}
-                    createOrder={createOrder}
-                    onApprove={onApprove}
-                    onError={onError}
-                    amount={selectedAmount}
-                  />
+                <div
+                  className="paypal-modal-container"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Display the PayPal button with appropriate props */}
+                  <PayPalScriptProvider
+                    options={{
+                      "client-id":
+                        "ATyV_k4Cl0uXb3m5rslF-APNEeMSqlO2xp42GOJoMOb7mzeguFi2028uPwa5UOTSbN8U7rjnKpOYFQT8",
+                      currency: "USD",
+                    }}
+                  >
+                    <PayPalButtons
+                      style={{ layout: "horizontal" }}
+                      createOrder={createOrder}
+                      onApprove={onApprove}
+                      onError={onError}
+                      amount={selectedAmount}
+                    />
+                  </PayPalScriptProvider>
+                  {/* Optional: Add a close button */}
+                  <button onClick={() => setShowPaypalModal(false)}>
+                    Close
+                  </button>
                 </div>
-              </PayPalScriptProvider>
-                )}
+              </div>
+            )}
           </div>
 
           <div className="col-md-12">
-      <div className="d-flex" style={{ textAlign: 'left' }}>
-      <div className="nain">
-<div>
-              {isFollowing ? (
+            <div className="d-flex" style={{ textAlign: "left" }}>
+              <div className="nain">
                 <div>
-                  {userInfo.followed_sharers.tier1.includes(parseInt(id)) && (
-                    <TierOneLatest sharerId={id} />
-                  )}
-                  {userInfo.followed_sharers.tier2.includes(parseInt(id)) && (
-                    <TierTwoLatest sharerId={id} />
-                  )}
-                  {userInfo.followed_sharers.tier3.includes(parseInt(id)) && (
-                    <TierThreeLatest sharerId={id} />
+                  {isFollowing ? (
+                    <div>
+                      {userInfo.followed_sharers.tier1.includes(
+                        parseInt(id)
+                      ) && <TierOneLatest sharerId={id} />}
+                      {userInfo.followed_sharers.tier2.includes(
+                        parseInt(id)
+                      ) && <TierTwoLatest sharerId={id} />}
+                      {userInfo.followed_sharers.tier3.includes(
+                        parseInt(id)
+                      ) && <TierThreeLatest sharerId={id} />}
+                    </div>
+                  ) : (
+                    <div>
+                      {/* <h6>FOLLOW NOW!</h6> */}
+                      <div
+                        className="toppy"
+                        style={{
+                          width: "60rem",
+                          height: "5rem",
+                          padding: "1rem 0rem",
+                          textAlign: "center",
+                          overflow: "visible",
+                        }}
+                      >
+                        <h1>Preview Content</h1>
+                      </div>
+                      <PreviewContent sharerId={id} />
+                    </div>
                   )}
                 </div>
-              ) : (
-                <div>
-                  {/* <h6>FOLLOW NOW!</h6> */}
-                  <div className="toppy" style={{width:'60rem', height:'5rem', padding:'1rem 0rem', textAlign:'center', overflow:'visible'}}>
-                  <h1>Preview Content</h1>
+              </div>
+              <div>
+                <div className="toppy">
+                  <div>
+                    <TopDonor sharerId={id} />
                   </div>
-                  <PreviewContent sharerId={id} />
                 </div>
-              )}
-          </div>
-       	</div>
-        <div>
-        <div className="toppy">
-          <div>
-          <TopDonor sharerId={id} />
-          </div>
-        </div>  
-         <div className="tippy">
-            <div>
-              <TipBox sharerId={id} />
+                <div className="tippy">
+                  <div>
+                    <TipBox sharerId={id} />
+                  </div>
+                </div>
+                <div className="ratty">
+                  <div className="">
+                    {isFollowing && !userHasRated && (
+                      <PostSharerRatingsComponent sharerId={id} />
+                    )}
+                    <div className="fetch-ratings-box">
+                      <FetchSharerRatingsComponent sharerId={id} />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-        </div>
-        <div className="ratty">    
-          <div className="">
-          {isFollowing && !userHasRated && (
-              <PostSharerRatingsComponent sharerId={id} />
-            )}
-            <div className="fetch-ratings-box">
-              <FetchSharerRatingsComponent sharerId={id} />
-            </div>
-          </div>	
-      </div>
-      </div>
-        </div>    
-
-
-      </div>
+          </div>
         </div>
       ) : null}
     </div>
