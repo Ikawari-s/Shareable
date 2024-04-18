@@ -14,6 +14,7 @@ function AdminContact() {
   const error = useSelector((state) => state.adminContacts.error);
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [zoomedImage, setZoomedImage] = useState(null);
 
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -32,7 +33,6 @@ function AdminContact() {
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
-  const [zoomedImage, setZoomedImage] = useState(null);
 
   const renderAttachment = (attachment, contactId) => {
     console.log("Contact ID:", contactId);
@@ -40,14 +40,9 @@ function AdminContact() {
       return "No attachment...";
     }
 
-    const extension = attachment.split(".").pop().toLowerCase();
+    const extension = getFileType(attachment);
 
-    if (
-      extension === "jpg" ||
-      extension === "jpeg" ||
-      extension === "png" ||
-      extension === "gif"
-    ) {
+    if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
       return (
         <img
           src={attachment}
@@ -71,19 +66,22 @@ function AdminContact() {
 
   const downloadFile = async (fileUrl) => {
     try {
-      const response = await axios.get(fileUrl, {
-        responseType: "blob",
-      });
-
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", fileUrl.split("/").pop());
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      console.log('File URL:', fileUrl); 
+  
+      const fileType = getFileType(fileUrl);
+  
+      if (['docx', 'doc', 'pdf', 'txt'].includes(fileType)) {
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        link.setAttribute('download', '');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } else {
+        console.log('File type not allowed.');
+      }
     } catch (error) {
-      console.error("Error downloading file:", error);
+      console.error('Error downloading file:', error);
     }
   };
 
@@ -152,7 +150,6 @@ function AdminContact() {
         </div>
       )}
       <Modal show={!!zoomedImage} onHide={handleCloseModal} centered>
-        
         <Modal.Header closeButton>
           <Modal.Title>Zoomed Image</Modal.Title>
         </Modal.Header>
@@ -174,3 +171,13 @@ function AdminContact() {
 }
 
 export default AdminContact;
+
+const getFileType = (fileUrl) => {
+  const path = new URL(fileUrl).pathname;
+  const segments = path.split('.');
+  const fileNameWithExtension = segments[segments.length - 1];
+  const fileNameWithoutQueryParams = fileNameWithExtension.split('?')[0];
+  const extension = fileNameWithoutQueryParams.split('.').pop();
+  console.log('Extension:', extension); 
+  return extension.toLowerCase();
+};
