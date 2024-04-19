@@ -19,7 +19,9 @@ function TierOneLatest({ sharerId }) {
   const handleButtonClick = (postId) => {
     setShowComment((prevShowComment) => !prevShowComment); // Toggle the showComment state
   };
-
+  const updatePostCount = () => {
+    dispatch(listTier1FollowedSharers(sharerId));
+  };
   const [editingPostId, setEditingPostId] = useState(null);
   const [editedPosts, setEditedPosts] = useState({});
   const [editedPostsFormatted, setEditedPostsFormatted] = useState({});
@@ -121,7 +123,7 @@ function TierOneLatest({ sharerId }) {
                   </>
                 )}
 
-<div className="d-flex">
+                <div className="d-flex">
                   <h1>{post.title}</h1>
                   <p
                     style={{
@@ -207,7 +209,12 @@ function TierOneLatest({ sharerId }) {
                 <div
                   className={`comment-section ${showComment ? "expanded" : ""}`}
                 >
-                  {showComment && <Comment uploadId={post.id} />}
+                  {showComment && (
+                    <Comment
+                      uploadId={post.id}
+                      updatePostCount={updatePostCount}
+                    />
+                  )}
                 </div>
               </div>
             ))

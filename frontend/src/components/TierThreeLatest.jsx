@@ -22,6 +22,9 @@ function TierThreeLatest({ sharerId }) {
   const [editingPostId, setEditingPostId] = useState(null);
   const [editedPosts, setEditedPosts] = useState({});
   const [editedPostsFormatted, setEditedPostsFormatted] = useState({});
+  const updatePostCount = () => {
+    dispatch(listTier3FollowedSharers(sharerId));
+  };
 
   useEffect(() => {
     dispatch(listTier3FollowedSharers(sharerId));
@@ -204,7 +207,12 @@ function TierThreeLatest({ sharerId }) {
                 <div
                   className={`comment-section ${showComment ? "expanded" : ""}`}
                 >
-                  {showComment && <Comment uploadId={post.id} />}
+                  {showComment && (
+                    <Comment
+                      uploadId={post.id}
+                      updatePostCount={updatePostCount}
+                    />
+                  )}
                 </div>
               </div>
             ))

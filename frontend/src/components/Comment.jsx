@@ -11,7 +11,7 @@ import gold from '../designs/images/gold.png'
 import silver from '../designs/images/silver.png'
 import bronze  from '../designs/images/bronze.png'
 
-function Comment({ uploadId }) {
+function Comment({ uploadId, updatePostCount }) {
   const dispatch = useDispatch();
   const { loading, comments, error } = useSelector(
     (state) => state.ListComment
@@ -46,7 +46,7 @@ function Comment({ uploadId }) {
         comments: content,
       });
       await dispatch(
-        postComment(userInfo.user_id, uploadId, content, userInfo.access_token)
+        postComment(userInfo.user_id, uploadId, content, userInfo.access_token, updatePostCount)
       );
       setContent("");
 
@@ -62,7 +62,7 @@ function Comment({ uploadId }) {
 
   const confirmDelete = async () => {
     try {
-      await dispatch(deleteComments(deletingCommentId));
+      await dispatch(deleteComments(deletingCommentId, updatePostCount));
       await dispatch(listComments(uploadId));
       setDeletingCommentId(null); // Reset deletingCommentId after successful deletion
     } catch (error) {

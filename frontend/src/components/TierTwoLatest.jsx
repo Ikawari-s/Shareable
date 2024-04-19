@@ -22,6 +22,9 @@ function TierTwoLatest({ sharerId }) {
   const [editingPostId, setEditingPostId] = useState(null);
   const [editedPosts, setEditedPosts] = useState({});
   const [editedPostsFormatted, setEditedPostsFormatted] = useState({});
+  const updatePostCount = () => {
+    dispatch(listTier2FollowedSharers(sharerId));
+  };
 
   useEffect(() => {
     dispatch(listTier2FollowedSharers(sharerId));
@@ -200,11 +203,15 @@ function TierTwoLatest({ sharerId }) {
                     </button>
                   </div>
                 </div>
-
                 <div
                   className={`comment-section ${showComment ? "expanded" : ""}`}
                 >
-                  {showComment && <Comment uploadId={post.id} />}
+                  {showComment && (
+                    <Comment
+                      uploadId={post.id}
+                      updatePostCount={updatePostCount}
+                    />
+                  )}
                 </div>
               </div>
             ))

@@ -236,8 +236,7 @@ export const fetchLikesCount = (uploadId) => {
   };
 };
 
-
-export const postComment = (userId, uploadId, comments, accessToken) => async (dispatch) => {
+export const postComment = (userId, uploadId, comments, accessToken, callback) => async (dispatch) => {
   try {
     dispatch({ type: USER_COMMENT_REQUEST });
     const config = {
@@ -260,6 +259,9 @@ export const postComment = (userId, uploadId, comments, accessToken) => async (d
     );
     dispatch({ type: USER_COMMENT_SUCCESS, payload: response.data });
     dispatch(listComments(uploadId));
+    if (callback) {
+      callback();
+    }
   } catch (error) {
     dispatch({ type: USER_COMMENT_FAIL, payload: error.message });
   }
@@ -289,18 +291,16 @@ export const listComments = (uploadId) => async (dispatch) => {
 };
 
 
-
-
-export const deleteComments = (commentId) => async (dispatch) => {
-  dispatch({ type: USER_DELETE_COMMENT_REQUEST });
+export const deleteComments = (commentId, callback, uploadId) => async (dispatch) => {
   try {
+    dispatch({ type: USER_DELETE_COMMENT_REQUEST });
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const token = userInfo ? userInfo.access_token : null;
     const config = {
       headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": `Bearer ${token}`,
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
       },
     };
     if (token) {
@@ -310,9 +310,12 @@ export const deleteComments = (commentId) => async (dispatch) => {
     const response = await instance.delete(`api/sharer/comment/delete/${commentId}/`, config);
     const { data } = response;
     dispatch({ type: USER_DELETE_COMMENT_SUCCESS, payload: { comments: data, commentId } });
-    dispatch(listComments(commentId));
+    dispatch(listComments(uploadId));
+    if (callback) {
+      callback();
+    }
   } catch (error) {
-    dispatch({ type: USER_DELETE_COMMENT_FAIL, payload: error.response ? error.response.data.message : error.message });
+    dispatch({ type: USER_DELETE_COMMENT_FAIL, payload: error.message });
   }
 };
 

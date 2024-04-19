@@ -59,6 +59,9 @@ function SharerPageScreen() {
   const handleButtonClick = (postId) => {
     setShowComment((prevShowComment) => !prevShowComment); // Toggle the showComment state
   };
+  const updatePostCount = () => {
+    dispatch(listSharerPosts());
+  };
 
   const CATEGORY_CHOICES = [
     { value: "", label: "Default Category" },
@@ -431,7 +434,7 @@ function SharerPageScreen() {
                     <LikeComponent uploadId={post.id} />
                     <div className="comment-icon">
                       <button onClick={() => handleButtonClick(post.id)}>
-                        <BiComment />
+                        <BiComment />{post.comment_count}
                       </button>
                     </div>
                     <div className="update-icon">
@@ -493,12 +496,15 @@ function SharerPageScreen() {
                     </form>
                   </div>
                   <div
-                    className={`comment-section ${
-                      showComment ? "expanded" : ""
-                    }`}
-                  >
-                    {showComment && <Comment uploadId={post.id} />}
-                  </div>
+                  className={`comment-section ${showComment ? "expanded" : ""}`}
+                >
+                  {showComment && (
+                    <Comment
+                      uploadId={post.id}
+                      updatePostCount={updatePostCount}
+                    />
+                  )}
+                </div>
                 </div>
               </div>
             ))}

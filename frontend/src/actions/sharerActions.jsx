@@ -239,7 +239,6 @@ export const uploadSharer = (formData) => async (dispatch) => {
 
 
 
-const BASE_URL = "http://localhost:8000";
 export const listSharerPosts = () => async (dispatch) => {
   try {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
