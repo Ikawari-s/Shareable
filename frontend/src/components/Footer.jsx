@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import '../designs/footer.css';
+import '../designs/Footer.css';
 import logotext from '../designs/images/logotext.png';
 import { Link } from "react-router-dom";
 
@@ -12,14 +12,11 @@ function Footer() {
         <Row className="justify-content-center">
           <Col l={3}>
             <p className="wa">ABOUT</p>
-            <p>Share something probably</p>
+            <p>Shareable: Create, Share, and Connect</p>
             <Link id="da-link" to="/"><img src={logotext} alt="Logo" /></Link>
           </Col>
           <Col l={3}>
-            <p className="wa">Sharers</p>
-            <p>They</p>
-            <p>Make</p>
-            <p>Content</p>
+     
           </Col>
           
           <Col l={3}>

@@ -105,9 +105,13 @@ function PreviewContent({ sharerId }) {
             {/* Render delete button if user is admin */}
             {isAdmin && (
               <>
-                <button onClick={() => handleShowDeleteConfirmation(post.id)}>
+                <button
+                  onClick={() => handleShowDeleteConfirmation(post.id)}
+                  className="btn btn-danger"
+                >
                   Delete Post
                 </button>
+
                 {showDeleteConfirmation && postIdToDelete === post.id && (
                   <div className="confirmation-overlay">
                     <div className="confirmation-modal">
@@ -120,26 +124,26 @@ function PreviewContent({ sharerId }) {
               </>
             )}
             <div className="d-flex">
-              <h1>{post.title}</h1>
-              <p
-                style={{
-                  margin: "1rem 0 0 1rem",
-                  color: "rgba(255, 255, 255, 0.5)",
-                }}
-              >
-                {post.created_at_formatted}
-              </p>
-              {post.edited && (
-                <p
-                  style={{
-                    margin: "1rem 0 0 1rem",
-                    color: "rgba(255, 255, 255, 0.5)",
-                  }}
-                >
-                  Edited {post.edited_at_formatted}
-                </p>
-              )}
-            </div>
+                  <h1>{post.title}</h1>
+                  <p
+                    style={{
+                      margin: "1rem 0 0 1rem",
+                      color: "rgba(255, 255, 255, 0.5)",
+                    }}
+                  >
+                    {post.created_at}
+                  </p>
+                  {post.edited && (
+                    <p
+                      style={{
+                        margin: "1rem 0 0 1rem",
+                        color: "rgba(255, 255, 255, 0.5)",
+                      }}
+                    >
+                      (Edited {post.edited_at_formatted})
+                    </p>
+                  )}
+                </div>
             <h4>{post.description}</h4>
             <div style={{ maxHeight: "70rem", overflowY: "auto" }}>
               {post.images.length > 0 && (

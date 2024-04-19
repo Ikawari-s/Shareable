@@ -105,6 +105,11 @@ DATABASES = {
     }
 }
 
+import dj_database_url
+db_from_env = dj_database_url.config()
+DATABASES['default'].update(db_from_env)
+DATABASES['default']['CONN_MAX_AGE'] = 500
+
 AUTH_USER_MODEL = 'accounts.AppUser'
 
 REST_FRAMEWORK = {
@@ -237,13 +242,14 @@ STATICFILES_DIRS = [BASE_DIR / "static_my_project",
                     BASE_DIR / "templates" / "build",
                      ]
 
-STATIC_ROOT = os.path.join(BASE_DIR, "static_cdn", "static_root")
+STATIC_ROOT = os.path.join(BASE_DIR, "static", "static_root")
 
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "static_cdn", "media_root")
+MEDIA_ROOT = os.path.join(BASE_DIR, "static", "media_root")
 
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
 # MEDIA_URL = '/contact_media/'
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'contact_media')
 
@@ -308,6 +314,7 @@ DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'contact_media')
 
 
+AWS_QUERYSTRING_AUTH = False
 
 
 AWS_GROUP_NAME = "SHAREABLE_GROUP-4 "

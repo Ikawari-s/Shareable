@@ -26,11 +26,11 @@ const ShareableIntro = () => {
         </h1>
         <div style={{ maxWidth: "50rem", margin: "auto" }}>
           <p>
-            The primary objective of Shareable is to connect patrons or users
-            with exclusive content from their favorite creators through
-            subscriptions or tiers, be it monthly, annually, or per creation. We
-            aim to cater to diverse preferences, creating a platform that
-            resonates with users' needs and drives engagement.
+            Welcome to Shareable, your gateway to exclusive content from your
+            favorite creators across various mediums. In today's digital age,
+            where the internet shapes our daily lives, Shareable emerges as a
+            vibrant platform bridging the gap between creators and their
+            dedicated audience.
           </p>
           <p>
             In today’s world where the internet is a huge part of our daily
@@ -42,45 +42,23 @@ const ShareableIntro = () => {
             users to access exclusive contents from their favorite creators, and
             creators to gain monetary compensation.
           </p>
+
           <p>
-            The number one reason that people pay for content is because they
-            can’t get the information they need elsewhere for free. Successful
-            membership websites tend to be run by people deeply immersed in
-            their subject, whose access to certain sources, background knowledge
-            and informed opinion creates sustainable advantage and value.
+            Our platform is built on the principles of fairness and equality. We
+            strive to create an environment where both creators and users
+            benefit mutually. Creators gain monetary compensation for their hard
+            work and dedication, while users gain access to exclusive content
+            that enriches their lives and fosters meaningful connections.
           </p>
           <p>
-            People pay for content because it enhances their trust in its
-            quality. That explains why news corporations aligned with values
-            such as objectivity and reliability are the ones with the highest
-            number of subscribers. Also, media that offer complete information
-            regarding a topic generate a higher sense of trust amongst
-            consumers.
-          </p>
-          <p>
-            This means that your target audience must comprehend how your
-            service or product will help them and be able to visualize the
-            possible outcome before they spend a coin. Unlike free content,
-            where you only list ideas and tips, paid content is a complete and
-            detailed guide that can be followed to get actual results (Kaiwen,
-            2021).
-          </p>
-          <p>
-            Selling exclusive content on YouTube can be a win-win for both
-            creators and their subscribers. It allows creators to monetize their
-            content further while offering a unique experience to their most
-            dedicated fans. As YouTube continues to evolve, this approach to
-            content monetization is likely to play a significant role in the
-            platform’s future. It’s a great way for creators to build deeper
-            relationships with their biggest fans, establish a recurring revenue
-            stream, and have more control over their business.
-          </p>
-          <p>
-            This website was created so people can access exclusive content from
-            different creators and for the creators to gain monetary
-            compensation. As well as providing equal opportunity for both users
-            and creators. As a result, Shareable will be a way for different
-            people to explore different creators with various content.
+            Discover a world of exclusive content and support your favorite
+            creators by joining Shareable today. Whether you're a creator
+            looking to showcase your talents or a user seeking premium content,
+            Shareable is your destination for exploration, engagement, and
+            empowerment. Join us and become part of a community where creativity
+            thrives, connections are forged, and possibilities are endless.
+            Together, let's make sharing and experiencing exclusive content a
+            seamless and enriching journey.
           </p>
         </div>
       </div>

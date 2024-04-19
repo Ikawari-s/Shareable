@@ -102,9 +102,11 @@ function TierOneLatest({ sharerId }) {
                   <>
                     <button
                       onClick={() => handleShowDeleteConfirmation(post.id)}
+                      className="btn btn-danger"
                     >
                       Delete Post
                     </button>
+
                     {showDeleteConfirmation && postIdToDelete === post.id && (
                       <div className="confirmation-overlay">
                         <div className="confirmation-modal">
@@ -119,7 +121,7 @@ function TierOneLatest({ sharerId }) {
                   </>
                 )}
 
-                <div className="d-flex">
+<div className="d-flex">
                   <h1>{post.title}</h1>
                   <p
                     style={{
@@ -127,7 +129,7 @@ function TierOneLatest({ sharerId }) {
                       color: "rgba(255, 255, 255, 0.5)",
                     }}
                   >
-                    {post.created_at_formatted}
+                    {post.created_at}
                   </p>
                   {post.edited && (
                     <p
@@ -136,7 +138,7 @@ function TierOneLatest({ sharerId }) {
                         color: "rgba(255, 255, 255, 0.5)",
                       }}
                     >
-                      Edited {post.edited_at_formatted}
+                      (Edited {post.edited_at_formatted})
                     </p>
                   )}
                 </div>
