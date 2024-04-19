@@ -97,7 +97,7 @@ export const DetailSharers = (id) => async (dispatch) => {
         }
       : {};
 
-    const { data } = await axios.get(
+    const { data } = await instance.get(
       `api/sharer/sharer-profile/${id}/`,
       config
     );
@@ -152,7 +152,7 @@ export const listSharers =
         url += `&category=${encodeURIComponent(selectedCategory)}`;
       }
 
-      const { data } = await axios.get(url, config);
+      const { data } = await instance.get(url, config);
 
       dispatch({
         type:
@@ -189,7 +189,7 @@ export const beSharer = (page_name) => async (dispatch) => {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    const response = await axios.post("api/be-sharer/", { page_name }, config);
+    const response = await instance.post("api/be-sharer/", { page_name }, config);
 
     dispatch({
       type: BE_SHARER_SUCCESS,
@@ -228,7 +228,7 @@ export const uploadSharer = (formData) => async (dispatch) => {
         }
       : {};
 
-    const { data } = await axios.post(
+    const { data } = await instance.post(
       "api/sharer/sharer-upload",
       formData,
       config
@@ -265,7 +265,7 @@ export const listSharerPosts = () => async (dispatch) => {
         }
       : {};
     dispatch({ type: SHARER_POST_LIST_REQUEST });
-    const { data } = await axios.get("api/sharer/sharer-upload-list", config);
+    const { data } = await instance.get("api/sharer/sharer-upload-list", config);
 
     // Check if data.edited_at_formatted exists, if not, set it to null
     const edited_at_formatted = data.edited_at_formatted || null;
@@ -317,7 +317,7 @@ export const FetchSharerPreviewList = (sharerId) => async (dispatch) => {
       : {};
 
     dispatch({ type: SHARER_PREVIEW_LIST_REQUEST });
-    const response = await axios.get(
+    const response = await instance.get(
       `api/sharer/preview-list-content/${sharerId}/`,
       config
     );
@@ -352,7 +352,7 @@ export const FetchSharerPreviewList = (sharerId) => async (dispatch) => {
 //       : {};
 
 //     dispatch({ type: SHARER_PREVIEW_REQUEST });
-//     const response = await axios.get(`api/sharer/preview-content/${postId}/`, config);
+//     const response = await instance.get(`api/sharer/preview-content/${postId}/`, config);
 //     dispatch({ type: SHARER_PREVIEW_SUCCESS, payload: response.data });
 //   } catch (error) {
 //     dispatch({
@@ -377,7 +377,7 @@ export const profileSharers = (userEmail) => async (dispatch) => {
       },
     };
 
-    const { data } = await axios.get("api/sharer/user-sharer-profile/", {
+    const { data } = await instance.get("api/sharer/user-sharer-profile/", {
       ...config,
       params: { email: userEmail },
     });
@@ -416,7 +416,7 @@ export const profileSharers = (userEmail) => async (dispatch) => {
 
 //     dispatch({ type: SHARER_LATEST_POST_REQUEST });
 
-//     const response = await axios.get(
+//     const response = await instance.get(
 //       `api/sharer/sharer-latest-post/${id}/`,
 //       config
 //     );
@@ -459,7 +459,7 @@ export const CheckerSharer = () => async (dispatch) => {
         }
       : {};
 
-    const response = await axios.get("api/checker/", config);
+    const response = await instance.get("api/checker/", config);
     const { data } = response;
 
     // Assuming your data contains an 'isSharer' property
@@ -522,7 +522,7 @@ export const SharerUpdateProfile = ({
 
       dispatch({ type: SHARER_UPDATE_PROFILE_REQUEST });
 
-      const response = await axios.patch(
+      const response = await instance.patch(
         "/api/sharer/update-profile-sharer/",
         formData,
         config
@@ -559,7 +559,7 @@ export const sharerDeletePost = (uploadId) => async (dispatch) => {
     };
 
     // Make API request to delete the post
-    await axios.delete(`/api/sharer/sharer-post-delete/${uploadId}/`, config);
+    await instance.delete(`/api/sharer/sharer-post-delete/${uploadId}/`, config);
 
     dispatch({ type: SHARER_DELETE_POST_SUCCESS, payload: uploadId }); // Pass the uploadId as payload
     dispatch({ type: REMOVE_DELETED_POST, payload: uploadId }); // Add a new action to remove the post from the state
@@ -590,7 +590,7 @@ export const fetchSharerRatings = (sharerId) => async (dispatch) => {
       },
     };
 
-    const response = await axios.get(`/api/sharer/ratings/${sharerId}`, config);
+    const response = await instance.get(`/api/sharer/ratings/${sharerId}`, config);
     const ratingsWithUsername = response.data.map((rating) => ({
       ...rating,
       username: rating.username, // Assuming the backend response includes the username
@@ -638,7 +638,7 @@ export const postSharerRatings = (sharerId, ratingData) => async (dispatch) => {
     };
 
     // Make API request to post the ratings
-    const response = await axios.post(
+    const response = await instance.post(
       `/api/sharer/ratings/${sharerId}`,
       fullRatingData,
       config
@@ -673,7 +673,7 @@ export const deleteSharerRatings = (ratingId) => async (dispatch) => {
       },
     };
 
-    const response = await axios.delete(
+    const response = await instance.delete(
       `/api/sharer/delete-rating/${ratingId}`,
       config
     ); // Pass the config object for authorization
@@ -707,7 +707,7 @@ export const patchSharerRatings = (ratingId, newData) => async (dispatch) => {
       },
     };
 
-    const response = await axios.patch(
+    const response = await instance.patch(
       `/api/sharer/update-rating/${ratingId}`,
       newData,
       config
@@ -752,7 +752,7 @@ export const editSharerPost =
         }
       }
 
-      const response = await axios.patch(
+      const response = await instance.patch(
         `api/sharer/sharer-upload-edit/${upload_id}/`,
         postData,
         config
@@ -793,7 +793,7 @@ export const getSharerPostCount = (sharerId) => async (dispatch) => {
         }
       : {};
 
-    const { data } = await axios.get(
+    const { data } = await instance.get(
       `api/sharer/posts/count-posts/${sharerId}/`,
       config
     );
@@ -837,7 +837,7 @@ export const sendTipBox = (userId, sharerId, tipAmount) => async (dispatch) => {
       amount: parseFloat(tipAmount),
     };
 
-    const response = await axios.post(
+    const response = await instance.post(
       `api/sharer/tipboxes/create/${sharerId}/`,
       requestData,
       config
@@ -880,7 +880,7 @@ export const getDashboard = () => async (dispatch) => {
         }
       : {};
 
-    const { data } = await axios.get("api/sharer/dashboard/", config);
+    const { data } = await instance.get("api/sharer/dashboard/", config);
 
     console.log("Dashboard data:", data); // Log the fetched data
     dispatch({ type: GET_DASHBOARD_SUCCESS, payload: data });
@@ -913,7 +913,7 @@ export const getTopDonor = (sharerId) => async (dispatch) => {
         }
       : {};
 
-    const response = await axios.get(
+    const response = await instance.get(
       `api/sharer/top-donor/${sharerId}/`,
       config
     );

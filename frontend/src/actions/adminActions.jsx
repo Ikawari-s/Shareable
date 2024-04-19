@@ -57,7 +57,7 @@ export const listAdminUsers = () => async (dispatch) => {
         }
       : {};
 
-    const { data } = await axios.get("api/admin/user-dashboard/", config);
+    const { data } = await instance.get("/api/admin/user-dashboard/", config);
     dispatch({ type: GET_ADMIN_USER_SUCCESS, payload: data });
   } catch (error) {
     dispatch({
@@ -90,8 +90,8 @@ export const createUserAdmin = (userData) => async (dispatch) => {
     // Include password in userData
     const dataToSend = { ...userData, password: userData.password1 };
 
-    const response = await axios.post(
-      "api/admin/user-dashboard/",
+    const response = await instance.post(
+      "/api/admin/user-dashboard/",
       dataToSend,
       config
     );
@@ -154,7 +154,7 @@ export const updateUserAdmin = (userId, userData) => async (dispatch) => {
     }
 
     const response = await instance.patch(
-      `api/admin/user-dashboard/${userId}/`,
+      `/api/admin/user-dashboard/${userId}/`,
       formData,
       config
     );
@@ -192,8 +192,8 @@ export const deleteUserAdmin = (userId) => async (dispatch) => {
         }
       : {};
 
-    const response = await axios.delete(
-      `api/admin/user-dashboard/${userId}/`,
+    const response = await instance.delete(
+      `/api/admin/user-dashboard/${userId}/`,
       config
     );
 
@@ -228,7 +228,7 @@ export const getSharerIncomeAdmin = () => async (dispatch) => {
         }
       : {};
 
-    const response = await axios.get("api/admin/sharer-dashboard/", config);
+    const response = await instance.get("/api/admin/sharer-dashboard/", config);
 
     dispatch({ type: GET_SHARER_INCOME_ADMIN_SUCCESS, payload: response.data });
   } catch (error) {
@@ -259,8 +259,8 @@ export const sendIncomeToSharer = (sharerId) => async (dispatch) => {
         }
       : {};
 
-    const response = await axios.post(
-      `api/admin/send-income/${sharerId}/`,
+    const response = await instance.post(
+      `/api/admin/send-income/${sharerId}/`,
       {},
       config
     );
@@ -294,8 +294,8 @@ export const patchSharerAdmin = (sharerId, formData) => async (dispatch) => {
         }
       : {};
 
-    const response = await axios.patch(
-      `api/admin/patch-sharer/${sharerId}/`,
+    const response = await instance.patch(
+      `/api/admin/patch-sharer/${sharerId}/`,
       formData,
       config
     );
@@ -330,8 +330,8 @@ export const searchUser = (query) => async (dispatch, getState) => {
         }
       : {};
 
-    const { data } = await axios.get(
-      `api/admin/search-user/?query=${query}`,
+    const { data } = await instance.get(
+      `/api/admin/search-user/?query=${query}`,
       config
     );
 
@@ -364,8 +364,8 @@ export const searchSharer = (query) => async (dispatch, getState) => {
         }
       : {};
 
-    const { data } = await axios.get(
-      `api/admin/search-sharer/?query=${query}`,
+    const { data } = await instance.get(
+      `/api/admin/search-sharer/?query=${query}`,
       config
     );
 
@@ -397,12 +397,12 @@ export const fetchAdminContacts =
         },
       };
 
-      let url = "api/admin/user-contacts/";
+      let url = "/api/admin/user-contacts/";
       if (searchTerm) {
         url += `?search=${encodeURIComponent(searchTerm)}`;
       }
 
-      const { data } = await axios.get(url, config);
+      const { data } = await instance.get(url, config);
 
       dispatch({
         type: CONTACTS_ADMIN_SUCCESS,
@@ -432,7 +432,7 @@ export const deleteAdminContact = (contactId) => async (dispatch) => {
       },
     };
 
-    await axios.delete(`api/admin/delete-contact/${contactId}/`, config);
+    await instance.delete(`/api/admin/delete-contact/${contactId}/`, config);
 
     dispatch({ type: DELETE_CONTACT_SUCCESS, payload: contactId });
 

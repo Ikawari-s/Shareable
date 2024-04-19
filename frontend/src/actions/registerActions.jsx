@@ -28,7 +28,7 @@ export const register = (email, password, username) => async (dispatch) => {
       },
     };
 
-    const { data } = await axios.post(
+    const { data } = await instance.post(
       "/api/register/",
       { email, password, username },
       config
@@ -62,8 +62,8 @@ export const verifyOTP = (userId, otp, otpId) => async (dispatch) => {
       },
     };
 
-    const { data } = await axios.post(
-      "api/verify-otp/",
+    const { data } = await instance.post(
+      "/api/verify-otp/",
       { user_id: userId, otp, otp_id: otpId },
       config
     );
@@ -99,8 +99,8 @@ export const resendOTP = (userId, otpId) => async (dispatch) => {
       },
     };
 
-    const { data } = await axios.post(
-      "api/resend-otp/",
+    const { data } = await instance.post(
+      "/api/resend-otp/",
       { user_id: userId, otp_id: otpId },
       config
     );

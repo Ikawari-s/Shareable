@@ -41,7 +41,7 @@ export const followSharer = (sharerId, tier, amount) => async (dispatch) => {
       amount: parseFloat(amount),
     };
 
-    const response = await axios.post(
+    const response = await instance.post(
       `/api/follow-sharer/${sharerId}`,
       requestData,
       config
@@ -81,7 +81,7 @@ export const unfollowSharer = (sharerId, tier) => async (dispatch) => {
     };
 
     // Perform API call to unfollow the sharer using DELETE method
-    const response = await axios.delete(`/api/unfollow-sharer/${sharerId}/`, {
+    const response = await instance.delete(`/api/unfollow-sharer/${sharerId}/`, {
       ...config,
       data: { tier },
     }); // Pass tier in the request body
@@ -122,7 +122,7 @@ export const listFollowedSharers = () => async (dispatch) => {
         }
       : {};
 
-    const response = await axios.get("/api/followed-sharers/", config);
+    const response = await instance.get("/api/followed-sharers/", config);
 
     if (response.status === 200) {
       dispatch({
@@ -159,7 +159,7 @@ export const getExpiration = () => async (dispatch) => {
       },
     };
 
-    const response = await axios.get("/api/follow-checker/", config);
+    const response = await instance.get("/api/follow-checker/", config);
 
     if (response.status === 200) {
       const expirationData = response.data;

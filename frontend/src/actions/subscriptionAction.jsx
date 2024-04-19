@@ -29,8 +29,8 @@ export const listTier1FollowedSharers =
         },
       };
 
-      const { data } = await axios.get(
-        `api/sharer/tier1-followed-sharers/${sharerId}/`,
+      const { data } = await instance.get(
+        `/api/sharer/tier1-followed-sharers/${sharerId}/`,
         config
       );
 
@@ -63,8 +63,8 @@ export const listTier2FollowedSharers =
         },
       };
 
-      const { data } = await axios.get(
-        `api/sharer/tier2-followed-sharers/${sharerId}/`,
+      const { data } = await instance.get(
+        `/api/sharer/tier2-followed-sharers/${sharerId}/`,
         config
       );
 
@@ -97,8 +97,8 @@ export const listTier3FollowedSharers =
         },
       };
 
-      const { data } = await axios.get(
-        `api/sharer/tier3-followed-sharers/${sharerId}/`,
+      const { data } = await instance.get(
+        `/api/sharer/tier3-followed-sharers/${sharerId}/`,
         config
       );
 

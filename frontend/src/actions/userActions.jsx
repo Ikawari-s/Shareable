@@ -56,8 +56,8 @@ export const login = (email, password) => async (dispatch) => {
       },
     };
 
-    const { data } = await axios.post(
-      "api/login/",
+    const { data } = await instance.post(
+      "/api/login/",
       { email, password },
       config
     );
@@ -91,7 +91,7 @@ export const logout = () => async (dispatch) => {
       : {};
 
     if (token) {
-      await axios.post("api/logout/", {}, config);
+      await instance.post("/api/logout/", {}, config);
     }
 
     localStorage.removeItem("userInfo");
@@ -113,7 +113,7 @@ export const logout = () => async (dispatch) => {
 export const sendPasswordRequest = (email) => async (dispatch) => {
   try {
     dispatch({ type: USER_SEND_PASSWORD_REQUEST });
-    const response = await axios.post("api/request-reset-email/", {
+    const response = await instance.post("/api/request-reset-email/", {
       email: email,
       redirect_url: "http://localhost:3000/new-password/",
     });
@@ -138,8 +138,8 @@ export const userNewPasswordReducer =
           "Content-Type": "application/json",
         },
       };
-      const { data } = await axios.patch(
-        "api/password-reset-complete/",
+      const { data } = await instance.patch(
+        "/api/password-reset-complete/",
         { uidb64, token, password, password2 },
         config
       );
@@ -171,7 +171,7 @@ export const likePost = (uploadId, token) => async (dispatch) => {
           },
         }
       : {};
-    await axios.post(`api/sharer/posts/like/${uploadId}/`, null, config);
+    await instance.post(`/api/sharer/posts/like/${uploadId}/`, null, config);
     dispatch({ type: USER_LIKE_SUCCESS });
   } catch (error) {
     dispatch({ type: USER_LIKE_FAIL, payload: error.message });
@@ -192,7 +192,7 @@ export const unlikePost = (uploadId, token) => async (dispatch) => {
           },
         }
       : {};
-    await axios.post(`api/sharer/posts/unlike/${uploadId}/`, null, config);
+    await instance.post(`/api/sharer/posts/unlike/${uploadId}/`, null, config);
     dispatch({ type: USER_UNLIKE_SUCCESS });
   } catch (error) {
     dispatch({ type: USER_UNLIKE_FAIL, payload: error.message });
@@ -217,8 +217,8 @@ export const fetchLikesCount = (uploadId) => {
       : {};
 
     try {
-      const response = await axios.get(
-        `api/sharer/posts/count-likes/${uploadId}/`,
+      const response = await instance.get(
+        `/api/sharer/posts/count-likes/${uploadId}/`,
         config
       );
 
@@ -256,8 +256,8 @@ export const postComment =
         comments: comments,
       };
       console.log("Submitting comment with data:", requestData); // Log the fields
-      const response = await axios.post(
-        `api/sharer/posts/comment/${uploadId}/`,
+      const response = await instance.post(
+        `/api/sharer/posts/comment/${uploadId}/`,
         requestData,
         config
       );
@@ -285,8 +285,8 @@ export const listComments = (uploadId) => async (dispatch) => {
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    const response = await axios.get(
-      `api/sharer/comments/${uploadId}/`,
+    const response = await instance.get(
+      `/api/sharer/comments/${uploadId}/`,
       config
     );
     const { data } = response;
@@ -320,8 +320,8 @@ export const deleteComments =
         config.headers.Authorization = `Bearer ${token}`;
       }
 
-      const response = await axios.delete(
-        `api/sharer/comment/delete/${commentId}/`,
+      const response = await instance.delete(
+        `/api/sharer/comment/delete/${commentId}/`,
         config
       );
       const { data } = response;
@@ -371,8 +371,8 @@ export const updateUserProfile =
         },
       };
 
-      const { data } = await axios.patch(
-        "api/profile/update/",
+      const { data } = await instance.patch(
+        "/api/profile/update/",
         formData,
         config
       );
@@ -411,7 +411,7 @@ export const fetchUserProfile = () => async (dispatch) => {
         }
       : {};
 
-    const response = await axios.get("api/user/profile/", config);
+    const response = await instance.get("/api/user/profile/", config);
 
     dispatch({ type: FETCH_USER_PROFILE_SUCCESS, payload: response.data });
   } catch (error) {
@@ -446,7 +446,7 @@ export const changePassword =
         },
       };
 
-      const { data } = await axios.patch(
+      const { data } = await instance.patch(
         "/api/change-password/",
         { old_password: oldPassword, new_password: newPassword },
         config
