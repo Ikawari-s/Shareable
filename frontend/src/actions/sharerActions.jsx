@@ -140,7 +140,7 @@ export const listSharers =
           }
         : {};
 
-      let url = `http://127.0.0.1:8000/api/sharer/?sort_by=${sort_by}&order_by=${order_by}`;
+      let url = `https://abcabc123-acd97d6f01bb.herokuapp.com/api/sharer/?sort_by=${sort_by}&order_by=${order_by}`;
 
       // Include search term in the request
       if (searchTerm) {
@@ -189,7 +189,11 @@ export const beSharer = (page_name) => async (dispatch) => {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    const response = await instance.post("api/be-sharer/", { page_name }, config);
+    const response = await instance.post(
+      "api/be-sharer/",
+      { page_name },
+      config
+    );
 
     dispatch({
       type: BE_SHARER_SUCCESS,
@@ -265,7 +269,10 @@ export const listSharerPosts = () => async (dispatch) => {
         }
       : {};
     dispatch({ type: SHARER_POST_LIST_REQUEST });
-    const { data } = await instance.get("api/sharer/sharer-upload-list", config);
+    const { data } = await instance.get(
+      "api/sharer/sharer-upload-list",
+      config
+    );
 
     // Check if data.edited_at_formatted exists, if not, set it to null
     const edited_at_formatted = data.edited_at_formatted || null;
@@ -559,7 +566,10 @@ export const sharerDeletePost = (uploadId) => async (dispatch) => {
     };
 
     // Make API request to delete the post
-    await instance.delete(`/api/sharer/sharer-post-delete/${uploadId}/`, config);
+    await instance.delete(
+      `/api/sharer/sharer-post-delete/${uploadId}/`,
+      config
+    );
 
     dispatch({ type: SHARER_DELETE_POST_SUCCESS, payload: uploadId }); // Pass the uploadId as payload
     dispatch({ type: REMOVE_DELETED_POST, payload: uploadId }); // Add a new action to remove the post from the state
@@ -590,7 +600,10 @@ export const fetchSharerRatings = (sharerId) => async (dispatch) => {
       },
     };
 
-    const response = await instance.get(`/api/sharer/ratings/${sharerId}`, config);
+    const response = await instance.get(
+      `/api/sharer/ratings/${sharerId}`,
+      config
+    );
     const ratingsWithUsername = response.data.map((rating) => ({
       ...rating,
       username: rating.username, // Assuming the backend response includes the username
