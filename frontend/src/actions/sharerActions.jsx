@@ -140,19 +140,16 @@ export const listSharers =
           }
         : {};
 
-      let url = `https://abcabc123-acd97d6f01bb.herokuapp.com/api/sharer/?sort_by=${sort_by}&order_by=${order_by}`;
-
-      // Include search term in the request
-      if (searchTerm) {
-        url += `&search=${encodeURIComponent(searchTerm)}`;
-      }
-
-      // Include selected category in the request
-      if (selectedCategory && selectedCategory !== "all") {
-        url += `&category=${encodeURIComponent(selectedCategory)}`;
-      }
-
-      const { data } = await instance.get(url, config);
+      const { data } = await instance.get(
+        `/api/sharer/?sort_by=${sort_by}&order_by=${order_by}${
+          searchTerm ? `&search=${encodeURIComponent(searchTerm)}` : ""
+        }${
+          selectedCategory && selectedCategory !== "all"
+            ? `&category=${encodeURIComponent(selectedCategory)}`
+            : ""
+        }`,
+        config
+      );
 
       dispatch({
         type:
