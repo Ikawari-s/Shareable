@@ -26,7 +26,7 @@ export const profile = () => async (dispatch) => {
         }
       : {};
 
-    const response = await instance.get("api/user/profile/", config);
+    const response = await axios.get("api/user/profile/", config);
 
     dispatch({ type: USER_PROFILE_SUCCESS, payload: response.data });
   } catch (error) {

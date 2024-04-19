@@ -13,7 +13,7 @@ export const submitContactRequest = (formData) => async (dispatch) => {
   try {
     dispatch({ type: CONTACT_REQUEST });
 
-    const response = await instance.post("/api/contacts/", formData);
+    const response = await axios.post("/api/contacts/", formData);
 
     if (!formData.get("attachment")) {
       dispatch({ type: CONTACT_SUCCESS });

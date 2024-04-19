@@ -122,7 +122,7 @@ export const listFollowedSharers = () => async (dispatch) => {
         }
       : {};
 
-    const response = await instance.get("/api/followed-sharers/", config);
+    const response = await axios.get("/api/followed-sharers/", config);
 
     if (response.status === 200) {
       dispatch({
