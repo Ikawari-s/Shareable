@@ -38,12 +38,11 @@ import {
   USER_CHANGE_PASSWORD_SUCCESS,
   USER_CHANGE_PASSWORD_FAIL,
   REMOVE_DELETED_POST,
-  
 } from "../constants/userConstants";
-import {profile} from './profileActions'
+import { profile } from "./profileActions";
 
 const instance = axios.create({
-  baseURL: "http://127.0.0.1:8000/",
+  baseURL: "https://abcabc123-acd97d6f01bb.herokuapp.com/",
 });
 
 export const login = (email, password) => async (dispatch) => {
@@ -57,7 +56,11 @@ export const login = (email, password) => async (dispatch) => {
       },
     };
 
-    const { data } = await instance.post("api/login/", { email, password }, config);
+    const { data } = await instance.post(
+      "api/login/",
+      { email, password },
+      config
+    );
 
     dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
 
@@ -72,7 +75,6 @@ export const login = (email, password) => async (dispatch) => {
     });
   }
 };
-
 
 export const logout = () => async (dispatch) => {
   try {
@@ -107,7 +109,6 @@ export const logout = () => async (dispatch) => {
     }
   }
 };
-
 
 export const sendPasswordRequest = (email) => async (dispatch) => {
   try {
@@ -155,7 +156,6 @@ export const userNewPasswordReducer =
       throw error;
     }
   };
-
 
 export const likePost = (uploadId, token) => async (dispatch) => {
   dispatch({ type: USER_LIKE_REQUEST });
@@ -208,64 +208,68 @@ export const fetchLikesCount = (uploadId) => {
 
     const config = token
       ? {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
       : {};
 
     try {
-      const response = await instance.get(`api/sharer/posts/count-likes/${uploadId}/`, config);
+      const response = await instance.get(
+        `api/sharer/posts/count-likes/${uploadId}/`,
+        config
+      );
 
       dispatch({
         type: FETCH_LIKES_COUNT_SUCCESS,
         payload: {
           likesCount: response.data.likes_count,
           unlikesCount: response.data.unlikes_count,
-          uploadId: uploadId 
-        }
+          uploadId: uploadId,
+        },
       });
     } catch (error) {
       dispatch({
         type: FETCH_LIKES_COUNT_FAILURE,
-        payload: { error: error.message, uploadId }
+        payload: { error: error.message, uploadId },
       });
     }
   };
 };
 
-export const postComment = (userId, uploadId, comments, accessToken, callback) => async (dispatch) => {
-  try {
-    dispatch({ type: USER_COMMENT_REQUEST });
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
-    const requestData = {
-      user: userId,
-      post: uploadId,
-      comments: comments,
-    };
-    console.log("Submitting comment with data:", requestData); // Log the fields
-    const response = await instance.post(
-      `api/sharer/posts/comment/${uploadId}/`,
-      requestData,
-      config
-    );
-    dispatch({ type: USER_COMMENT_SUCCESS, payload: response.data });
-    dispatch(listComments(uploadId));
-    if (callback) {
-      callback();
+export const postComment =
+  (userId, uploadId, comments, accessToken, callback) => async (dispatch) => {
+    try {
+      dispatch({ type: USER_COMMENT_REQUEST });
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const requestData = {
+        user: userId,
+        post: uploadId,
+        comments: comments,
+      };
+      console.log("Submitting comment with data:", requestData); // Log the fields
+      const response = await instance.post(
+        `api/sharer/posts/comment/${uploadId}/`,
+        requestData,
+        config
+      );
+      dispatch({ type: USER_COMMENT_SUCCESS, payload: response.data });
+      dispatch(listComments(uploadId));
+      if (callback) {
+        callback();
+      }
+    } catch (error) {
+      dispatch({ type: USER_COMMENT_FAIL, payload: error.message });
     }
-  } catch (error) {
-    dispatch({ type: USER_COMMENT_FAIL, payload: error.message });
-  }
-};
+  };
 
 export const listComments = (uploadId) => async (dispatch) => {
   dispatch({ type: USER_LIST_COMMENT_REQUEST });
@@ -281,98 +285,114 @@ export const listComments = (uploadId) => async (dispatch) => {
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    const response = await instance.get(`api/sharer/comments/${uploadId}/`, config);
+    const response = await instance.get(
+      `api/sharer/comments/${uploadId}/`,
+      config
+    );
     const { data } = response;
     console.log("Comments data:", data); // Log comments data
-    dispatch({ type: USER_LIST_COMMENT_SUCCESS, payload: { comments: data, uploadId } });
-  } catch (error) {
-    dispatch({ type: USER_LIST_COMMENT_FAIL, payload: error.response ? error.response.data.message : error.message });
-  }
-};
-
-
-export const deleteComments = (commentId, callback, uploadId) => async (dispatch) => {
-  try {
-    dispatch({ type: USER_DELETE_COMMENT_REQUEST });
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    const token = userInfo ? userInfo.access_token : null;
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    const response = await instance.delete(`api/sharer/comment/delete/${commentId}/`, config);
-    const { data } = response;
-    dispatch({ type: USER_DELETE_COMMENT_SUCCESS, payload: { comments: data, commentId } });
-    dispatch(listComments(uploadId));
-    if (callback) {
-      callback();
-    }
-  } catch (error) {
-    dispatch({ type: USER_DELETE_COMMENT_FAIL, payload: error.message });
-  }
-};
-
-
-
-export const updateUserProfile = ({ profile_picture, username }) => async (dispatch) => {
-  try {
-    dispatch({ type: UPDATE_PROFILE_REQUEST });
-
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    const token = userInfo ? userInfo.access_token : null;
-
-    const formData = new FormData();
-
-    // Append profile_picture only if it's present
-    if (profile_picture) {
-      formData.append('profile_picture', profile_picture);
-    }
-
-    // Append username only if it's present
-    if (username) {
-      formData.append('username', username);
-    }
-
-    // Log the username and profile_picture
-    console.log("Username:", username);
-    console.log("Profile Picture:", profile_picture);
-
-    const config = {
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        // Set the correct content type for FormData
-        "Content-Type": "multipart/form-data",
-      },
-    };
-
-    const { data } = await instance.patch('api/profile/update/', formData, config);
-
     dispatch({
-      type: UPDATE_PROFILE_SUCCESS,
-      payload: data,
-      
+      type: USER_LIST_COMMENT_SUCCESS,
+      payload: { comments: data, uploadId },
     });
-
-    dispatch(profile())
   } catch (error) {
     dispatch({
-      type: UPDATE_PROFILE_FAILURE,
-      payload: error.response && error.response.data.detail
-        ? error.response.data.detail
-        : error.message,
+      type: USER_LIST_COMMENT_FAIL,
+      payload: error.response ? error.response.data.message : error.message,
     });
   }
 };
 
+export const deleteComments =
+  (commentId, callback, uploadId) => async (dispatch) => {
+    try {
+      dispatch({ type: USER_DELETE_COMMENT_REQUEST });
+      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      const token = userInfo ? userInfo.access_token : null;
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
 
+      const response = await instance.delete(
+        `api/sharer/comment/delete/${commentId}/`,
+        config
+      );
+      const { data } = response;
+      dispatch({
+        type: USER_DELETE_COMMENT_SUCCESS,
+        payload: { comments: data, commentId },
+      });
+      dispatch(listComments(uploadId));
+      if (callback) {
+        callback();
+      }
+    } catch (error) {
+      dispatch({ type: USER_DELETE_COMMENT_FAIL, payload: error.message });
+    }
+  };
 
+export const updateUserProfile =
+  ({ profile_picture, username }) =>
+  async (dispatch) => {
+    try {
+      dispatch({ type: UPDATE_PROFILE_REQUEST });
+
+      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      const token = userInfo ? userInfo.access_token : null;
+
+      const formData = new FormData();
+
+      // Append profile_picture only if it's present
+      if (profile_picture) {
+        formData.append("profile_picture", profile_picture);
+      }
+
+      // Append username only if it's present
+      if (username) {
+        formData.append("username", username);
+      }
+
+      // Log the username and profile_picture
+      console.log("Username:", username);
+      console.log("Profile Picture:", profile_picture);
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          // Set the correct content type for FormData
+          "Content-Type": "multipart/form-data",
+        },
+      };
+
+      const { data } = await instance.patch(
+        "api/profile/update/",
+        formData,
+        config
+      );
+
+      dispatch({
+        type: UPDATE_PROFILE_SUCCESS,
+        payload: data,
+      });
+
+      dispatch(profile());
+    } catch (error) {
+      dispatch({
+        type: UPDATE_PROFILE_FAILURE,
+        payload:
+          error.response && error.response.data.detail
+            ? error.response.data.detail
+            : error.message,
+      });
+    }
+  };
 
 export const fetchUserProfile = () => async (dispatch) => {
   try {
@@ -385,13 +405,13 @@ export const fetchUserProfile = () => async (dispatch) => {
       ? {
           headers: {
             "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Authorization": `Bearer ${token}`,
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
           },
         }
       : {};
 
-    const response = await instance.get('api/user/profile/', config);
+    const response = await instance.get("api/user/profile/", config);
 
     dispatch({ type: FETCH_USER_PROFILE_SUCCESS, payload: response.data });
   } catch (error) {
@@ -399,42 +419,42 @@ export const fetchUserProfile = () => async (dispatch) => {
   }
 };
 
+export const changePassword =
+  (oldPassword, newPassword) => async (dispatch) => {
+    try {
+      // Validate new password length
+      if (newPassword.length < 8) {
+        throw new Error("New password must be at least 8 characters long.");
+      }
 
-export const changePassword = (oldPassword, newPassword) => async (dispatch) => {
-  try {
-    // Validate new password length
-    if (newPassword.length < 8) {
-      throw new Error('New password must be at least 8 characters long.');
+      dispatch({ type: USER_CHANGE_PASSWORD_REQUEST });
+
+      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      const accessToken = userInfo ? userInfo.access_token : null;
+
+      console.log("Access token:", accessToken);
+
+      if (!accessToken) {
+        throw new Error("Access token not found");
+      }
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+
+      const { data } = await instance.patch(
+        "/api/change-password/",
+        { old_password: oldPassword, new_password: newPassword },
+        config
+      );
+
+      dispatch({ type: USER_CHANGE_PASSWORD_SUCCESS, payload: data });
+    } catch (error) {
+      dispatch({ type: USER_CHANGE_PASSWORD_FAIL, payload: error.message });
+      throw error;
     }
-
-    dispatch({ type: USER_CHANGE_PASSWORD_REQUEST });
-
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    const accessToken = userInfo ? userInfo.access_token : null;
-
-    console.log("Access token:", accessToken); 
-
-    if (!accessToken) {
-      throw new Error('Access token not found');
-    }
-
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
-
-    const { data } = await instance.patch(
-      "/api/change-password/",
-      { old_password: oldPassword, new_password: newPassword },
-      config
-    );
-
-    dispatch({ type: USER_CHANGE_PASSWORD_SUCCESS, payload: data });
-  } catch (error) {
-    dispatch({ type: USER_CHANGE_PASSWORD_FAIL, payload: error.message });
-    throw error;
-  }
-};
+  };

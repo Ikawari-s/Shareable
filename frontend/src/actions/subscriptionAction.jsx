@@ -12,44 +12,44 @@ import {
 } from "../constants/subscriptionConstatns";
 
 const instance = axios.create({
-  baseURL: "http://127.0.0.1:8000/",
+  baseURL: "https://abcabc123-acd97d6f01bb.herokuapp.com/",
 });
 
-export const listTier1FollowedSharers = (sharerId) => async (dispatch, getState) => {
-  try {
-    dispatch({ type: TIER1_LIST_REQUEST });
+export const listTier1FollowedSharers =
+  (sharerId) => async (dispatch, getState) => {
+    try {
+      dispatch({ type: TIER1_LIST_REQUEST });
 
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    const token = userInfo ? userInfo.access_token : null;
+      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      const token = userInfo ? userInfo.access_token : null;
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
 
-    const { data } = await instance.get(
-      `api/sharer/tier1-followed-sharers/${sharerId}/`,
-      config
-    );
+      const { data } = await instance.get(
+        `api/sharer/tier1-followed-sharers/${sharerId}/`,
+        config
+      );
 
-    dispatch({
-      type: TIER1_LIST_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: TIER1_LIST_FAIL,
-      payload: error.response && error.response.data.detail
-        ? error.response.data.detail
-        : error.message,
-    });
-  }
-};
+      dispatch({
+        type: TIER1_LIST_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: TIER1_LIST_FAIL,
+        payload:
+          error.response && error.response.data.detail
+            ? error.response.data.detail
+            : error.message,
+      });
+    }
+  };
 
-
-
-  export const listTier2FollowedSharers =
+export const listTier2FollowedSharers =
   (sharerId) => async (dispatch, getState) => {
     try {
       dispatch({ type: TIER2_LIST_REQUEST });
@@ -83,8 +83,7 @@ export const listTier1FollowedSharers = (sharerId) => async (dispatch, getState)
     }
   };
 
-
-  export const listTier3FollowedSharers =
+export const listTier3FollowedSharers =
   (sharerId) => async (dispatch, getState) => {
     try {
       dispatch({ type: TIER3_LIST_REQUEST });

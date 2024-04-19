@@ -15,7 +15,7 @@ import {
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "http://127.0.0.1:8000/",
+  baseURL: "https://abcabc123-acd97d6f01bb.herokuapp.com/",
 });
 
 export const register = (email, password, username) => async (dispatch) => {
@@ -30,7 +30,7 @@ export const register = (email, password, username) => async (dispatch) => {
 
     const { data } = await axios.post(
       "/api/register/",
-      { email, password, username }, 
+      { email, password, username },
       config
     );
 
@@ -39,7 +39,7 @@ export const register = (email, password, username) => async (dispatch) => {
       payload: data,
     });
 
-    return data; 
+    return data;
   } catch (error) {
     dispatch({
       type: USER_REGISTER_FAIL,
@@ -48,11 +48,11 @@ export const register = (email, password, username) => async (dispatch) => {
           ? error.response.data.detail
           : error.message,
     });
-    throw error; 
+    throw error;
   }
 };
 
-export const verifyOTP = (userId, otp, otpId) => async (dispatch) => { 
+export const verifyOTP = (userId, otp, otpId) => async (dispatch) => {
   try {
     dispatch({ type: USER_VERIFY_REQUEST });
 
@@ -64,7 +64,7 @@ export const verifyOTP = (userId, otp, otpId) => async (dispatch) => {
 
     const { data } = await instance.post(
       "api/verify-otp/",
-      { user_id: userId, otp, otp_id: otpId }, 
+      { user_id: userId, otp, otp_id: otpId },
       config
     );
 
@@ -73,7 +73,7 @@ export const verifyOTP = (userId, otp, otpId) => async (dispatch) => {
       payload: data,
     });
 
-    return data; 
+    return data;
   } catch (error) {
     const errorMessage =
       error.response && error.response.data.error
@@ -89,7 +89,7 @@ export const verifyOTP = (userId, otp, otpId) => async (dispatch) => {
   }
 };
 
-export const resendOTP = (userId, otpId) => async (dispatch) => { 
+export const resendOTP = (userId, otpId) => async (dispatch) => {
   try {
     dispatch({ type: USER_OTP_RESEND_REQUEST });
 
@@ -101,7 +101,7 @@ export const resendOTP = (userId, otpId) => async (dispatch) => {
 
     const { data } = await instance.post(
       "api/resend-otp/",
-      { user_id: userId, otp_id: otpId }, 
+      { user_id: userId, otp_id: otpId },
       config
     );
 

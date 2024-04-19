@@ -1,10 +1,13 @@
-import { USER_PROFILE_FAIL, USER_PROFILE_REQUEST, USER_PROFILE_SUCCESS } from "../constants/profileConstants";
-import axios from 'axios';
+import {
+  USER_PROFILE_FAIL,
+  USER_PROFILE_REQUEST,
+  USER_PROFILE_SUCCESS,
+} from "../constants/profileConstants";
+import axios from "axios";
 
 const instance = axios.create({
-  baseURL: 'http://127.0.0.1:8000/',
+  baseURL: "https://abcabc123-acd97d6f01bb.herokuapp.com/",
 });
-
 
 export const profile = () => async (dispatch) => {
   try {
@@ -17,13 +20,13 @@ export const profile = () => async (dispatch) => {
       ? {
           headers: {
             "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Authorization": `Bearer ${token}`,
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
           },
         }
       : {};
 
-    const response = await instance.get('api/user/profile/', config);
+    const response = await instance.get("api/user/profile/", config);
 
     dispatch({ type: USER_PROFILE_SUCCESS, payload: response.data });
   } catch (error) {

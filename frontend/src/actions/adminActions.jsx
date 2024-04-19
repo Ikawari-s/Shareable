@@ -36,7 +36,7 @@ import {
 } from "../constants/adminConstants";
 
 const instance = axios.create({
-  baseURL: "http://127.0.0.1:8000/",
+  baseURL: "https://abcabc123-acd97d6f01bb.herokuapp.com/",
 });
 
 export const listAdminUsers = () => async (dispatch) => {
@@ -90,7 +90,11 @@ export const createUserAdmin = (userData) => async (dispatch) => {
     // Include password in userData
     const dataToSend = { ...userData, password: userData.password1 };
 
-    const response = await instance.post("api/admin/user-dashboard/", dataToSend, config);
+    const response = await instance.post(
+      "api/admin/user-dashboard/",
+      dataToSend,
+      config
+    );
 
     if (response.status === 201) {
       dispatch({ type: CREATE_USER_ADMIN_SUCCESS, payload: response.data });
@@ -107,7 +111,6 @@ export const createUserAdmin = (userData) => async (dispatch) => {
     return null;
   }
 };
-
 
 export const updateUserAdmin = (userId, userData) => async (dispatch) => {
   try {
@@ -126,31 +129,35 @@ export const updateUserAdmin = (userId, userData) => async (dispatch) => {
 
     const formData = new FormData();
 
-    if (userData.username.trim() !== '') {
-      formData.append('username', userData.username);
+    if (userData.username.trim() !== "") {
+      formData.append("username", userData.username);
     }
 
     if (userData.is_active !== null) {
-      formData.append('is_active', userData.is_active);
+      formData.append("is_active", userData.is_active);
     }
 
     if (userData.is_sharer !== null) {
-      formData.append('is_sharer', userData.is_sharer);
+      formData.append("is_sharer", userData.is_sharer);
     }
 
     if (userData.is_staff !== null) {
-      formData.append('is_staff', userData.is_staff);
+      formData.append("is_staff", userData.is_staff);
     }
 
     if (userData.is_superuser !== null) {
-      formData.append('is_superuser', userData.is_superuser);
+      formData.append("is_superuser", userData.is_superuser);
     }
 
     if (userData.profile_picture !== null) {
-      formData.append('profile_picture', userData.profile_picture);
+      formData.append("profile_picture", userData.profile_picture);
     }
 
-    const response = await instance.patch(`api/admin/user-dashboard/${userId}/`, formData, config);
+    const response = await instance.patch(
+      `api/admin/user-dashboard/${userId}/`,
+      formData,
+      config
+    );
 
     if (response.status === 200) {
       dispatch({ type: UPDATE_USER_ADMIN_SUCCESS, payload: response.data });
@@ -168,32 +175,33 @@ export const updateUserAdmin = (userId, userData) => async (dispatch) => {
   }
 };
 
-
-
 export const deleteUserAdmin = (userId) => async (dispatch) => {
   try {
     dispatch({ type: DELETE_USER_ADMIN_REQUEST });
 
-    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const token = userInfo ? userInfo.access_token : null;
 
     const config = token
       ? {
           headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
+            "Content-Type": "application/json",
+            Accept: "application/json",
             Authorization: `Bearer ${token}`,
           },
         }
       : {};
 
-    const response = await instance.delete(`api/admin/user-dashboard/${userId}/`, config);
+    const response = await instance.delete(
+      `api/admin/user-dashboard/${userId}/`,
+      config
+    );
 
     if (response.status === 204) {
       dispatch({ type: DELETE_USER_ADMIN_SUCCESS });
       dispatch(listAdminUsers());
     } else {
-      throw new Error('Bad Request');
+      throw new Error("Bad Request");
     }
   } catch (error) {
     dispatch({
@@ -202,7 +210,6 @@ export const deleteUserAdmin = (userId) => async (dispatch) => {
     });
   }
 };
-
 
 export const getSharerIncomeAdmin = () => async (dispatch) => {
   try {
@@ -239,26 +246,30 @@ export const sendIncomeToSharer = (sharerId) => async (dispatch) => {
   try {
     dispatch({ type: INCOME_SENT_ADMIN_REQUEST });
 
-    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const token = userInfo ? userInfo.access_token : null;
 
     const config = token
       ? {
           headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
+            "Content-Type": "application/json",
+            Accept: "application/json",
             Authorization: `Bearer ${token}`,
           },
         }
       : {};
 
-    const response = await instance.post(`api/admin/send-income/${sharerId}/`, {}, config);
+    const response = await instance.post(
+      `api/admin/send-income/${sharerId}/`,
+      {},
+      config
+    );
 
     if (response.status === 200) {
       dispatch({ type: INCOME_SENT_ADMIN_SUCCESS });
       dispatch(getSharerIncomeAdmin(sharerId));
     } else {
-      throw new Error('Bad Request');
+      throw new Error("Bad Request");
     }
   } catch (error) {
     dispatch({
@@ -267,8 +278,6 @@ export const sendIncomeToSharer = (sharerId) => async (dispatch) => {
     });
   }
 };
-
-
 
 export const patchSharerAdmin = (sharerId, formData) => async (dispatch) => {
   try {
@@ -285,7 +294,11 @@ export const patchSharerAdmin = (sharerId, formData) => async (dispatch) => {
         }
       : {};
 
-    const response = await instance.patch(`api/admin/patch-sharer/${sharerId}/`, formData, config);
+    const response = await instance.patch(
+      `api/admin/patch-sharer/${sharerId}/`,
+      formData,
+      config
+    );
 
     dispatch({ type: PATCH_SHARER_ADMIN_SUCCESS, payload: response.data });
     dispatch(getSharerIncomeAdmin(sharerId));
@@ -317,7 +330,10 @@ export const searchUser = (query) => async (dispatch, getState) => {
         }
       : {};
 
-    const { data } = await instance.get(`api/admin/search-user/?query=${query}`, config);
+    const { data } = await instance.get(
+      `api/admin/search-user/?query=${query}`,
+      config
+    );
 
     dispatch({ type: SEARCH_USER_SUCCESS, payload: data });
   } catch (error) {
@@ -348,7 +364,10 @@ export const searchSharer = (query) => async (dispatch, getState) => {
         }
       : {};
 
-    const { data } = await instance.get(`api/admin/search-sharer/?query=${query}`, config);
+    const { data } = await instance.get(
+      `api/admin/search-sharer/?query=${query}`,
+      config
+    );
 
     dispatch({ type: SEARCH_SHARER_SUCCESS, payload: data });
   } catch (error) {
@@ -362,67 +381,69 @@ export const searchSharer = (query) => async (dispatch, getState) => {
   }
 };
 
+export const fetchAdminContacts =
+  (searchTerm = "") =>
+  async (dispatch) => {
+    try {
+      dispatch({ type: CONTACTS_ADMIN_REQUEST });
 
-export const fetchAdminContacts = (searchTerm = '') => async (dispatch) => {
-  try {
-    dispatch({ type: CONTACTS_ADMIN_REQUEST });
+      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      const token = userInfo ? userInfo.access_token : null;
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      };
 
-    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-    const token = userInfo ? userInfo.access_token : null;
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        Authorization: token ? `Bearer ${token}` : '',
-      },
-    };
+      let url = "api/admin/user-contacts/";
+      if (searchTerm) {
+        url += `?search=${encodeURIComponent(searchTerm)}`;
+      }
 
-    let url = 'api/admin/user-contacts/';
-    if (searchTerm) {
-      url += `?search=${encodeURIComponent(searchTerm)}`;
+      const { data } = await instance.get(url, config);
+
+      dispatch({
+        type: CONTACTS_ADMIN_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: CONTACTS_ADMIN_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
     }
-
-    const { data } = await instance.get(url, config);
-
-    dispatch({
-      type: CONTACTS_ADMIN_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: CONTACTS_ADMIN_FAIL,
-      payload: error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message,
-    });
-  }
-};
-
+  };
 
 export const deleteAdminContact = (contactId) => async (dispatch) => {
   try {
     dispatch({ type: DELETE_CONTACT_REQUEST });
 
-    const token = JSON.parse(localStorage.getItem('userInfo')).access_token;
+    const token = JSON.parse(localStorage.getItem("userInfo")).access_token;
     const config = {
       headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        Authorization: token ? `Bearer ${token}` : '',
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: token ? `Bearer ${token}` : "",
       },
     };
 
     await instance.delete(`api/admin/delete-contact/${contactId}/`, config);
 
     dispatch({ type: DELETE_CONTACT_SUCCESS, payload: contactId });
-    
+
     dispatch(fetchAdminContacts());
   } catch (error) {
     dispatch({
       type: DELETE_CONTACT_FAIL,
-      payload: error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
     });
   }
 };

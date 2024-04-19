@@ -15,7 +15,7 @@ import {
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "http://127.0.0.1:8000/",
+  baseURL: "https://abcabc123-acd97d6f01bb.herokuapp.com/",
 });
 
 export const followSharer = (sharerId, tier, amount) => async (dispatch) => {
@@ -64,7 +64,6 @@ export const followSharer = (sharerId, tier, amount) => async (dispatch) => {
     throw error;
   }
 };
-
 
 export const unfollowSharer = (sharerId, tier) => async (dispatch) => {
   try {
@@ -164,7 +163,7 @@ export const getExpiration = () => async (dispatch) => {
 
     if (response.status === 200) {
       const expirationData = response.data;
-      console.log("Expiration Data:", expirationData); 
+      console.log("Expiration Data:", expirationData);
       dispatch({
         type: GET_EXPIRATION_SUCCESS,
         payload: expirationData,
@@ -174,7 +173,10 @@ export const getExpiration = () => async (dispatch) => {
       updatedUserInfo.expiration_dates = expirationData;
       localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
     } else {
-      console.error("Failed to get expiration data. Response status:", response.status);
+      console.error(
+        "Failed to get expiration data. Response status:",
+        response.status
+      );
       const data = await response.data;
       dispatch({
         type: GET_EXPIRATION_FAIL,
@@ -189,6 +191,5 @@ export const getExpiration = () => async (dispatch) => {
     });
   }
 };
-
 
 /* */
